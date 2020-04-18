@@ -59,7 +59,7 @@ class NewArrayFunctionsSpec
         "even_best_number_exists",
         exists(col("best_numbers"), (col: Column) => col % 2 === lit(0))
       )
-.show()
+      .show()
 
     }
 
