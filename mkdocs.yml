@@ -1,0 +1,162 @@
+site_name: MungingData
+site_url: https://mungingdata.com
+theme:
+  name: material
+  features:
+    - content.action.edit
+    - content.code.copy
+    - navigation.footer
+    - navigation.expand
+    - navigation.indexes
+
+nav:
+  - Home: index.md
+  - PySpark:
+      - Working with array columns: pyspark/array-arraytype-list.md
+      - Avoid periods in column names: pyspark/avoid-dots-periods-column-names.md
+      - Chaining transforms: pyspark/chaining-dataframe-transformations.md
+      - Column to list: pyspark/column-to-list-collect-tolocaliterator.md
+      - Combining PySpark Arrays: pyspark/concat-array-union-except-intersect.md
+      - Add constant column: pyspark/constant-column-lit-typedlit.md
+      - Dictionary to columns: pyspark/dict-map-to-multiple-columns.md
+      - exists and forall: pyspark/exists-forall-any-all-array.md
+      - Filter Array: pyspark/filter-array.md
+      - Install Delta, Jupyter: pyspark/install-delta-lake-jupyter-conda-mac.md
+      - Poetry Dependency management: pyspark/poetry-dependency-management-wheel.md
+      - Random array values: pyspark/random-values-arrays-columns.md
+      - Rename columns: pyspark/rename-multiple-columns-todf-withcolumnrenamed.md
+      - Select columns: pyspark/select-add-columns-withcolumn.md
+      - Testing PySpark: pyspark/testing-pytest-chispa.md
+      - Union DataFrames: pyspark/union-unionbyname-merge-dataframes.md
+      - Broadcast variables: pyspark/udf-dict-broadcast.md
+      - Schema definition: pyspark/schema-structtype-structfield.md
+      - None and NULL: pyspark/none-null.md
+      - Spark Session: pyspark/sparksession-getorcreate-getactivesession.md
+  - Apache Spark:
+      - Convert CSV to Delta Lake: apache-spark/convert-csv-to-delta-lake-latency-trigger.md
+      - Broadcast joins: apache-spark/broadcast-joins.md
+      - Broadcast maps: apache-spark/broadcasting-maps-in-spark.md
+      - Array methods: spark-3/array-exists-forall-transform-aggregate-zip_with.md
+      - Scala array columns: apache-spark/arraytype-columns.md
+      - Scala DataFrame transform: apache-spark/chaining-custom-dataframe-transformations.md
+      - Column equality: apache-spark/column-equality.md
+      - Column methods: apache-spark/column-methods.md
+      - Compacting Parquet files: apache-spark/compacting-parquet-files.md
+      - Building JARs with SBT: apache-spark/building-jar-sbt.md
+      - DataFrame schema: apache-spark/dataframe-schema-structfield-structtype.md
+      - DataFrame summary and describe: apache-spark/dataframe-summary-describe.md
+      - Datasets: apache-spark/dataset-tods-createdataset-advantages.md
+      - Dates and Times: apache-spark/dates-times.md
+      - Dealing with null: apache-spark/dealing-with-null.md
+      - Deduplicating and collapsing: apache-spark/deduplicating-and-collapsing.md
+      - Percentile and median: apache-spark/exact-percentile-approx-median.md
+      - Environment configuration: apache-spark/environment-specific-configuration.md
+      - Best books: apache-spark/best-books.md
+      - expr eval: apache-spark/expr-eval.md
+      - Enough Scala: apache-spark/just-enough-scala.md
+      - Function order dependencies: apache-spark/limiting-function-order-dependencies.md
+      - Logistic regression: apache-spark/logistic-regressions.md
+      - Mill build tool: apache-spark/mill-build-tool.md
+      - MapType columns: apache-spark/maptype-columns.md
+      - Optimizing data lakes: apache-spark/optimizing-data-lakes.md
+      - Output one file: apache-spark/output-one-file-csv-parquet.md
+      - Pushed filters: apache-spark/partition-filters-pushed-filters.md
+      - Partition by: apache-spark/partitionby.md
+      - Shading dependencies: apache-spark/shading-dependencies-with-sbt.md
+      - Practical introduction: apache-spark/practical-introduction.md
+      - Publishing with jitpack: apache-spark/publishing-spark-projects-with-jitpack.md
+      - Pyspark vs Scala: apache-spark/python-pyspark-scala-which-better.md
+      - Real Google Sheets: apache-spark/read-google-sheets-dataframe.md
+      - Register functions: apache-spark/registerfunction-injectfunction.md
+      - Import packages: apache-spark/scala-packages-imports.md
+      - Spark SQL functions: apache-spark/spark-sql-functions.md
+      - Spark Session: apache-spark/sparksession.md
+      - Speak Slack notifications: apache-spark/speaking-slack-notifications.md
+      - Start and end of month: apache-spark/start-end-month-last-day-date-trunc.md
+      - Streaming Trigger Once: apache-spark/structured-streaming-trigger-once.md
+      - Testing with utest: apache-spark/testing-with-utest.md
+      - Upgrading to Spark 3: apache-spark/upgrate-to-spark-3-scala-2-12.md
+      - Using the console: apache-spark/using-the-console.md
+      - Start and end of week: apache-spark/week-end-start-dayofweek-next-day.md
+      - expr eval: apache-spark/expr-eval.md
+      - Filter DataFrame: apache-spark/filter-where.md
+      - Frameless: apache-spark/frameless-typed-datasets.md
+      - Spark HyperLogLog: apache-spark/hyperloglog-count-distinct.md
+      - Incremental extracts: apache-spark/incrementally-updating-extracts.md
+      - Intro to DataFrames: apache-spark/introduction-to-dataframes.md
+      - Intro to SBT: apache-spark/introduction-to-sbt.md
+      - rlike: apache-spark/advanced-string-matching-with-rlike.md
+      - Aggregations: apache-spark/aggregations.md
+      - Compacting files: apache-spark/compacting-files.md
+  - sqlite:
+      - Create database Python: sqlite/create-database-load-csv-python.md
+      - Write to Parquet file: sqlite/export-tables-queries-to-csv-parquet.md
+  - DevRel:
+      - Virtuous Content Cycle: devrel/virtuous-content-cycle-developer-advocates.md
+      - DevRel Driven Development: devrel/devrel-driven-development.md
+  - Python:
+      - Building DAGs: python/dag-directed-acyclic-graph-networkx.md
+      - How pyenv works: python/how-pyenv-works-shims.md
+      - Split CSV: python/split-csv-write-chunk-pandas.md
+      - Writing Parquet: python/writing-parquet-pandas-pyspark-koalas.md
+      - Jupyter and poetry: pyspark/jupyter-workflow-poetry-pandas.md
+  - Pandas:
+      - Adding category column: pandas/dataframe-cut-category.md
+      - Large data: pandas/large-data-workflow-dask.md
+      - Read Delta Lake: pandas/read-delta-lake-dataframe.md
+      - Read multiple CSVs: pandas/read-multiple-csv-pandas-dataframe.md
+      - Rename columns: pandas/rename-columns.md
+      - Unit testing: pandas/unit-testing-pandas.md
+  - Golang:
+      - CSV to Parquet: go/csv-to-parquet.md
+      - DataFrames: go/dataframes-gota-qframe.md
+  - Unix:
+      - Appending Executables Path: unix/appending-executables-path.md
+  - OSS:
+      - Open source is a delight: oss/creating-open-source-software-is-a-delight.md
+  - PyArrow:
+      - Writing Custom Metadata: pyarrow/arbitrary-metadata-parquet-table.md
+      - Parquet metadata: pyarrow/parquet-metadata-min-max-statistics.md
+  - Scala:
+      - Call Java with wrapper: scala/call-java-code-with-wrapper.md
+      - Filesystem operations: scala/filesystem-paths-move-copy-list-delete-folders.md
+      - Library best practices: scala/library-best-practices.md
+      - Maintenance nightmare: scala/maintenance-nightmare-upgrade.md
+      - Serde case classes: scala/serializing-deserializing-case-classes.md
+      - Testing with munit: scala/testing-munit.md
+      - Templates: scala/scalate-templates-mustache-ssp.md
+      - Scalatest: scala/scalatest.md
+      - Read and write JSON: scala/read-write-json.md
+  - AWS:
+      - Spark and Athena: aws/athena-spark-best-friends.md
+  - GitHub:
+      - Creating a ticketing system: github/creating-ticketing-system-with-slack.md
+  - Creator:
+      - Creators making money: creator/how-content-creators-make-lots-money.md
+  - Dask:
+      - Compress CSVs: dask/write-csv-compression-filename.md
+      - Output single file: dask/ouput-dataframe-single-csv-file.md
+      - Install with conda: dask/software-environments-conda-miniconda.md
+      - CSV to Parquet: dask/read-csv-to-parquet.md
+      - Read Delta Lake: dask/read-delta-lake.md
+  - Emacs:
+      - Learn Emacs: emacs/learning-emacs-keybindings-after-multiple-failed-attempts.md
+  - Books:
+      - Self publishing: books/self-publishing-programming-books.md
+  - Investing:
+      - Cheap real estate: investing/ultra-cheap-real-estate-1000-square-meter.md
+  - Numpy:
+      - Save to text: numpy/save-numpy-text-txt.md
+  - Career:
+      - Manage calendar: career/7-steps-reject-meeting-zoom.md
+  - Java:
+      - SDKMAN installation: java/sdkman-multiple-versions-java-sbt-scala.md
+      - jenv: java/jenv-multiple-versions-java.md
+  - Delta Lake:
+      - Merge, update, upserts: delta-lake/merge-update-upserts.md
+      - Compact small files: delta-lake/compact-small-files.md
+      - Type 2 SCD: delta-lake/type-2-scd-upserts.md
+      - Updating partitions: delta-lake/updating-partitions-with-replacewhere.md
+      - Vacuum: delta-lake/vacuum-command.md
+      - Schema enforcement: delta-lake/schema-enforcement-evolution-mergeschema-overwriteschema.md
+      - Time travel: delta-lake/introduction-time-travel.md
