@@ -1,0 +1,4122 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://mungingdata.com/pyspark/dict-map-to-multiple-columns/">
+      
+      
+        <link rel="prev" href="../constant-column-lit-typedlit/">
+      
+      
+        <link rel="next" href="../exists-forall-any-all-array/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.40">
+    
+    
+      
+        <title>Converting a PySpark Map / Dictionary to Multiple Columns - MungingData</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.8c3ca2c6.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#converting-a-pyspark-map-dictionary-to-multiple-columns" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="MungingData" class="md-header__button md-logo" aria-label="MungingData" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            MungingData
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Converting a PySpark Map / Dictionary to Multiple Columns
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="MungingData" class="md-nav__button md-logo" aria-label="MungingData" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    MungingData
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    PySpark
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            PySpark
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../array-arraytype-list/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Working with array columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../avoid-dots-periods-column-names/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Avoid periods in column names
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chaining-dataframe-transformations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chaining transforms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../column-to-list-collect-tolocaliterator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Column to list
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../concat-array-union-except-intersect/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Combining PySpark Arrays
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../constant-column-lit-typedlit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Add constant column
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Dictionary to columns
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Dictionary to columns
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#creating-a-dataframe-with-a-maptype-column" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating a DataFrame with a MapType column
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manually-expanding-the-dataframe" class="md-nav__link">
+    <span class="md-ellipsis">
+      Manually expanding the DataFrame
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#programatically-expanding-the-dataframe" class="md-nav__link">
+    <span class="md-ellipsis">
+      Programatically expanding the DataFrame
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examining-logical-plans" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examining logical plans
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next steps
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exists-forall-any-all-array/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    exists and forall
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../filter-array/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Filter Array
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../install-delta-lake-jupyter-conda-mac/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Install Delta, Jupyter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../poetry-dependency-management-wheel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Poetry Dependency management
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../random-values-arrays-columns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Random array values
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../rename-multiple-columns-todf-withcolumnrenamed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Rename columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../select-add-columns-withcolumn/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Select columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing-pytest-chispa/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Testing PySpark
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../union-unionbyname-merge-dataframes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Union DataFrames
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../udf-dict-broadcast/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Broadcast variables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../schema-structtype-structfield/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Schema definition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../none-null/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    None and NULL
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sparksession-getorcreate-getactivesession/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spark Session
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Apache Spark
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Apache Spark
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/convert-csv-to-delta-lake-latency-trigger/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Convert CSV to Delta Lake
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/broadcast-joins/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Broadcast joins
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/broadcasting-maps-in-spark/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Broadcast maps
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spark-3/array-exists-forall-transform-aggregate-zip_with/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Array methods
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/arraytype-columns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scala array columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/chaining-custom-dataframe-transformations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scala DataFrame transform
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/column-equality/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Column equality
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/column-methods/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Column methods
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/compacting-parquet-files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Compacting Parquet files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/building-jar-sbt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building JARs with SBT
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/dataframe-schema-structfield-structtype/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DataFrame schema
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/dataframe-summary-describe/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DataFrame summary and describe
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/dataset-tods-createdataset-advantages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Datasets
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/dates-times/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dates and Times
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/dealing-with-null/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dealing with null
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/deduplicating-and-collapsing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deduplicating and collapsing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/exact-percentile-approx-median/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Percentile and median
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/environment-specific-configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Environment configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/best-books/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Best books
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/expr-eval/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    expr eval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/just-enough-scala/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Enough Scala
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/limiting-function-order-dependencies/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Function order dependencies
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/logistic-regressions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Logistic regression
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/mill-build-tool/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Mill build tool
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/maptype-columns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MapType columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/optimizing-data-lakes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Optimizing data lakes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/output-one-file-csv-parquet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Output one file
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/partition-filters-pushed-filters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pushed filters
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/partitionby/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Partition by
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/shading-dependencies-with-sbt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shading dependencies
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/practical-introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Practical introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/publishing-spark-projects-with-jitpack/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Publishing with jitpack
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/python-pyspark-scala-which-better/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pyspark vs Scala
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/read-google-sheets-dataframe/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Real Google Sheets
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/registerfunction-injectfunction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Register functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/scala-packages-imports/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Import packages
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/spark-sql-functions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spark SQL functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/sparksession/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spark Session
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/speaking-slack-notifications/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Speak Slack notifications
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/start-end-month-last-day-date-trunc/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Start and end of month
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/structured-streaming-trigger-once/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Streaming Trigger Once
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/testing-with-utest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Testing with utest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/upgrate-to-spark-3-scala-2-12/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Upgrading to Spark 3
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/using-the-console/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using the console
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/week-end-start-dayofweek-next-day/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Start and end of week
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/expr-eval/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    expr eval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/filter-where/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Filter DataFrame
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/frameless-typed-datasets/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Frameless
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/hyperloglog-count-distinct/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spark HyperLogLog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/incrementally-updating-extracts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Incremental extracts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/introduction-to-dataframes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Intro to DataFrames
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/introduction-to-sbt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Intro to SBT
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/advanced-string-matching-with-rlike/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    rlike
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/aggregations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Aggregations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/compacting-files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Compacting files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    DevRel
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            DevRel
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../devrel/virtuous-content-cycle-developer-advocates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Virtuous Content Cycle
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../devrel/devrel-driven-development/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DevRel Driven Development
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Python
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Python
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/dag-directed-acyclic-graph-networkx/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building DAGs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/how-pyenv-works-shims/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    How pyenv works
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/split-csv-write-chunk-pandas/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Split CSV
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/writing-parquet-pandas-pyspark-koalas/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Writing Parquet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/jupyter-workflow-poetry-pandas/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Jupyter and poetry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Pandas
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Pandas
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/dataframe-cut-category/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Adding category column
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/large-data-workflow-dask/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Large data
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/read-delta-lake-dataframe/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Read Delta Lake
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/read-multiple-csv-pandas-dataframe/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Read multiple CSVs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/rename-columns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Rename columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/unit-testing-pandas/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unit testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Golang
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Golang
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../go/csv-to-parquet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CSV to Parquet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../go/dataframes-gota-qframe/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DataFrames
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    PyArrow
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            PyArrow
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyarrow/arbitrary-metadata-parquet-table/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Writing Custom Metadata
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyarrow/parquet-metadata-min-max-statistics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Parquet metadata
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Scala
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            Scala
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/call-java-code-with-wrapper/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Call Java with wrapper
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/filesystem-paths-move-copy-list-delete-folders/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Filesystem operations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/library-best-practices/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Library best practices
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/maintenance-nightmare-upgrade/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Maintenance nightmare
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/serializing-deserializing-case-classes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Serde case classes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/testing-munit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Testing with munit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/scalate-templates-mustache-ssp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/scalatest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scalatest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/read-write-json/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Read and write JSON
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Java
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Java
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/sdkman-multiple-versions-java-sbt-scala/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SDKMAN installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/jenv-multiple-versions-java/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    jenv
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Misc
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            Misc
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../unix/appending-executables-path/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Appending Executables Path
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../oss/creating-open-source-software-is-a-delight/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Open source is a delight
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../aws/athena-spark-best-friends/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spark and Athena
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../github/creating-ticketing-system-with-slack/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Creating a ticketing system
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../creator/how-content-creators-make-lots-money/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Creators making money
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../emacs/learning-emacs-keybindings-after-multiple-failed-attempts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Learn Emacs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../books/self-publishing-programming-books/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Self publishing programming books
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../investing/ultra-cheap-real-estate-1000-square-meter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Investing in cheap real estate
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../numpy/save-numpy-text-txt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    numpy Save to text
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../career/7-steps-reject-meeting-zoom/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manage calendar invites
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Delta Lake
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            Delta Lake
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/merge-update-upserts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Merge, update, upserts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/compact-small-files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Compact small files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/type-2-scd-upserts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Type 2 SCD
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/updating-partitions-with-replacewhere/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Updating partitions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/vacuum-command/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Vacuum
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/schema-enforcement-evolution-mergeschema-overwriteschema/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Schema enforcement
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/introduction-time-travel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Time travel
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    sqlite
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            sqlite
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sqlite/create-database-load-csv-python/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Create database Python
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sqlite/export-tables-queries-to-csv-parquet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Write to Parquet file
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Dask
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            Dask
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dask/write-csv-compression-filename/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Compress CSVs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dask/ouput-dataframe-single-csv-file/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Output single file
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dask/software-environments-conda-miniconda/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Install with conda
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dask/read-csv-to-parquet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CSV to Parquet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dask/read-delta-lake/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Read Delta Lake
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#creating-a-dataframe-with-a-maptype-column" class="md-nav__link">
+    <span class="md-ellipsis">
+      Creating a DataFrame with a MapType column
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#manually-expanding-the-dataframe" class="md-nav__link">
+    <span class="md-ellipsis">
+      Manually expanding the DataFrame
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#programatically-expanding-the-dataframe" class="md-nav__link">
+    <span class="md-ellipsis">
+      Programatically expanding the DataFrame
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#examining-logical-plans" class="md-nav__link">
+    <span class="md-ellipsis">
+      Examining logical plans
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next steps
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="converting-a-pyspark-map-dictionary-to-multiple-columns">Converting a PySpark Map / Dictionary to Multiple Columns</h1>
+<p>Python dictionaries are stored in PySpark map columns (the <code>pyspark.sql.types.MapType</code> class). This blog post explains how to convert a map into multiple columns.</p>
+<p>You'll want to break up a map to multiple columns for performance gains and when writing data to different types of data stores. It's typically best to avoid writing complex columns.</p>
+<h2 id="creating-a-dataframe-with-a-maptype-column">Creating a DataFrame with a MapType column</h2>
+<p>Let's create a DataFrame with a map column called <code>some_data</code>:</p>
+<pre><code>data = [(&quot;jose&quot;, {&quot;a&quot;: &quot;aaa&quot;, &quot;b&quot;: &quot;bbb&quot;}), (&quot;li&quot;, {&quot;b&quot;: &quot;some_letter&quot;, &quot;z&quot;: &quot;zed&quot;})]
+df = spark.createDataFrame(data, [&quot;first_name&quot;, &quot;some_data&quot;])
+df.show(truncate=False)
+</code></pre>
+<pre><code>+----------+----------------------------+
+|first_name|some_data                   |
++----------+----------------------------+
+|jose      |[a -&gt; aaa, b -&gt; bbb]        |
+|li        |[b -&gt; some_letter, z -&gt; zed]|
++----------+----------------------------+
+</code></pre>
+<p>Use <code>df.printSchema</code> to verify the type of the <code>some_data</code> column:</p>
+<pre><code>root
+ |-- first_name: string (nullable = true)
+ |-- some_data: map (nullable = true)
+ |    |-- key: string
+ |    |-- value: string (valueContainsNull = true)
+</code></pre>
+<p>You can see <code>some_data</code> is a MapType column with string keys and values.</p>
+<p>Add a <code>some_data_a</code> column that grabs the value associated with the key <code>a</code> in the <code>some_data</code> column. The <code>getItem</code> method helps when fetching values from PySpark maps.</p>
+<pre><code>df.withColumn(&quot;some_data_a&quot;, F.col(&quot;some_data&quot;).getItem(&quot;a&quot;)).show(truncate=False)
+</code></pre>
+<pre><code>+----------+----------------------------+-----------+
+|first_name|some_data                   |some_data_a|
++----------+----------------------------+-----------+
+|jose      |[a -&gt; aaa, b -&gt; bbb]        |aaa        |
+|li        |[b -&gt; some_letter, z -&gt; zed]|null       |
++----------+----------------------------+-----------+
+</code></pre>
+<p>This syntax also works:</p>
+<pre><code>df.withColumn(&quot;some_data_a&quot;, F.col(&quot;some_data&quot;)[&quot;a&quot;]).show()
+</code></pre>
+<h2 id="manually-expanding-the-dataframe">Manually expanding the DataFrame</h2>
+<p>We can manually append the <code>some_data_a</code>, <code>some_data_b</code>, and <code>some_data_z</code> columns to our DataFrame as follows:</p>
+<pre><code>df\
+    .withColumn(&quot;some_data_a&quot;, F.col(&quot;some_data&quot;).getItem(&quot;a&quot;))\
+    .withColumn(&quot;some_data_b&quot;, F.col(&quot;some_data&quot;).getItem(&quot;b&quot;))\
+    .withColumn(&quot;some_data_z&quot;, F.col(&quot;some_data&quot;).getItem(&quot;z&quot;))\
+    .show(truncate=False)
+</code></pre>
+<pre><code>+----------+----------------------------+-----------+-----------+-----------+
+|first_name|some_data                   |some_data_a|some_data_b|some_data_z|
++----------+----------------------------+-----------+-----------+-----------+
+|jose      |[a -&gt; aaa, b -&gt; bbb]        |aaa        |bbb        |null       |
+|li        |[b -&gt; some_letter, z -&gt; zed]|null       |some_letter|zed        |
++----------+----------------------------+-----------+-----------+-----------+
+</code></pre>
+<p>We can refactor this code to be more concise and to generate a more efficient parsed logical plan.</p>
+<pre><code>cols = [F.col(&quot;first_name&quot;)] + list(map(
+    lambda f: F.col(&quot;some_data&quot;).getItem(f).alias(str(f)),
+    [&quot;a&quot;, &quot;b&quot;, &quot;z&quot;]))
+df.select(cols).show()
+</code></pre>
+<pre><code>+----------+----+-----------+----+
+|first_name|   a|          b|   z|
++----------+----+-----------+----+
+|      jose| aaa|        bbb|null|
+|        li|null|some_letter| zed|
++----------+----+-----------+----+
+</code></pre>
+<p>Manually appending the columns is fine if you know all the distinct keys in the map. If you don't know all the distinct keys, you'll need a programatic solution, but be warned - this approach is slow!</p>
+<h2 id="programatically-expanding-the-dataframe">Programatically expanding the DataFrame</h2>
+<p>Here's the code to programatically expand the DataFrame (keep reading to see all the steps broken down individually):</p>
+<pre><code>keys_df = df.select(F.explode(F.map_keys(F.col(&quot;some_data&quot;)))).distinct()
+keys = list(map(lambda row: row[0], keys_df.collect()))
+key_cols = list(map(lambda f: F.col(&quot;some_data&quot;).getItem(f).alias(str(f)), keys))
+final_cols = [F.col(&quot;first_name&quot;)] + key_cols
+df.select(final_cols).show()
+</code></pre>
+<pre><code>+----------+----+-----------+----+
+|first_name|   z|          b|   a|
++----------+----+-----------+----+
+|      jose|null|        bbb| aaa|
+|        li| zed|some_letter|null|
++----------+----+-----------+----+
+</code></pre>
+<p>Let's break down each step of this code.</p>
+<p><strong>Step 1</strong>: Create a DataFrame with all the unique keys</p>
+<pre><code>keys_df = df.select(F.explode(F.map_keys(F.col(&quot;some_data&quot;)))).distinct()
+keys_df.show()
+</code></pre>
+<pre><code>+---+
+|col|
++---+
+|  z|
+|  b|
+|  a|
++---+
+</code></pre>
+<p><strong>Step 2</strong>: Convert the DataFrame to a list with all the unique keys</p>
+<pre><code>keys = list(map(lambda row: row[0], keys_df.collect()))
+print(keys) # =&gt; ['z', 'b', 'a']
+</code></pre>
+<p>The <code>collect()</code> method gathers all the data on the driver node, which can be slow. We call <code>distinct()</code> to limit the data that's being collected on the driver node. Spark is a big data engine that's optimized for running computations in parallel on multiple nodes in a cluster. Collecting data on a single node and leaving the worker nodes idle should be avoided whenever possible. We're only using <code>collect()</code> here cause it's the only option.</p>
+<p><strong>Step 3</strong>: Create an array of column objects for the map items</p>
+<pre><code>key_cols = list(map(lambda f: F.col(&quot;some_data&quot;).getItem(f).alias(str(f)), keys))
+print(key_cols)
+# =&gt; [Column&lt;b'some_data[z] AS `z`'&gt;, Column&lt;b'some_data[b] AS `b`'&gt;, Column&lt;b'some_data[a] AS `a`'&gt;]
+</code></pre>
+<p><strong>Step 4</strong>: Add any additional columns before calculating the final result</p>
+<pre><code>final_cols = [F.col(&quot;first_name&quot;)] + key_cols
+print(final_cols)
+# =&gt; [Column&lt;b'first_name'&gt;, Column&lt;b'some_data[z] AS `z`'&gt;, Column&lt;b'some_data[b] AS `b`'&gt;, Column&lt;b'some_data[a] AS `a`'&gt;]
+</code></pre>
+<p><strong>Step 5</strong>: Run a <code>select()</code> to get the final result</p>
+<pre><code>df.select(final_cols).show()
+</code></pre>
+<pre><code>+----------+----+-----------+----+
+|first_name|   z|          b|   a|
++----------+----+-----------+----+
+|      jose|null|        bbb| aaa|
+|        li| zed|some_letter|null|
++----------+----+-----------+----+
+</code></pre>
+<p>Step 2 is the potential bottleneck. If there aren't too many unique keys it shouldn't be too slow.</p>
+<p>Steps 3 and 4 should run very quickly. Running a single select operation in Step 5 is also quick.</p>
+<h2 id="examining-logical-plans">Examining logical plans</h2>
+<p>Use the <code>explain()</code> function to print the logical plans and see if the parsed logical plan needs a lot of optimizations:</p>
+<pre><code>df.select(final_cols).explain(True)
+
+== Parsed Logical Plan ==
+'Project [unresolvedalias('first_name, None), 'some_data[z] AS z#28, 'some_data[b] AS b#29, 'some_data[a] AS a#30]
++- LogicalRDD [first_name#0, some_data#1], false
+
+== Analyzed Logical Plan ==
+first_name: string, z: string, b: string, a: string
+Project [first_name#0, some_data#1[z] AS z#28, some_data#1[b] AS b#29, some_data#1[a] AS a#30]
++- LogicalRDD [first_name#0, some_data#1], false
+
+== Optimized Logical Plan ==
+Project [first_name#0, some_data#1[z] AS z#28, some_data#1[b] AS b#29, some_data#1[a] AS a#30]
++- LogicalRDD [first_name#0, some_data#1], false
+
+== Physical Plan ==
+*(1) Project [first_name#0, some_data#1[z] AS z#28, some_data#1[b] AS b#29, some_data#1[a] AS a#30]
+</code></pre>
+<p>As you can see the parsed logical plan is quite similar to the optimized logical plan. Catalyst does not need to perform a lot of optimizations, so our code is efficient.</p>
+<h2 id="next-steps">Next steps</h2>
+<p>Breaking out a MapType column into multiple columns is fast if you know all the distinct map key values, but potentially slow if you need to figure them all out dynamically.</p>
+<p>You would want to avoid calculating the unique map keys whenever possible. Consider storing the distinct values in a data store and updating it incrementally if you have production workflows that depend on the distinct keys.</p>
+<p>If breaking out your map into separate columns is slow, consider segmenting your job into two steps:</p>
+<ul>
+<li>Step 1: Break the map column into separate columns and write it out to disk</li>
+<li>Step 2: Read the new dataset with separate columns and perform the rest of your analysis</li>
+</ul>
+<p>Complex column types are important for a lot of Spark analyses. In general favor StructType columns over MapType columns because they're easier to work with.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../constant-column-lit-typedlit/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Add constant column">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Add constant column
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../exists-forall-any-all-array/" class="md-footer__link md-footer__link--next" aria-label="Next: exists and forall">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                exists and forall
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.action.edit", "content.code.copy", "navigation.footer", "navigation.indexes"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.525ec568.min.js"></script>
+      
+    
+  </body>
+</html>

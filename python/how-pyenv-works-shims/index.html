@@ -1,0 +1,4519 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://mungingdata.com/python/how-pyenv-works-shims/">
+      
+      
+        <link rel="prev" href="../dag-directed-acyclic-graph-networkx/">
+      
+      
+        <link rel="next" href="../split-csv-write-chunk-pandas/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.40">
+    
+    
+      
+        <title>Deep dive into how pyenv actually works by leveraging the shim design pattern - MungingData</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.8c3ca2c6.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#deep-dive-into-how-pyenv-actually-works-by-leveraging-the-shim-design-pattern" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="MungingData" class="md-header__button md-logo" aria-label="MungingData" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            MungingData
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Deep dive into how pyenv actually works by leveraging the shim design pattern
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="MungingData" class="md-nav__button md-logo" aria-label="MungingData" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    MungingData
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    PySpark
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            PySpark
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/array-arraytype-list/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Working with array columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/avoid-dots-periods-column-names/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Avoid periods in column names
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/chaining-dataframe-transformations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chaining transforms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/column-to-list-collect-tolocaliterator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Column to list
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/concat-array-union-except-intersect/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Combining PySpark Arrays
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/constant-column-lit-typedlit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Add constant column
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/dict-map-to-multiple-columns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dictionary to columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/exists-forall-any-all-array/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    exists and forall
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/filter-array/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Filter Array
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/install-delta-lake-jupyter-conda-mac/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Install Delta, Jupyter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/poetry-dependency-management-wheel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Poetry Dependency management
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/random-values-arrays-columns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Random array values
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/rename-multiple-columns-todf-withcolumnrenamed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Rename columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/select-add-columns-withcolumn/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Select columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/testing-pytest-chispa/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Testing PySpark
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/union-unionbyname-merge-dataframes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Union DataFrames
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/udf-dict-broadcast/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Broadcast variables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/schema-structtype-structfield/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Schema definition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/none-null/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    None and NULL
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/sparksession-getorcreate-getactivesession/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spark Session
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Apache Spark
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Apache Spark
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/convert-csv-to-delta-lake-latency-trigger/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Convert CSV to Delta Lake
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/broadcast-joins/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Broadcast joins
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/broadcasting-maps-in-spark/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Broadcast maps
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spark-3/array-exists-forall-transform-aggregate-zip_with/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Array methods
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/arraytype-columns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scala array columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/chaining-custom-dataframe-transformations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scala DataFrame transform
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/column-equality/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Column equality
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/column-methods/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Column methods
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/compacting-parquet-files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Compacting Parquet files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/building-jar-sbt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building JARs with SBT
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/dataframe-schema-structfield-structtype/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DataFrame schema
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/dataframe-summary-describe/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DataFrame summary and describe
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/dataset-tods-createdataset-advantages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Datasets
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/dates-times/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dates and Times
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/dealing-with-null/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dealing with null
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/deduplicating-and-collapsing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Deduplicating and collapsing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/exact-percentile-approx-median/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Percentile and median
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/environment-specific-configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Environment configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/best-books/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Best books
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/expr-eval/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    expr eval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/just-enough-scala/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Enough Scala
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/limiting-function-order-dependencies/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Function order dependencies
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/logistic-regressions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Logistic regression
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/mill-build-tool/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Mill build tool
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/maptype-columns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MapType columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/optimizing-data-lakes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Optimizing data lakes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/output-one-file-csv-parquet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Output one file
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/partition-filters-pushed-filters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pushed filters
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/partitionby/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Partition by
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/shading-dependencies-with-sbt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shading dependencies
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/practical-introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Practical introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/publishing-spark-projects-with-jitpack/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Publishing with jitpack
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/python-pyspark-scala-which-better/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pyspark vs Scala
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/read-google-sheets-dataframe/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Real Google Sheets
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/registerfunction-injectfunction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Register functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/scala-packages-imports/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Import packages
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/spark-sql-functions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spark SQL functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/sparksession/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spark Session
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/speaking-slack-notifications/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Speak Slack notifications
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/start-end-month-last-day-date-trunc/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Start and end of month
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/structured-streaming-trigger-once/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Streaming Trigger Once
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/testing-with-utest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Testing with utest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/upgrate-to-spark-3-scala-2-12/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Upgrading to Spark 3
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/using-the-console/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using the console
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/week-end-start-dayofweek-next-day/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Start and end of week
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/expr-eval/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    expr eval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/filter-where/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Filter DataFrame
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/frameless-typed-datasets/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Frameless
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/hyperloglog-count-distinct/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spark HyperLogLog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/incrementally-updating-extracts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Incremental extracts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/introduction-to-dataframes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Intro to DataFrames
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/introduction-to-sbt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Intro to SBT
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/advanced-string-matching-with-rlike/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    rlike
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/aggregations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Aggregations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../apache-spark/compacting-files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Compacting files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    DevRel
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            DevRel
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../devrel/virtuous-content-cycle-developer-advocates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Virtuous Content Cycle
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../devrel/devrel-driven-development/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DevRel Driven Development
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Python
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Python
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dag-directed-acyclic-graph-networkx/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building DAGs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    How pyenv works
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    How pyenv works
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pyenv-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      pyenv installation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python-installations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python installations
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python versions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyenv-global" class="md-nav__link">
+    <span class="md-ellipsis">
+      pyenv global
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyenv-local" class="md-nav__link">
+    <span class="md-ellipsis">
+      pyenv local
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#path-basics" class="md-nav__link">
+    <span class="md-ellipsis">
+      PATH basics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyenv-changes-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      pyenv changes PATH
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rehashing-design-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rehashing design pattern
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#intercepting-the-python-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      Intercepting the python command
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyenv-executable" class="md-nav__link">
+    <span class="md-ellipsis">
+      pyenv executable
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pip-install-for-different-python-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      pip install for different Python versions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyenv-is-not-bootstrapped-by-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      pyenv is not bootstrapped by Python
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../split-csv-write-chunk-pandas/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Split CSV
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../writing-parquet-pandas-pyspark-koalas/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Writing Parquet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../jupyter-workflow-poetry-pandas/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Jupyter and poetry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Pandas
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Pandas
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/dataframe-cut-category/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Adding category column
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/large-data-workflow-dask/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Large data
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/read-delta-lake-dataframe/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Read Delta Lake
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/read-multiple-csv-pandas-dataframe/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Read multiple CSVs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/rename-columns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Rename columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/unit-testing-pandas/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unit testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Golang
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Golang
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../go/csv-to-parquet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CSV to Parquet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../go/dataframes-gota-qframe/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DataFrames
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    PyArrow
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            PyArrow
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyarrow/arbitrary-metadata-parquet-table/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Writing Custom Metadata
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyarrow/parquet-metadata-min-max-statistics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Parquet metadata
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Scala
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            Scala
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/call-java-code-with-wrapper/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Call Java with wrapper
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/filesystem-paths-move-copy-list-delete-folders/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Filesystem operations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/library-best-practices/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Library best practices
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/maintenance-nightmare-upgrade/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Maintenance nightmare
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/serializing-deserializing-case-classes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Serde case classes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/testing-munit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Testing with munit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/scalate-templates-mustache-ssp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/scalatest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scalatest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/read-write-json/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Read and write JSON
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Java
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Java
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/sdkman-multiple-versions-java-sbt-scala/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SDKMAN installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/jenv-multiple-versions-java/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    jenv
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Misc
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            Misc
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../unix/appending-executables-path/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Appending Executables Path
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../oss/creating-open-source-software-is-a-delight/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Open source is a delight
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../aws/athena-spark-best-friends/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spark and Athena
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../github/creating-ticketing-system-with-slack/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Creating a ticketing system
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../creator/how-content-creators-make-lots-money/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Creators making money
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../emacs/learning-emacs-keybindings-after-multiple-failed-attempts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Learn Emacs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../books/self-publishing-programming-books/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Self publishing programming books
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../investing/ultra-cheap-real-estate-1000-square-meter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Investing in cheap real estate
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../numpy/save-numpy-text-txt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    numpy Save to text
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../career/7-steps-reject-meeting-zoom/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manage calendar invites
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Delta Lake
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            Delta Lake
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/merge-update-upserts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Merge, update, upserts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/compact-small-files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Compact small files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/type-2-scd-upserts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Type 2 SCD
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/updating-partitions-with-replacewhere/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Updating partitions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/vacuum-command/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Vacuum
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/schema-enforcement-evolution-mergeschema-overwriteschema/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Schema enforcement
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/introduction-time-travel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Time travel
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    sqlite
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            sqlite
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sqlite/create-database-load-csv-python/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Create database Python
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sqlite/export-tables-queries-to-csv-parquet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Write to Parquet file
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Dask
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            Dask
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dask/write-csv-compression-filename/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Compress CSVs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dask/ouput-dataframe-single-csv-file/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Output single file
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dask/software-environments-conda-miniconda/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Install with conda
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dask/read-csv-to-parquet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CSV to Parquet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dask/read-delta-lake/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Read Delta Lake
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#pyenv-installation" class="md-nav__link">
+    <span class="md-ellipsis">
+      pyenv installation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python-installations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python installations
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#python-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      Python versions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyenv-global" class="md-nav__link">
+    <span class="md-ellipsis">
+      pyenv global
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyenv-local" class="md-nav__link">
+    <span class="md-ellipsis">
+      pyenv local
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#path-basics" class="md-nav__link">
+    <span class="md-ellipsis">
+      PATH basics
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyenv-changes-path" class="md-nav__link">
+    <span class="md-ellipsis">
+      pyenv changes PATH
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#rehashing-design-pattern" class="md-nav__link">
+    <span class="md-ellipsis">
+      Rehashing design pattern
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#intercepting-the-python-command" class="md-nav__link">
+    <span class="md-ellipsis">
+      Intercepting the python command
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyenv-executable" class="md-nav__link">
+    <span class="md-ellipsis">
+      pyenv executable
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pip-install-for-different-python-versions" class="md-nav__link">
+    <span class="md-ellipsis">
+      pip install for different Python versions
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#pyenv-is-not-bootstrapped-by-python" class="md-nav__link">
+    <span class="md-ellipsis">
+      pyenv is not bootstrapped by Python
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#conclusion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Conclusion
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="deep-dive-into-how-pyenv-actually-works-by-leveraging-the-shim-design-pattern">Deep dive into how pyenv actually works by leveraging the shim design pattern</h1>
+<p><a href="https://github.com/pyenv/pyenv">pyenv</a> lets you manage multiple versions of Python on your computer.</p>
+<p>This blog post focuses on how pyenv uses the shim design pattern to provide a wonderful user experience (it doesn't focus on installing and using the software like other posts).</p>
+<p>Once pyenv is installed you can easily switch between one project that uses Python 3.6, another project that uses Python 3.7, and a system-wide default Python, without any additional thought.</p>
+<p>Managing Python versions and packages can be a huge pain. It's important to understand how pyenv works to debug issues. Complexities are layered on top of different Python versions… good luck understanding virtual environments if you don't understand Python versioning.</p>
+<p>pyenv is a fork of <a href="https://github.com/rbenv/rbenv">rbenv</a>, a project to manage Ruby versions. The "shim design philosophy" used by pyenv and rbenv has proven to be a winner for maintaining multiple versions of a programming language on a given machine. Learning the shim design philosophy will make you a better programmer and teach you a powerful design pattern you can use with your own programs.</p>
+<h2 id="pyenv-installation">pyenv installation</h2>
+<p>You can install pyenv with Homebrew using the <code>brew install pyenv</code> command.</p>
+<p>Homebrew runs <a href="https://github.com/Homebrew/homebrew-core/blob/master/Formula/pyenv.rb">this formula</a>. We'll cover how Homebrew works in another post.</p>
+<p>Type <code>which pyenv</code> to see that there is a pyenv executable in the <code>/usr/local/bin</code> directory.</p>
+<p>Enter <code>open /usr/local/bin</code> to view the <code>pyenv</code> executable in the directory.</p>
+<p><img alt="" src="../images/Screen-Shot-2020-04-11-at-9.31.39-AM.png" /></p>
+<p>The <code>pyenv</code> executable is run whenever we run commands like <code>pyenv versions</code> or <code>pyenv install --list</code>. Simply run <code>pyenv</code> without any arguments to see a listing of all the pyenv commands that can be run.</p>
+<p>Let's dig into where pyenv installs Python code in the filesystem.</p>
+<h2 id="python-installations">Python installations</h2>
+<p>Run <code>pyenv versions</code> to see the Python versions you currently have installed on your machine.</p>
+<pre><code>$ pyenv versions
+  system
+* 3.7.5 (set by /Users/matthewpowers/.pyenv/version)
+</code></pre>
+<p>Run <code>pyenv install --list</code> to see the Python versions that can be installed.</p>
+<p>One of the Python versions that can be installed is <code>3.6.10</code> - let's install it with <code>pyenv install 3.6.10</code>. Here's the console output:</p>
+<pre><code>~ $ pyenv install 3.6.10
+python-build: use openssl@1.1 from homebrew
+python-build: use readline from homebrew
+Downloading Python-3.6.10.tar.xz...
+-&gt; https://www.python.org/ftp/python/3.6.10/Python-3.6.10.tar.xz
+Installing Python-3.6.10...
+python-build: use readline from homebrew
+python-build: use zlib from xcode sdk
+Installed Python-3.6.10 to /Users/matthewpowers/.pyenv/versions/3.6.10
+</code></pre>
+<p>Python 3.6.10 was downloaded to the <code>/Users/matthewpowers/.pyenv/versions/3.6.10</code> directory.</p>
+<h2 id="python-versions">Python versions</h2>
+<p>Type <code>pyenv versions</code> to see all the Python versions available on your machine.</p>
+<pre><code>~ $ pyenv versions
+  system
+  3.6.10
+* 3.7.5 (set by /Users/matthewpowers/.pyenv/version)
+</code></pre>
+<p>My machine has the system Python version, 3.6.10, and 3.7.5.</p>
+<p>Python 3.7.5 is the "current selected" version of Python that pyenv will use (as indicated by the * next to 3.7.5 when <code>pyenv versions</code> is run).</p>
+<p>If you run <code>python</code> when <code>3.7.5</code> is the selected Python version, then a Python 3.7.5 shell will be started. Understanding how pyenv knows to launch a 3.7.5 shell when the <code>python</code> command is run is the central focus of this post.</p>
+<pre><code>~ $ python
+Python 3.7.5 (default, Apr  7 2020, 08:06:08)
+[Clang 10.0.1 (clang-1001.0.46.4)] on darwin
+Type &quot;help&quot;, &quot;copyright&quot;, &quot;credits&quot; or &quot;license&quot; for more information.
+</code></pre>
+<p>The <code>/Users/matthewpowers/.pyenv/version</code> file only contains a single line of data.</p>
+<pre><code>~ $ cat /Users/matthewpowers/.pyenv/version
+3.7.5
+</code></pre>
+<h2 id="pyenv-global">pyenv global</h2>
+<p>Let's view the current "global" python version with <code>pyenv global</code>:</p>
+<pre><code>~ $ pyenv global
+3.7.5
+</code></pre>
+<p>The global Python version is set in the <code>/Users/matthewpowers/.pyenv/version</code> file.</p>
+<p>Let's change the global version to <code>3.6.10</code> with <code>pyenv global 3.6.10</code>.</p>
+<p>We can run <code>pyenv versions</code> and see that pyenv is using 3.6.10 by default now.</p>
+<pre><code>~ $ pyenv versions
+  system
+* 3.6.10 (set by /Users/matthewpowers/.pyenv/version)
+  3.7.5
+</code></pre>
+<p>Let's inspect the contents of the <code>/Users/matthewpowers/.pyenv/version</code> file to decipher what the <code>pyenv global 3.6.10</code> command did under the hood.</p>
+<pre><code>~ $ cat /Users/matthewpowers/.pyenv/version
+3.6.10
+</code></pre>
+<p>Looks like <code>pyenv global 3.6.10</code> just clobbered the <code>/Users/matthewpowers/.pyenv/version</code> file with a new Python version number.</p>
+<p>Let's make a bad decision and clobber <code>/Users/matthewpowers/.pyenv/version</code> with <code>echo</code> and <code>&gt;</code> to see if we can change the global Python version ourselves (don't do this - we're just hacking to learn how this all works).</p>
+<pre><code>~ $ echo 3.7.5 &gt; /Users/matthewpowers/.pyenv/version
+~ $ pyenv global
+3.7.5
+</code></pre>
+<p>The pyenv global version is set in the <code>/Users/matthewpowers/.pyenv/version</code> file. This approach simple and intuitive. Let's see how we can modify Python versions for different projects.</p>
+<h2 id="pyenv-local">pyenv local</h2>
+<p>Let's create a <code>~/Documents/project1/</code> folder and cd into the directory.</p>
+<pre><code>~ $ mkdir ~/Documents/project1
+~ $ cd ~/Documents/project1/
+</code></pre>
+<p>We can run <code>pyenv version</code> to see this project is using Python 3.7.5 (it's using the global Python version by default):</p>
+<pre><code>project1 $ pyenv version
+3.7.5 (set by /Users/matthewpowers/.pyenv/version)
+</code></pre>
+<p>Let's change the Python version to 3.6.10 for this project.</p>
+<pre><code>project1 $ pyenv local 3.6.10
+project1 $ pyenv version
+3.6.10 (set by /Users/matthewpowers/Documents/project1/.python-version)
+</code></pre>
+<p>pyenv added a <code>.python-version</code> file to the project1 directory.</p>
+<pre><code>project1 $ ls -ahl
+total 8
+drwxr-xr-x  3 matthewpowers  staff    96B Apr 11 10:59 .
+drwx------+ 8 matthewpowers  staff   256B Apr 11 13:49 ..
+-rw-r--r-- 1 matthewpowers  staff     7B Apr 11 10:59 .python-version
+</code></pre>
+<p>Let's inspect the contents of <code>/Users/matthewpowers/Documents/project1/.python-version</code>:</p>
+<pre><code>project1 $ cat /Users/matthewpowers/Documents/project1/.python-version
+3.6.10
+</code></pre>
+<p>The <code>/Users/matthewpowers/.pyenv/version</code> file that sets the global Python version is unchanged.</p>
+<pre><code>project1 $ cat /Users/matthewpowers/.pyenv/version
+3.7.5
+</code></pre>
+<p>pyenv is somehow performing an analysis like "yes, I can see you have a global Python version set, but the <code>python version</code> command is being run from the <code>project1</code> directory, and that has a <code>.python-version</code> file that takes precedence over the global Python version".</p>
+<p>Let's create a <code>~/Documents/project2/</code> folder and set the local Python version to "system".</p>
+<pre><code>project1 $ mkdir ~/Documents/project2
+project1 $ cd ~/Documents/project2
+project2 $ pyenv local system
+</code></pre>
+<p>Let's verify that project2 is using the system Python version.</p>
+<pre><code>project2 $ pyenv version
+system (set by /Users/matthewpowers/Documents/project2/.python-version)
+</code></pre>
+<p>Let's run some commands to recap and demonstrate that the home directory is using a Python version of 3.7.5, project1 is using 3.6.10, and project2 is using the system Python.</p>
+<pre><code>$ cd ~
+~ $ pyenv version
+3.7.5 (set by /Users/matthewpowers/.pyenv/version)
+
+~ $ cd ~/Documents/project1/
+project1 $ pyenv version
+3.6.10 (set by /Users/matthewpowers/Documents/project1/.python-version)
+
+project1 $ cd ~/Documents/project2/
+project2 $ pyenv version
+system (set by /Users/matthewpowers/Documents/project2/.python-version)
+</code></pre>
+<p>Let's keep digging and see how pyenv is switching these Python versions magically.</p>
+<h2 id="path-basics">PATH basics</h2>
+<p>PATH is an environment variable that specifies an ordered list of folders where executables are saved.</p>
+<p>Run <code>echo $PATH</code> on your machine to see the path on your machine.</p>
+<pre><code>~ $ echo $PATH
+/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin
+</code></pre>
+<p>The <code>PATH</code> is an ordered list of directories delimited by a colon. It's easier to visualize a bulleted list:</p>
+<ul>
+<li><code>/usr/local/bin</code></li>
+<li><code>/usr/bin</code></li>
+<li><code>/bin</code></li>
+<li><code>/usr/sbin</code></li>
+<li><code>/sbin</code></li>
+</ul>
+<p>When you enter a command in Terminal, your computer will look for an executable in <code>/usr/local/bin</code> first, then <code>/usr/bin</code>, then <code>/bin</code>, then <code>/bin/usr/sbin</code> and finally <code>/sbin</code>.</p>
+<p>When you run <code>echo hi</code>, your Terminal will start by looking for an executable named <code>echo</code> in the <code>/usr/local/bin</code> directory. There isn't a <code>echo</code> executable in <code>/usr/local/bin/</code> (run <code>open /usr/local/bin/</code> on your machine and visually inspect to verify). <code>echo</code> isn't in <code>/usr/bin</code> either. An <code>echo</code> executable is stored in <code>/bin</code>. The Terminal will use whatever executable it finds first.</p>
+<p>You can also find where executables are located with the <code>whereis</code> command:</p>
+<pre><code>~ $ whereis echo
+/bin/echo
+</code></pre>
+<h2 id="pyenv-changes-path">pyenv changes PATH</h2>
+<p>pyenv adds this code to the <code>~/.bash_profile</code> which changes the <code>PATH</code> on your machine:</p>
+<pre><code>if command -v pyenv 1&gt;/dev/null 2&gt;&amp;1; then
+  eval &quot;$(pyenv init -)&quot;
+fi
+</code></pre>
+<p>Run <code>echo $PATH</code> to see the <code>PATH</code> is different now: <code>/Users/matthewpowers/.pyenv/shims:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</code>.</p>
+<p>The <code>/Users/matthewpowers/.pyenv/shims</code> directory has been added before all the other directories in the <code>PATH</code>.</p>
+<p>All Terminal commands will go through <code>/Users/matthewpowers/.pyenv/shims</code> first now. This allows pyenv to "intercept" any relevant Python commands.</p>
+<ul>
+<li>The <code>$ python</code> command will go to <code>/Users/matthewpowers/.pyenv/shims/python</code>.</li>
+<li>The <code>$ pip</code> command will go to <code>/Users/matthewpowers/.pyenv/shims/pip</code>.</li>
+</ul>
+<p><code>/Users/matthewpowers/.pyenv/shims</code> doesn't contain an executable named <code>echo</code>, so the <code>echo hi there</code> command will still use the <code>echo</code> executable that's in <code>/bin</code>.</p>
+<h2 id="rehashing-design-pattern">Rehashing design pattern</h2>
+<p>Once you have pyenv installed and run a simple command like <code>pip install pandas</code>, what exactly happens? How does pyenv execute this code?</p>
+<p>The pyenv README has <a href="https://github.com/pyenv/pyenv#understanding-shims">a great high level description on shims and the rehashing pattern</a>. From the README:</p>
+<p>Shims are lightweight executables that simply pass your command along to pyenv. So with pyenv installed, when you run, say, <code>pip</code>, your operating system will do the following:</p>
+<ul>
+<li>Search your PATH for an executable file named pip</li>
+<li>Find the pyenv shim named pip at the beginning of your PATH</li>
+<li>Run the shim named pip, which in turn passes the command along to pyenv</li>
+</ul>
+<p>Let's describe these steps in more detail:</p>
+<ul>
+<li>When you run <code>pip install pandas</code>, your Terminal will search your <code>PATH</code> for a <code>pip</code> executable. It'll find that executable in the <code>/Users/matthewpowers/.pyenv/shims</code> directory that is at the front of your path. pyenv is intercepting this command and handling it before it can be picked up by another executable lower in the <code>PATH</code> hierarchy. The <code>python</code> command will use the executable in <code>/usr/bin</code>, the dreaded system Python version, it it's not intercepted.</li>
+<li><code>/Users/matthewpowers/.pyenv/shims/pip</code> is an executable file that's referred to as a "shim". A shim <a href="https://en.wikipedia.org/wiki/Shim_(computing)">intercepts a call and redirects the operation elsewhere</a>.</li>
+<li>The shim redirects the command to pyenv. Let's take a look at the code with <code>cat /Users/matthewpowers/.pyenv/shims/pip</code>:</li>
+</ul>
+<pre><code>#!/usr/bin/env bash
+set -e
+[ -n &quot;$PYENV_DEBUG&quot; ] &amp;&amp; set -x
+
+program=&quot;${0##*/}&quot;
+if [[ &quot;$program&quot; = &quot;python&quot;* ]]; then
+  for arg; do
+    case &quot;$arg&quot; in
+    -c* | -- ) break ;;
+    */* )
+      if [ -f &quot;$arg&quot; ]; then
+        export PYENV_FILE_ARG=&quot;$arg&quot;
+        break
+      fi
+      ;;
+    esac
+  done
+fi
+
+export PYENV_ROOT=&quot;/Users/matthewpowers/.pyenv&quot;
+exec &quot;/usr/local/Cellar/pyenv/1.2.18/libexec/pyenv&quot; exec &quot;$program&quot; &quot;$@&quot;
+</code></pre>
+<p>We can see that <code>exec "/usr/local/Cellar/pyenv/1.2.18/libexec/pyenv"</code> is "passing the command along to pyenv".</p>
+<h2 id="intercepting-the-python-command">Intercepting the python command</h2>
+<p>The <code>python</code> command will be intercepted by <code>/Users/matthewpowers/.pyenv/shims/python</code>, as you can see by running <code>which python</code>:</p>
+<pre><code>$ which python
+/Users/matthewpowers/.pyenv/shims/python
+</code></pre>
+<p>The code in <code>/Users/matthewpowers/.pyenv/shims/python</code> is exactly the same as the code in <code>/Users/matthewpowers/.pyenv/shims/pip</code>.</p>
+<p>This is what <code>cat /Users/matthewpowers/.pyenv/shims/python</code> returns:</p>
+<pre><code>#!/usr/bin/env bash
+set -e
+[ -n &quot;$PYENV_DEBUG&quot; ] &amp;&amp; set -x
+
+program=&quot;${0##*/}&quot;
+if [[ &quot;$program&quot; = &quot;python&quot;* ]]; then
+  for arg; do
+    case &quot;$arg&quot; in
+    -c* | -- ) break ;;
+    */* )
+      if [ -f &quot;$arg&quot; ]; then
+        export PYENV_FILE_ARG=&quot;$arg&quot;
+        break
+      fi
+      ;;
+    esac
+  done
+fi
+
+export PYENV_ROOT=&quot;/Users/matthewpowers/.pyenv&quot;
+exec &quot;/usr/local/Cellar/pyenv/1.2.18/libexec/pyenv&quot; exec &quot;$program&quot; &quot;$@&quot;
+</code></pre>
+<p>The shim passes the command to pyenv without doing any processing.</p>
+<h2 id="pyenv-executable">pyenv executable</h2>
+<p>Let's look at the pyenv executable that's being passed commands from the shims.</p>
+<p>Run <code>cat /usr/local/Cellar/pyenv/1.2.18/libexec/pyenv</code> to inspect the contents of the <code>pyenv</code> executable. Prepare yourself for 150 lines of Bash code.</p>
+<pre><code>#!/usr/bin/env bash
+set -e
+
+if [ &quot;$1&quot; = &quot;--debug&quot; ]; then
+  export PYENV_DEBUG=1
+  shift
+fi
+
+if [ -n &quot;$PYENV_DEBUG&quot; ]; then
+  export PS4='+ [${BASH_SOURCE##*/}:${LINENO}] '
+  set -x
+fi
+
+abort() {
+  { if [ &quot;$#&quot; -eq 0 ]; then cat -
+    else echo &quot;pyenv: $*&quot;
+    fi
+  } &gt;&amp;2
+  exit 1
+}
+
+if enable -f &quot;${BASH_SOURCE%/*}&quot;/../libexec/pyenv-realpath.dylib realpath 2&gt;/dev/null; then
+  abs_dirname() {
+    local path
+    path=&quot;$(realpath &quot;$1&quot;)&quot;
+    echo &quot;${path%/*}&quot;
+  }
+else
+  [ -z &quot;$PYENV_NATIVE_EXT&quot; ] || abort &quot;failed to load \`realpath' builtin&quot;
+
+  READLINK=$(type -p greadlink readlink | head -1)
+  [ -n &quot;$READLINK&quot; ] || abort &quot;cannot find readlink - are you missing GNU coreutils?&quot;
+
+  resolve_link() {
+    $READLINK &quot;$1&quot;
+  }
+
+  abs_dirname() {
+    local path=&quot;$1&quot;
+
+    # Use a subshell to avoid changing the current path
+    (
+    while [ -n &quot;$path&quot; ]; do
+      cd_path=&quot;${path%/*}&quot;
+      if [[ &quot;$cd_path&quot; != &quot;$path&quot; ]]; then
+        cd &quot;$cd_path&quot;
+      fi
+      name=&quot;${path##*/}&quot;
+      path=&quot;$(resolve_link &quot;$name&quot; || true)&quot;
+    done
+
+    echo &quot;$PWD&quot;
+    )
+  }
+fi
+
+if [ -z &quot;${PYENV_ROOT}&quot; ]; then
+  PYENV_ROOT=&quot;${HOME}/.pyenv&quot;
+else
+  PYENV_ROOT=&quot;${PYENV_ROOT%/}&quot;
+fi
+export PYENV_ROOT
+
+# Transfer PYENV_FILE_ARG (from shims) into PYENV_DIR.
+if [ -z &quot;${PYENV_DIR}&quot; ]; then
+  if [ -n &quot;${PYENV_FILE_ARG}&quot; ]; then
+    if [ -L &quot;${PYENV_FILE_ARG}&quot; ]; then
+      PYENV_DIR=&quot;$(abs_dirname &quot;${PYENV_FILE_ARG}&quot;)&quot;
+    else
+      PYENV_DIR=&quot;${PYENV_FILE_ARG%/*}&quot;
+    fi
+    export PYENV_DIR
+    unset PYENV_FILE_ARG
+  fi
+else
+  [[ $PYENV_DIR == /* ]] || PYENV_DIR=&quot;$PWD/$PYENV_DIR&quot;
+  cd &quot;$PYENV_DIR&quot; 2&gt;/dev/null || abort &quot;cannot change working directory to \`$PYENV_DIR'&quot;
+  PYENV_DIR=&quot;$PWD&quot;
+  cd &quot;$OLDPWD&quot;
+fi
+
+if [ -z &quot;${PYENV_DIR}&quot; ]; then
+  PYENV_DIR=&quot;$PWD&quot;
+fi
+
+if [ ! -d &quot;$PYENV_DIR&quot; ] || [ ! -e &quot;$PYENV_DIR&quot; ]; then
+  abort &quot;cannot change working directory to \`$PYENV_DIR'&quot;
+fi
+
+PYENV_DIR=$(cd &quot;$PYENV_DIR&quot; &amp;&amp; echo &quot;$PWD&quot;)
+export PYENV_DIR
+
+
+shopt -s nullglob
+
+bin_path=&quot;$(abs_dirname &quot;$0&quot;)&quot;
+for plugin_bin in &quot;${PYENV_ROOT}/plugins/&quot;*/bin; do
+  PATH=&quot;${plugin_bin}:${PATH}&quot;
+done
+export PATH=&quot;${bin_path}:${PATH}&quot;
+
+PYENV_HOOK_PATH=&quot;${PYENV_HOOK_PATH}:${PYENV_ROOT}/pyenv.d&quot;
+if [ &quot;${bin_path%/*}&quot; != &quot;$PYENV_ROOT&quot; ]; then
+  # Add pyenv's own `pyenv.d` unless pyenv was cloned to PYENV_ROOT
+  PYENV_HOOK_PATH=&quot;${PYENV_HOOK_PATH}:${bin_path%/*}/pyenv.d&quot;
+fi
+PYENV_HOOK_PATH=&quot;${PYENV_HOOK_PATH}:/usr/local/etc/pyenv.d:/etc/pyenv.d:/usr/lib/pyenv/hooks&quot;
+for plugin_hook in &quot;${PYENV_ROOT}/plugins/&quot;*/etc/pyenv.d; do
+  PYENV_HOOK_PATH=&quot;${PYENV_HOOK_PATH}:${plugin_hook}&quot;
+done
+PYENV_HOOK_PATH=&quot;${PYENV_HOOK_PATH#:}&quot;
+export PYENV_HOOK_PATH
+
+shopt -u nullglob
+
+
+command=&quot;$1&quot;
+case &quot;$command&quot; in
+&quot;&quot; )
+  { pyenv---version
+    pyenv-help
+  } | abort
+  ;;
+-v | --version )
+  exec pyenv---version
+  ;;
+-h | --help )
+  exec pyenv-help
+  ;;
+* )
+  command_path=&quot;$(command -v &quot;pyenv-$command&quot; || true)&quot;
+  if [ -z &quot;$command_path&quot; ]; then
+    if [ &quot;$command&quot; == &quot;shell&quot; ]; then
+      abort &quot;shell integration not enabled. Run \`pyenv init' for instructions.&quot;
+    else
+      abort &quot;no such command \`$command'&quot;
+    fi
+  fi
+
+  shift 1
+  if [ &quot;$1&quot; = --help ]; then
+    if [[ &quot;$command&quot; == &quot;sh-&quot;* ]]; then
+      echo &quot;pyenv help \&quot;$command\&quot;&quot;
+    else
+      exec pyenv-help &quot;$command&quot;
+    fi
+  else
+    exec &quot;$command_path&quot; &quot;$@&quot;
+  fi
+  ;;
+</code></pre>
+<p><a href="https://github.com/pyenv/pyenv/blob/3faeda67bb33e07750d1a104271369a7384ca45c/libexec/pyenv">Here is where this script is defined in the pyenv repo</a>.</p>
+<h2 id="pip-install-for-different-python-versions">pip install for different Python versions</h2>
+<p>Suppose you're using Python 3.7.5 and run <code>pip install pandas</code>.</p>
+<p>The Pandas code will be stored in <code>.pyenv/versions/3.7.5/lib/python3.7/site-packages</code>.</p>
+<p>If you switch to Python 3.6.10 with <code>pyenv shell 3.6.10</code>, you'll need to reinstall pandas with another <code>pip install pandas</code>. The Python 3.6.10 pandas will be stored in <code>/Users/matthewpowers/.pyenv/versions/3.6.10/lib/python3.6/site-packages</code>.</p>
+<p>pyenv doesn't share library versions across different Python versions.</p>
+<p>See <a href="https://github.com/pyenv/pyenv-virtualenv">pyenv-virtualenv</a> for more details about managing virtual environments with pyenv.</p>
+<h2 id="pyenv-is-not-bootstrapped-by-python">pyenv is not bootstrapped by Python</h2>
+<p>You might wonder why the pyenv codebase is almost entirely Shell and Roff code.</p>
+<p><img alt="" src="../images/Screen-Shot-2020-04-11-at-7.46.07-AM-1024x108.png" /></p>
+<p>pyenv intentionally avoids Python. If pyenv was written in Python, then the system would need Python installed to run pyenv commands. pyenv can install Python on machines that don't have any version of Python installed (most machines come with an old Python version pre-installed).</p>
+<p>You don't want a program that installs Python to depend on Python.</p>
+<p>The system version of Python that comes pre-installed in machines causes a huge headache for programmers that don't understand the PATH, executable, etc. The shell scripting patterns you've learned in this post will save you from a lot of Python development hell.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>We learned a lot about pyenv and have a good understanding of how it works.</p>
+<p>The shims are injected at the beginning of your PATH so pyenv can route commands to the right Python version. pyenv is using versions specified in text files to see what version of Python should be used to run the commands.</p>
+<p>pyenv offers an elegant user interface for managing different Python versions for end users. The codebase is amazingly clean.</p>
+<p>Programs like these make you sit back with awe - you're starstruck that other programmers can architect such beauty.</p>
+<p>Study their design patterns and try to copy them! <a href="http://www.paulgraham.com/copy.html">Copy what you like</a>.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../dag-directed-acyclic-graph-networkx/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Building DAGs">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Building DAGs
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../split-csv-write-chunk-pandas/" class="md-footer__link md-footer__link--next" aria-label="Next: Split CSV">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Split CSV
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.action.edit", "content.code.copy", "navigation.footer", "navigation.indexes"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.525ec568.min.js"></script>
+      
+    
+  </body>
+</html>

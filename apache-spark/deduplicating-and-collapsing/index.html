@@ -1,0 +1,4115 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://mungingdata.com/apache-spark/deduplicating-and-collapsing/">
+      
+      
+        <link rel="prev" href="../dealing-with-null/">
+      
+      
+        <link rel="next" href="../exact-percentile-approx-median/">
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.5.40">
+    
+    
+      
+        <title>Deduplicating and Collapsing Records in Spark DataFrames - MungingData</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.8c3ca2c6.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#deduplicating-and-collapsing-records-in-spark-dataframes" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="MungingData" class="md-header__button md-logo" aria-label="MungingData" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            MungingData
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Deduplicating and Collapsing Records in Spark DataFrames
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="MungingData" class="md-nav__button md-logo" aria-label="MungingData" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    MungingData
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    PySpark
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            PySpark
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/array-arraytype-list/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Working with array columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/avoid-dots-periods-column-names/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Avoid periods in column names
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/chaining-dataframe-transformations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Chaining transforms
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/column-to-list-collect-tolocaliterator/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Column to list
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/concat-array-union-except-intersect/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Combining PySpark Arrays
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/constant-column-lit-typedlit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Add constant column
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/dict-map-to-multiple-columns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dictionary to columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/exists-forall-any-all-array/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    exists and forall
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/filter-array/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Filter Array
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/install-delta-lake-jupyter-conda-mac/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Install Delta, Jupyter
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/poetry-dependency-management-wheel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Poetry Dependency management
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/random-values-arrays-columns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Random array values
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/rename-multiple-columns-todf-withcolumnrenamed/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Rename columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/select-add-columns-withcolumn/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Select columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/testing-pytest-chispa/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Testing PySpark
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/union-unionbyname-merge-dataframes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Union DataFrames
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/udf-dict-broadcast/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Broadcast variables
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/schema-structtype-structfield/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Schema definition
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/none-null/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    None and NULL
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyspark/sparksession-getorcreate-getactivesession/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spark Session
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Apache Spark
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Apache Spark
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../convert-csv-to-delta-lake-latency-trigger/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Convert CSV to Delta Lake
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../broadcast-joins/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Broadcast joins
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../broadcasting-maps-in-spark/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Broadcast maps
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../spark-3/array-exists-forall-transform-aggregate-zip_with/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Array methods
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../arraytype-columns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scala array columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../chaining-custom-dataframe-transformations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scala DataFrame transform
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../column-equality/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Column equality
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../column-methods/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Column methods
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compacting-parquet-files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Compacting Parquet files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../building-jar-sbt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building JARs with SBT
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dataframe-schema-structfield-structtype/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DataFrame schema
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dataframe-summary-describe/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DataFrame summary and describe
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dataset-tods-createdataset-advantages/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Datasets
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dates-times/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dates and Times
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dealing-with-null/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Dealing with null
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Deduplicating and collapsing
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Deduplicating and collapsing
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#deduplicating-dataframes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deduplicating DataFrames
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#killing-duplicates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Killing duplicates
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collapsing-records" class="md-nav__link">
+    <span class="md-ellipsis">
+      Collapsing records
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collapsing-records-to-datamarts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Collapsing records to datamarts
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next steps
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../exact-percentile-approx-median/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Percentile and median
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../environment-specific-configuration/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Environment configuration
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../best-books/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Best books
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../expr-eval/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    expr eval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../just-enough-scala/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Enough Scala
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../limiting-function-order-dependencies/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Function order dependencies
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../logistic-regressions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Logistic regression
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../mill-build-tool/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Mill build tool
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../maptype-columns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    MapType columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../optimizing-data-lakes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Optimizing data lakes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../output-one-file-csv-parquet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Output one file
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../partition-filters-pushed-filters/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pushed filters
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../partitionby/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Partition by
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../shading-dependencies-with-sbt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Shading dependencies
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../practical-introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Practical introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../publishing-spark-projects-with-jitpack/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Publishing with jitpack
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../python-pyspark-scala-which-better/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Pyspark vs Scala
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../read-google-sheets-dataframe/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Real Google Sheets
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../registerfunction-injectfunction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Register functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../scala-packages-imports/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Import packages
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../spark-sql-functions/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spark SQL functions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sparksession/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spark Session
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../speaking-slack-notifications/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Speak Slack notifications
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../start-end-month-last-day-date-trunc/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Start and end of month
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../structured-streaming-trigger-once/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Streaming Trigger Once
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../testing-with-utest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Testing with utest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../upgrate-to-spark-3-scala-2-12/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Upgrading to Spark 3
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../using-the-console/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Using the console
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../week-end-start-dayofweek-next-day/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Start and end of week
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../expr-eval/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    expr eval
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../filter-where/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Filter DataFrame
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../frameless-typed-datasets/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Frameless
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../hyperloglog-count-distinct/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spark HyperLogLog
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../incrementally-updating-extracts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Incremental extracts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../introduction-to-dataframes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Intro to DataFrames
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../introduction-to-sbt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Intro to SBT
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../advanced-string-matching-with-rlike/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    rlike
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../aggregations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Aggregations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../compacting-files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Compacting files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    DevRel
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            DevRel
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../devrel/virtuous-content-cycle-developer-advocates/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Virtuous Content Cycle
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../devrel/devrel-driven-development/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DevRel Driven Development
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Python
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            Python
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/dag-directed-acyclic-graph-networkx/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Building DAGs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/how-pyenv-works-shims/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    How pyenv works
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/split-csv-write-chunk-pandas/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Split CSV
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/writing-parquet-pandas-pyspark-koalas/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Writing Parquet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/jupyter-workflow-poetry-pandas/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Jupyter and poetry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <label class="md-nav__link" for="__nav_6" id="__nav_6_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Pandas
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            Pandas
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/dataframe-cut-category/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Adding category column
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/large-data-workflow-dask/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Large data
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/read-delta-lake-dataframe/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Read Delta Lake
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/read-multiple-csv-pandas-dataframe/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Read multiple CSVs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/rename-columns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Rename columns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pandas/unit-testing-pandas/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Unit testing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <label class="md-nav__link" for="__nav_7" id="__nav_7_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Golang
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Golang
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../go/csv-to-parquet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CSV to Parquet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../go/dataframes-gota-qframe/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    DataFrames
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8" >
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    PyArrow
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            PyArrow
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyarrow/arbitrary-metadata-parquet-table/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Writing Custom Metadata
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pyarrow/parquet-metadata-min-max-statistics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Parquet metadata
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_9" >
+        
+          
+          <label class="md-nav__link" for="__nav_9" id="__nav_9_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Scala
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_9_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_9">
+            <span class="md-nav__icon md-icon"></span>
+            Scala
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/call-java-code-with-wrapper/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Call Java with wrapper
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/filesystem-paths-move-copy-list-delete-folders/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Filesystem operations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/library-best-practices/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Library best practices
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/maintenance-nightmare-upgrade/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Maintenance nightmare
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/serializing-deserializing-case-classes/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Serde case classes
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/testing-munit/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Testing with munit
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/scalate-templates-mustache-ssp/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Templates
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/scalatest/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Scalatest
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../scala/read-write-json/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Read and write JSON
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_10" >
+        
+          
+          <label class="md-nav__link" for="__nav_10" id="__nav_10_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Java
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_10_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_10">
+            <span class="md-nav__icon md-icon"></span>
+            Java
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/sdkman-multiple-versions-java-sbt-scala/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    SDKMAN installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../java/jenv-multiple-versions-java/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    jenv
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_11" >
+        
+          
+          <label class="md-nav__link" for="__nav_11" id="__nav_11_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Misc
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_11_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_11">
+            <span class="md-nav__icon md-icon"></span>
+            Misc
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../unix/appending-executables-path/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Appending Executables Path
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../oss/creating-open-source-software-is-a-delight/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Open source is a delight
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../aws/athena-spark-best-friends/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Spark and Athena
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../github/creating-ticketing-system-with-slack/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Creating a ticketing system
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../creator/how-content-creators-make-lots-money/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Creators making money
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../emacs/learning-emacs-keybindings-after-multiple-failed-attempts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Learn Emacs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../books/self-publishing-programming-books/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Self publishing programming books
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../investing/ultra-cheap-real-estate-1000-square-meter/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Investing in cheap real estate
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../numpy/save-numpy-text-txt/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    numpy Save to text
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../career/7-steps-reject-meeting-zoom/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Manage calendar invites
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_12" >
+        
+          
+          <label class="md-nav__link" for="__nav_12" id="__nav_12_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Delta Lake
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_12_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_12">
+            <span class="md-nav__icon md-icon"></span>
+            Delta Lake
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/merge-update-upserts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Merge, update, upserts
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/compact-small-files/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Compact small files
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/type-2-scd-upserts/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Type 2 SCD
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/updating-partitions-with-replacewhere/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Updating partitions
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/vacuum-command/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Vacuum
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/schema-enforcement-evolution-mergeschema-overwriteschema/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Schema enforcement
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../delta-lake/introduction-time-travel/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Time travel
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_13" >
+        
+          
+          <label class="md-nav__link" for="__nav_13" id="__nav_13_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    sqlite
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_13_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_13">
+            <span class="md-nav__icon md-icon"></span>
+            sqlite
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sqlite/create-database-load-csv-python/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Create database Python
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../sqlite/export-tables-queries-to-csv-parquet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Write to Parquet file
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_14" >
+        
+          
+          <label class="md-nav__link" for="__nav_14" id="__nav_14_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Dask
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_14_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_14">
+            <span class="md-nav__icon md-icon"></span>
+            Dask
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dask/write-csv-compression-filename/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Compress CSVs
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dask/ouput-dataframe-single-csv-file/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Output single file
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dask/software-environments-conda-miniconda/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Install with conda
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dask/read-csv-to-parquet/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    CSV to Parquet
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../dask/read-delta-lake/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Read Delta Lake
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#deduplicating-dataframes" class="md-nav__link">
+    <span class="md-ellipsis">
+      Deduplicating DataFrames
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#killing-duplicates" class="md-nav__link">
+    <span class="md-ellipsis">
+      Killing duplicates
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collapsing-records" class="md-nav__link">
+    <span class="md-ellipsis">
+      Collapsing records
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#collapsing-records-to-datamarts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Collapsing records to datamarts
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#next-steps" class="md-nav__link">
+    <span class="md-ellipsis">
+      Next steps
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+<h1 id="deduplicating-and-collapsing-records-in-spark-dataframes">Deduplicating and Collapsing Records in Spark DataFrames</h1>
+<p>This blog post explains how to filter duplicate records from Spark DataFrames with the <code>dropDuplicates()</code> and <code>killDuplicates()</code> methods. It also demonstrates how to collapse duplicate records into a single row with the <code>collect_list()</code> and <code>collect_set()</code> functions.</p>
+<p>Make sure to read <a href="https://leanpub.com/beautiful-spark/">Writing Beautiful Spark Code</a> for a detailed overview of how to deduplicate production datasets and for background information on the <a href="https://mungingdata.com/apache-spark/arraytype-columns/">ArrayType columns</a> that are returned when DataFrames are collapsed.</p>
+<h2 id="deduplicating-dataframes">Deduplicating DataFrames</h2>
+<p>Let's create a DataFrame with <code>letter1</code>, <code>letter2</code>, and <code>number1</code> columns.</p>
+<pre><code>val df = Seq(
+  (&quot;a&quot;, &quot;b&quot;, 1),
+  (&quot;a&quot;, &quot;b&quot;, 2),
+  (&quot;a&quot;, &quot;b&quot;, 3),
+  (&quot;z&quot;, &quot;b&quot;, 4),
+  (&quot;a&quot;, &quot;x&quot;, 5)
+).toDF(&quot;letter1&quot;, &quot;letter2&quot;, &quot;number1&quot;)
+
+df.show()
+</code></pre>
+<pre><code>+-------+-------+-------+
+|letter1|letter2|number1|
++-------+-------+-------+
+|      a|      b|      1|
+|      a|      b|      2|
+|      a|      b|      3|
+|      z|      b|      4|
+|      a|      x|      5|
++-------+-------+-------+
+</code></pre>
+<p>Some rows in the <code>df</code> DataFrame have the same <code>letter1</code> and <code>letter2</code> values. Let's use the <code>Dataset#dropDuplicates()</code> method to remove duplicates from the DataFrame.</p>
+<pre><code>df.dropDuplicates(&quot;letter1&quot;, &quot;letter2&quot;).show()
+</code></pre>
+<pre><code>+-------+-------+-------+
+|letter1|letter2|number1|
++-------+-------+-------+
+|      a|      x|      5|
+|      z|      b|      4|
+|      a|      b|      1|
++-------+-------+-------+
+</code></pre>
+<p>The <code>dropDuplicates</code> method chooses one record from the duplicates and drops the rest. This is useful for simple use cases, but collapsing records is better for analyses that can't afford to lose any valuable data.</p>
+<h2 id="killing-duplicates">Killing duplicates</h2>
+<p>We can use the <a href="https://github.com/MrPowers/spark-daria/">spark-daria</a> <code>killDuplicates()</code> method to completely remove all duplicates from a DataFrame.</p>
+<pre><code>import com.github.mrpowers.spark.daria.sql.DataFrameExt._
+
+df.killDuplicates(&quot;letter1&quot;, &quot;letter2&quot;).show()
+</code></pre>
+<pre><code>+-------+-------+-------+
+|letter1|letter2|number1|
++-------+-------+-------+
+|      a|      x|      5|
+|      z|      b|      4|
++-------+-------+-------+
+</code></pre>
+<p>Killing duplicates is similar to dropping duplicates, just a little more aggressive.</p>
+<h2 id="collapsing-records">Collapsing records</h2>
+<p>Let's use the <code>collect_list()</code> method to eliminate all the rows with duplicate <code>letter1</code> and <code>letter2</code> rows in the DataFrame and collect all the <code>number1</code> entries as a list.</p>
+<pre><code>df
+  .groupBy(&quot;letter1&quot;, &quot;letter2&quot;)
+  .agg(collect_list(&quot;number1&quot;) as &quot;number1s&quot;)
+  .show()
+</code></pre>
+<pre><code>+-------+-------+---------+
+|letter1|letter2| number1s|
++-------+-------+---------+
+|      a|      x|      [5]|
+|      z|      b|      [4]|
+|      a|      b|[1, 2, 3]|
++-------+-------+---------+
+</code></pre>
+<p>Let's create a more realitic example of credit card transactions and use <code>collect_set()</code> to aggregate unique records and eliminate pure duplicates.</p>
+<pre><code>val ccTransactionsDF = Seq(
+  (&quot;123&quot;, &quot;20180102&quot;, 10.49),
+  (&quot;123&quot;, &quot;20180102&quot;, 10.49),
+  (&quot;123&quot;, &quot;20180102&quot;, 77.33),
+  (&quot;555&quot;, &quot;20180214&quot;, 99.99),
+  (&quot;888&quot;, &quot;20180214&quot;, 1.23)
+).toDF(&quot;person_id&quot;, &quot;transaction_date&quot;, &quot;amount&quot;)
+
+ccTransactionsDF.show()
+</code></pre>
+<pre><code>+---------+----------------+------+
+|person_id|transaction_date|amount|
++---------+----------------+------+
+|      123|        20180102| 10.49|
+|      123|        20180102| 10.49|
+|      123|        20180102| 77.33|
+|      555|        20180214| 99.99|
+|      888|        20180214|  1.23|
++---------+----------------+------+
+</code></pre>
+<p>Let's eliminate the duplicates with <code>collect_set()</code>.</p>
+<pre><code>ccTransactionsDF
+  .groupBy(&quot;person_id&quot;, &quot;transaction_date&quot;)
+  .agg(collect_set(&quot;amount&quot;) as &quot;amounts&quot;)
+  .show()
+</code></pre>
+<pre><code>+---------+----------------+--------------+
+|person_id|transaction_date|       amounts|
++---------+----------------+--------------+
+|      555|        20180214|       [99.99]|
+|      888|        20180214|        [1.23]|
+|      123|        20180102|[10.49, 77.33]|
++---------+----------------+--------------+
+</code></pre>
+<p><code>collect_set()</code> let's us retain all the valuable information and delete the duplicates. The best of both worlds!</p>
+<h2 id="collapsing-records-to-datamarts">Collapsing records to datamarts</h2>
+<p>Let's examine a DataFrame of with data on hockey players and how many goals they've scored in each game.</p>
+<pre><code>val playersDF = Seq(
+  (&quot;123&quot;, 11, &quot;20180102&quot;, 0),
+  (&quot;123&quot;, 11, &quot;20180102&quot;, 0),
+  (&quot;123&quot;, 13, &quot;20180105&quot;, 3),
+  (&quot;555&quot;, 11, &quot;20180214&quot;, 1),
+  (&quot;888&quot;, 22, &quot;20180214&quot;, 2)
+).toDF(&quot;player_id&quot;, &quot;game_id&quot;, &quot;game_date&quot;, &quot;goals_scored&quot;)
+
+playersDF.show()
+</code></pre>
+<pre><code>+---------+-------+---------+------------+
+|player_id|game_id|game_date|goals_scored|
++---------+-------+---------+------------+
+|      123|     11| 20180102|           0|
+|      123|     11| 20180102|           0|
+|      123|     13| 20180105|           3|
+|      555|     11| 20180214|           1|
+|      888|     22| 20180214|           2|
++---------+-------+---------+------------+
+</code></pre>
+<p>Let's create a <code>StructType</code> column that encapsulates all the columns in the DataFrame and then collapse all records on the <code>player_id</code> column to create a player datamart.</p>
+<pre><code>playersDF
+  .withColumn(&quot;as_struct&quot;, struct(&quot;game_id&quot;, &quot;game_date&quot;, &quot;goals_scored&quot;))
+  .groupBy(&quot;player_id&quot;)
+  .agg(collect_set(&quot;as_struct&quot;) as &quot;as_structs&quot;)
+  .show(false)
+</code></pre>
+<pre><code>+---------+----------------------------------+
+|player_id|as_structs                        |
++---------+----------------------------------+
+|888      |[[22,20180214,2]]                 |
+|555      |[[11,20180214,1]]                 |
+|123      |[[11,20180102,0], [13,20180105,3]]|
++---------+----------------------------------+
+</code></pre>
+<p>A player datamart like this can simplify a lot of queries. We don't need to write window functions if all the data is already aggregated in a single row.</p>
+<h2 id="next-steps">Next steps</h2>
+<p>Deduplicating DataFrames is relatively straightforward. Collapsing records is more complicated, but worth the effort.</p>
+<p>Data lakes are notoriously granular and programmers often write window functions to analyze historical results.</p>
+<p>Collapsing records into datamarts is the best way to simplify your code logic.</p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../dealing-with-null/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Dealing with null">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Dealing with null
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../exact-percentile-approx-median/" class="md-footer__link md-footer__link--next" aria-label="Next: Percentile and median">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Percentile and median
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.action.edit", "content.code.copy", "navigation.footer", "navigation.indexes"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.525ec568.min.js"></script>
+      
+    
+  </body>
+</html>
