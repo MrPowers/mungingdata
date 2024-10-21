@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Scala Spark vs Python PySpark: Which is better?
+
 Apache Spark code can be written with the Scala, Java, Python, or R APIs.
 
 Scala and Python are the most popular APIs. This blog post performs a detailed comparison of writing Spark with Scala and Python and helps users choose the language API that's best for their team.

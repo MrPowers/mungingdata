@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Practical Introduction to Apache Spark
+
 This book will teach you how to be a proficient Apache Spark programmer with minimal effort.
 
 Other books focus on the theoretical underpinnings of Spark. This book skips the theory and only covers the practical knowledge needed to write production grade Spark code.

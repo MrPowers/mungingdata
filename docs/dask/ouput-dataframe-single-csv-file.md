@@ -5,6 +5,8 @@ categories:
   - "dask"
 ---
 
+# Writing Dask DataFrame to a Single CSV File
+
 Dask DataFrames are composed of multiple partitions and are outputted as multiple files, one per partition, by default.
 
 This post explains the different approaches to write a Dask DataFrame to a single file and the strategy that works best for different situations.

@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# Filtering PySpark Arrays and DataFrame Array Columns
+
 This post explains how to filter values from a PySpark array column.
 
 It also explains how to filter DataFrames with array columns (i.e. reduce the number of rows in a DataFrame).

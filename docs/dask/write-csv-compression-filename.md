@@ -5,6 +5,8 @@ categories:
   - "dask"
 ---
 
+# Different ways to write CSV files with Dask
+
 This post explains how to write a Dask DataFrame to CSV files.
 
 You'll see how to write CSV files, customize the filename, change the compression, and append files to an existing lake.

@@ -5,6 +5,8 @@ categories:
   - "scala"
 ---
 
+# Testing Scala with MUnit
+
 MUnit is a test library with a collection of features that are not available in other Scala testing libraries.
 
 MUnit draws inspiration from Scalatest, utest, and ava (JavaScript testing library).

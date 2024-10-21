@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Shading Dependencies in Spark Projects with SBT
+
 `sbt-assembly` makes it easy to shade dependencies in your Spark projects when you create fat JAR files. This blog post will explain why it's useful to shade dependencies and will teach you how to shade dependencies in your own projects.
 
 ## When shading is useful

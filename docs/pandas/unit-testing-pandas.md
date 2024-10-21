@@ -5,6 +5,8 @@ categories:
   - "pandas"
 ---
 
+# Testing Pandas Code
+
 This post explains how to test Pandas code with the built-in test helper methods and with the [beavis](https://github.com/MrPowers/beavis) functions that give more readable error messages.
 
 Unit testing helps you write Pandas code that more modular and easier to refactor. It's especially important to test your core Pandas helper methods.

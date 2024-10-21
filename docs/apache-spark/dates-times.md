@@ -1,9 +1,11 @@
 ---
-title: "Working with dates and times in Spark"
+title: "Working with dates and times in Spark"
 date: "2018-12-22"
 categories: 
   - "apache-spark"
 ---
+
+# Working with dates and times in Spark
 
 Spark supports `DateType` and `TimestampType` columns and defines a rich API of functions to make working with dates and times easy. This blog post will demonstrates how to make DataFrames with `DateType` / `TimestampType` columns and how to leverage Spark's functions for working with these columns.
 

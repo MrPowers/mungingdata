@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Calculating Percentile, Approximate Percentile, and Median with Spark
+
 This blog post explains how to compute the percentile, approximate percentile and median of a column in Spark.
 
 There are a variety of different ways to perform these computations and it's good to know all the approaches because they touch different important sections of the Spark API.

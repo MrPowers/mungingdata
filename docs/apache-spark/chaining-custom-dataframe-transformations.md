@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Chaining Custom DataFrame Transformations in Spark
+
 `implicit classes` or the `Dataset#transform` method can be used to chain DataFrame transformations in Spark. This blog post will demonstrate how to chain DataFrame transformations and explain why the `Dataset#transform` method is preferred compared to `implicit classes`.
 
 Structuring Spark code as DataFrame transformations separates strong Spark programmers from "spaghetti hackers" as detailed in [Writing Beautiful Spark Code](https://leanpub.com/beautiful-spark/). Following the blog post will make your Spark code much easier to test and reuse.

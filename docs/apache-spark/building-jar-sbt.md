@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Building Spark JAR Files with SBT
+
 Spark JAR files let you package a project into a single file so it can be run on a Spark cluster.
 
 A lot of developers develop Spark code in brower based notebooks because they're unfamiliar with JAR files. Scala is a difficult language and it's especially challenging when you can't leverage the development tools provided by an IDE like IntelliJ.

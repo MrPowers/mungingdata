@@ -5,6 +5,8 @@ categories:
   - "python"
 ---
 
+# Writing Parquet Files in Python with Pandas, PySpark, and Koalas
+
 This blog post shows how to convert a CSV file to Parquet with Pandas, Spark, [PyArrow](https://mungingdata.com/pyarrow/parquet-metadata-min-max-statistics/) and [Dask](https://mungingdata.com/dask/read-csv-to-parquet/).
 
 It discusses the pros and cons of each approach and explains how both approaches can happily coexist in the same ecosystem.

@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# Navigating None and null in PySpark
+
 This blog post shows you how to gracefully handle `null` in PySpark and how to avoid `null` input errors.
 
 Mismanaging the `null` case is a common source of errors and frustration in PySpark.

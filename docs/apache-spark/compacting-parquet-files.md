@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Compacting Parquet Files
+
 This post describes how to programatically compact Parquet files in a folder.
 
 Incremental updates frequently result in lots of small files that can be slow to read. It's best to periodically compact the small files into larger files, so they can be read faster.

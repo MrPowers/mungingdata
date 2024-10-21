@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Introduction to Spark DataFrames
+
 Spark DataFrames are similar to tables in relational databases - they store data in columns and rows and support a variety of operations to manipulate the data.
 
 Here's an example of a DataFrame that contains information about cities.

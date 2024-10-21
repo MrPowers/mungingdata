@@ -5,6 +5,8 @@ categories:
   - "delta-lake"
 ---
 
+# Introduction to Delta Lake and Time Travel
+
 [Delta Lake](https://delta.io/) is a wonderful technology that adds powerful features to Parquet data lakes.
 
 This blog post demonstrates how to create and incrementally update Delta lakes.

@@ -5,6 +5,8 @@ categories:
   - "go"
 ---
 
+# DataFrames in Go with gota, qframe, and dataframe-go
+
 Go has great DataFrame libraries that let you easily manipulate data that's stored in CSV files and databases.
 
 Working with CSV files directly can be burdensome. DataFrames are easier because they provide data manipulation and grouping functionality natively.

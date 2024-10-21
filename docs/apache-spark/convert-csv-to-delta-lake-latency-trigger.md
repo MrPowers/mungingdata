@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Convert streaming CSV data to Delta Lake with different latency requirements
+
 This blog post explains how to incrementally convert streaming CSV data into Delta Lake with different latency requirements. A streaming CSV data source is used because it's easy to demo, but the lessons covered in this post also apply to streaming event platforms like Kafka or Kinesis.
 
 This post will show you three ways to convert CSV to Delta Lake, with different latency and cost implications. In general, lower latency solutions cost more to run in production.

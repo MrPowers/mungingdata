@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Aggregations with Spark (groupBy, cube, rollup)
+
 Spark has a variety of aggregate functions to group, cube, and rollup DataFrames.
 
 This post will explain how to use aggregate functions with Spark.

@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Fast Filtering with Spark PartitionFilters and PushedFilters
+
 Spark can use the disk partitioning of files to greatly speed up certain filtering operations.
 
 This post explains the difference between memory and disk partitioning, describes how to analyze physical plans to see when filters are applied, and gives a conceptual overview of why this design pattern can provide massive performace gains.

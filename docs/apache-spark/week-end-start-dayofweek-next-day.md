@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Calculating Week Start and Week End Dates with Spark
+
 You can use native Spark functions to compute the beginning and end dates for a week, but the code isn't intuitive.
 
 This blog post demonstrates how to wrap the complex code in simple functions, so your code is readable.

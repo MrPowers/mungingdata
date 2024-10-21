@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Defining DataFrame Schemas with StructField and StructType
+
 Spark DataFrames schemas are defined as a collection of typed columns. The entire schema is stored as a `StructType` and individual columns are stored as `StructFields`.
 
 This blog post explains how to create and modify Spark schemas via the `StructType` and `StructField` classes.

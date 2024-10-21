@@ -5,6 +5,8 @@ categories:
   - "spark-3"
 ---
 
+# New Spark 3 Array Functions (exists, forall, transform, aggregate, zip_with)
+
 Spark 3 has new array functions that make working with ArrayType columns much easier.
 
 Spark developers previously needed to use UDFs to perform complicated array functions. The new Spark functions make it easy to process array columns with native Spark.

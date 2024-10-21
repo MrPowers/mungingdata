@@ -5,6 +5,8 @@ categories:
   - "python"
 ---
 
+# Amazing Python Data Workflow with Poetry, Pandas, and Jupyter
+
 Poetry makes it easy to install Pandas and Jupyter to perform data analyses.
 
 Poetry is a robust dependency management system and makes it easy to make Python libraries accessible in Jupyter notebooks.
@@ -112,10 +114,6 @@ data = [['tom', 10], ['nick', 15], ['juli', 14]]
 df = pd.DataFrame(data, columns = ['Name', 'Age'])
 print(df)
 ```
-
-Here's how these commands will look in the notebook:
-
-![](images/Screen-Shot-2020-09-04-at-8.36.05-AM.png)
 
 ## Accessing application code in notebook
 

@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Introduction to Spark SQL functions
+
 Spark SQL functions make it easy to perform DataFrame analyses.
 
 This post will show you how to use the built-in Spark SQL functions and how to build your own SQL functions.

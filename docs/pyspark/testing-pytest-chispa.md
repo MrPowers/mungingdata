@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# Testing PySpark Code
+
 This blog post explains how to test PySpark code with the [chispa](https://github.com/MrPowers/chispa) helper library.
 
 Writing fast PySpark tests that provide your codebase with adequate coverage is surprisingly easy when you follow some simple design patters. chispa outputs readable error messages to facilitate your development workflow.

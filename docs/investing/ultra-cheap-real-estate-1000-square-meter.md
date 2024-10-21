@@ -5,6 +5,8 @@ categories:
   - "investing"
 ---
 
+# Ultra-cheap international real estate markets in 2022
+
 This post explains how to identify ultra-cheap international real estate markets and when you can capitalize on deeply discounted prices.
 
 Let's borrow Andrew Henderson's definition of an ultra-cheap real estate market:

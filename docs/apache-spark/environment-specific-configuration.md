@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Environment Specific Config in Spark Scala Projects
+
 Environment config files return different values for the test, development, staging, and production environments.
 
 In Spark projects, you will often want a variable to point to a local CSV file in the test environment and a CSV file in S3 in the production environment.

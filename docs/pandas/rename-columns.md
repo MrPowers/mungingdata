@@ -5,6 +5,8 @@ categories:
   - "pandas"
 ---
 
+# Renaming Columns in Pandas DataFrames
+
 This article explains how to rename a single or multiple columns in a Pandas DataFrame.
 
 There are multiple different ways to rename columns and you'll often want to perform this operation, so listen up.

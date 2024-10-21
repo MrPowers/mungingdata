@@ -5,6 +5,8 @@ categories:
   - "pyarrow"
 ---
 
+# Writing Custom Metadata to Parquet Files and Columns with PyArrow
+
 Metadata can be written to Parquet files or columns. This blog post explains how to write Parquet files with metadata using PyArrow.
 
 Here are some powerful features that Parquet files allow for because they support metadata:

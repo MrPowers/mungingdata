@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Migrating Scala Projects to Spark 3
+
 This post explains how to migrate your Scala projects to Spark 3.
 
 It covers the high level steps and doesn't get [into all the details](https://spark.apache.org/docs/3.0.0-preview/sql-migration-guide.html).

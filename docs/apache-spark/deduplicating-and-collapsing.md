@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Deduplicating and Collapsing Records in Spark DataFrames
+
 This blog post explains how to filter duplicate records from Spark DataFrames with the `dropDuplicates()` and `killDuplicates()` methods. It also demonstrates how to collapse duplicate records into a single row with the `collect_list()` and `collect_set()` functions.
 
 Make sure to read [Writing Beautiful Spark Code](https://leanpub.com/beautiful-spark/) for a detailed overview of how to deduplicate production datasets and for background information on the [ArrayType columns](https://mungingdata.com/apache-spark/arraytype-columns/) that are returned when DataFrames are collapsed.

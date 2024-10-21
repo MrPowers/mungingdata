@@ -5,6 +5,8 @@ categories:
   - "python"
 ---
 
+# Deep dive into how pyenv actually works by leveraging the shim design pattern
+
 [pyenv](https://github.com/pyenv/pyenv) lets you manage multiple versions of Python on your computer.
 
 This blog post focuses on how pyenv uses the shim design pattern to provide a wonderful user experience (it doesn't focus on installing and using the software like other posts).

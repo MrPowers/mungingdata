@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Important Considerations when filtering in Spark with filter and where
+
 This blog post explains how to filter in Spark and discusses the vital factors to consider when filtering.
 
 Poorly executed filtering operations are a common bottleneck in Spark analyses.

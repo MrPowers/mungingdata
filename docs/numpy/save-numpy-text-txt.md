@@ -5,6 +5,8 @@ categories:
   - "numpy"
 ---
 
+# Writing NumPy Array to Text Files
+
 This post explains the different ways to save a NumPy array to text files.
 
 After showing the different syntax options the post will teach you some better ways to write NumPy data:

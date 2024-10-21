@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Partitioning on Disk with partitionBy
+
 Spark writers allow for data to be partitioned on disk with `partitionBy`. Some queries can run 50 to 100 times faster on a partitioned data lake, so partitioning is vital for certain queries.
 
 Creating and maintaining partitioned data lake is hard.

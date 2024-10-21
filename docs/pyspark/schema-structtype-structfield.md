@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# Defining PySpark Schemas with StructType and StructField
+
 This post explains how to define PySpark schemas and when this design pattern is useful.
 
 It'll also explain when defining schemas seems wise, but can actually be safely avoided.

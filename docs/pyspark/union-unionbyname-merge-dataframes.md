@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# Combining PySpark DataFrames with union and unionByName
+
 Multiple PySpark DataFrames can be combined into a single DataFrame with `union` and `unionByName`.
 
 `union` works when the columns of both DataFrames being joined are in the same order. It can give surprisingly wrong results when the schemas aren't the same, so watch out!

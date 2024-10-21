@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Expressively Typed Spark Datasets with Frameless
+
 [frameless](https://github.com/typelevel/frameless) is a great library for writing Datasets with expressive types. The library helps users write correct code with descriptive compile time errors instead of runtime errors with long stack traces.
 
 This blog post shows how to build typed datasets with frameless. It demonstrates the improved error messages, explains how to add columns / run functions, and discusses how the library could be improved.

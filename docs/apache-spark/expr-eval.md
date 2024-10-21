@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Executing Spark code with expr and eval
+
 You can execute Spark column functions with a genius combination of `expr` and `eval()`.
 
 This technique lets you execute Spark functions without having to create a DataFrame.

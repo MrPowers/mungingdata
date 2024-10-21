@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Registering Native Spark Functions
+
 This post explains how Spark registers native functions internally and the public facing APIs for you to register your own functions.
 
 Registering native functions is important if you want to access functions via the SQL API. You don't need to register functions if you're using the PySpark or Scala DSLs.

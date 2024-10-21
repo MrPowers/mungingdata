@@ -5,6 +5,8 @@ categories:
   - "pandas"
 ---
 
+# Add Category Column to pandas DataFrame with cut
+
 This post explains how to add a category column to a pandas DataFrame with `cut()`.
 
 `cut` makes it easy to categorize numerical values in buckets.

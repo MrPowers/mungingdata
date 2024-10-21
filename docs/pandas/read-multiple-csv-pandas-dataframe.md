@@ -5,6 +5,8 @@ categories:
   - "pandas"
 ---
 
+# Read multiple CSVs into pandas DataFrame
+
 This post explains how to read multiple CSVs into a pandas DataFrame.
 
 pandas filesystem APIs make it easy to load multiple files stored in a single directory or in nested directories.

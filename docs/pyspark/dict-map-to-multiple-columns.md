@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# Converting a PySpark Map / Dictionary to Multiple Columns
+
 Python dictionaries are stored in PySpark map columns (the `pyspark.sql.types.MapType` class). This blog post explains how to convert a map into multiple columns.
 
 You'll want to break up a map to multiple columns for performance gains and when writing data to different types of data stores. It's typically best to avoid writing complex columns.

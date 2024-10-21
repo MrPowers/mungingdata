@@ -5,6 +5,8 @@ categories:
   - "emacs"
 ---
 
+# Learning Emacs Keybindings After Multiple Failed Attempts
+
 Have you ever tried Emacs, found the keybindings to be highly unergonomic, and wondered why so many great programmers are passionate about such a weird editor?
 
 You're not alone - [Emacs pinky is a thing](http://ergoemacs.org/emacs/emacs_pinky.html) and [several famous Emacs users suffer with debilitating repetitive strain injury](http://ergoemacs.org/emacs/emacs_hand_pain_celebrity.html).

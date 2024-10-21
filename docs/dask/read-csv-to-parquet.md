@@ -5,6 +5,8 @@ categories:
   - "dask"
 ---
 
+# Reading CSVs and Writing Parquet files with Dask
+
 Dask is a great technology for converting CSV files to the Parquet format. Pandas is good for converting a single CSV file to Parquet, but Dask is better when dealing with multiple files.
 
 Convering to Parquet is important and CSV files should generally be avoided in data products. Column file formats like Parquet allow for column pruning, so queries run a lot faster. If you have CSV files, it's best to start your analysis by first converting the files to the Parquet file format.

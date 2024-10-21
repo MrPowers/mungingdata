@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Just Enough Scala for Spark Programmers
+
 Spark programmers only need to know a small subset of the Scala API to be productive.
 
 Scala has a reputation for being a difficult language to learn and that scares some developers away from Spark. This guide covers the Scala language features needed for Spark programmers.

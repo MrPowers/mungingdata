@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# select and add columns in PySpark
+
 This post shows you how to select a subset of the columns in a DataFrame with `select`. It also shows how `select` can be used to add and rename columns. Most PySpark users don't know how to truly harness the power of `select`.
 
 This post also shows how to add a column with `withColumn`. Newbie PySpark developers often run `withColumn` multiple times to add multiple columns because there isn't a `withColumns` method. We will see why chaining multiple `withColumn` calls is an anti-pattern and how to avoid this pattern with `select`.

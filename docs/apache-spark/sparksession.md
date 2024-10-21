@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Managing the SparkSession, The DataFrame Entry Point
+
 The SparkSession is used to create and read DataFrames. It's used whenever you create a DataFrame in your test suite or whenever you read a Parquet / CSV data lake into a DataFrame.
 
 This post explains how to create a SparkSession, share it throughout your program, and use it to create DataFrames.

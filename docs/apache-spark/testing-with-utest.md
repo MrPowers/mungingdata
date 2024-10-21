@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Testing Spark Applications with uTest
+
 The uTest Scala testing framework can be used to elegantly test your Spark code.
 
 The other popular Scala testing frameworks (Scalatest and Specs2) provide multiple different ways to solve the same thing, whereas uTest only provides one way to solve common testing problems.

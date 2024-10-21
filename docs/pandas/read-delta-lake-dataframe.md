@@ -5,6 +5,8 @@ categories:
   - "pandas"
 ---
 
+# Reading Delta Lakes into pandas DataFrames
+
 This post explains how to read Delta Lakes into pandas DataFrames.
 
 The [delta-rs](https://github.com/delta-io/delta-rs) library makes this incredibly easy and doesn't require any Spark dependencies.

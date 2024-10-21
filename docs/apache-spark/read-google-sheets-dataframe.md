@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Reading data from Google Sheets to Spark DataFrames
+
 This blog post explains how to read a Google Sheet into a Spark DataFrame with the [spark-google-spreadsheets](https://github.com/potix2/spark-google-spreadsheets) library.
 
 Google Sheets is not a good place to store a lot of data, but is fine for small datasets. Google Sheets are easy for non-technical users to understand and modify.

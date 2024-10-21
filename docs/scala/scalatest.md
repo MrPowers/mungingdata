@@ -5,6 +5,8 @@ categories:
   - "scala"
 ---
 
+# Testing Scala with Scalatest
+
 Scalatest makes it easy to test your Scala code.
 
 This blog post shows how to add Scalatest to a sbt project and write some basic tests.

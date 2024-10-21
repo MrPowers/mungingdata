@@ -5,6 +5,8 @@ categories:
   - "delta-lake"
 ---
 
+# Selectively updating Delta partitions with replaceWhere
+
 Delta makes it easy to update certain disk partitions with the `replaceWhere` option.
 
 Selectively applying updates to certain partitions isn't always possible (sometimes the entire lake needs the update), but can result in significant speed gains.

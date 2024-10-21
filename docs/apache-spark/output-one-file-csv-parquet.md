@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Writing out single files with Spark (CSV or Parquet)
+
 This blog explains how to write out a DataFrame to a single file with Spark. It also describes how to write out data in a file with a specific name, which is surprisingly challenging.
 
 Writing out a single file with Spark isn't typical. Spark is designed to write out multiple files in parallel. Writing out many files at the same time is faster for big datasets.

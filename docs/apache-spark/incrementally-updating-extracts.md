@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Incrementally Updating Extracts with Spark
+
 Spark Structured Streaming and `Trigger.Once` can be used to incrementally update Spark extracts with ease.
 
 An extract that updates incrementally will take the same amount of time as a normal extract for the initial run, but subsequent runs will execute much faster.

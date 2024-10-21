@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Spark Column Equality
+
 The term "column equality" refers to two different things in Spark:
 
 1. When a column is equal to a particular value (typically when filtering)

@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Publishing Spark Projects with JitPack
+
 JitPack is a package repository that provides easy access to your Spark projects that are checked into GitHub. JitPack is easier to use than Maven for open source projects and less hassle than maintaining a private artifact repository for closed source projects.
 
 This episode will show how to access existing Spark projects in JitPack and how to publish your own Spark projects in JitPack.

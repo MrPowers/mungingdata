@@ -5,6 +5,8 @@ categories:
   - "github"
 ---
 
+# Creating an IT Ticketing System with GitHub and Slack
+
 GitHub is great for an IT ticketing system - it's easy to create issues, set assignees, and prioritize the ticket with labels.
 
 The GitHub Slack integration makes it easy to create tickets directly from the Slack command line.

@@ -5,6 +5,8 @@ categories:
   - "pandas"
 ---
 
+# Scale big data pandas workflows with Dask
+
 pandas is a great DataFrame library for datasets that fit comfortably in memory, but throws out of memory exceptions for datasets that are too large.
 
 This post shows how pandas works well for a small dataset, but can't run a query on a big datasets. It then shows how Dask can run the query on the large dataset, which has a familiar pandas-like API.

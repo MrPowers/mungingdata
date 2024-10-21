@@ -5,6 +5,8 @@ categories:
   - "scala"
 ---
 
+# Scala Library Best Practices
+
 This post explains the best practices Scala libraries should follow.
 
 Here are the most important best practices to follow:

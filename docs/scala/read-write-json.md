@@ -5,6 +5,8 @@ categories:
   - "scala"
 ---
 
+# Reading and writing JSON with Scala
+
 This blog post explains how to read and write JSON with Scala using the [uPickle / uJSON library](https://github.com/lihaoyi/upickle).
 
 This library makes it easy to work with JSON files in Scala.

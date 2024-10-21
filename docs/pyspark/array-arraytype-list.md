@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# Working with PySpark ArrayType Columns
+
 This post explains how to create DataFrames with ArrayType columns and how to perform common data processing operations.
 
 Array columns are one of the most useful column types, but they're hard for most Python programmers to grok. The PySpark array syntax isn't similar to the list comprehension syntax that's normally used in Python.

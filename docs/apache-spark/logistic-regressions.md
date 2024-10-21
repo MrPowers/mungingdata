@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Running Logistic Regressions with Spark
+
 Logistic regression models are a powerful way to predict binary outcomes (e.g. winning a game or surviving a shipwreck).
 
 Multiple explanatory variables (aka "features") are used to train the model that predicts the outcome.

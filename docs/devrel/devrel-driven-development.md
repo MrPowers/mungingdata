@@ -5,6 +5,8 @@ categories:
   - "devrel"
 ---
 
+# DevRel Driven Development
+
 DevRel Driven Development is driving software development from developer advocacy activities like creating documentation, writing blog posts, and producing videos. Developers advocates frequently identify public interface warts when creating content. They can collaborate closely with devs build more intuitive APIs and give end users a better development experience.
 
 When done right, DevRel Driven Development creates a symbiotic collaboration between core developers, dev advocates and end users. This virtuous cycle motivates developers and delights end users. Developers love exposing elegant APIs that are quickly adopted by users. A good dev advocate will help the devs expose the right interface.

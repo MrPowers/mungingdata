@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Reverse Engineering Spark Structured Streaming and Trigger.Once
+
 Spark Structured Streaming and Trigger.Once make it easy to run incremental updates. Spark uses a checkpoint directory to identify the data that's already been processed and only analyzes the new data.
 
 This blog post demonstrates how to use Structured Streaming and Trigger.Once and provides a detailed look at the checkpoint directory that easily allows Spark to identify the newly added files.

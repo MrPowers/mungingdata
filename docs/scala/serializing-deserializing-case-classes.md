@@ -5,6 +5,8 @@ categories:
   - "scala"
 ---
 
+# Serializing and Deserializing Scala Case Classes with JSON
+
 This blog post shows how to serialize and deserialize Scala case classes with the JSON file format.
 
 Serialization is important when persisting data to disk or transferring data over the network.

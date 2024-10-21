@@ -6,7 +6,6 @@ theme:
     - content.action.edit
     - content.code.copy
     - navigation.footer
-    - navigation.expand
     - navigation.indexes
 
 nav:
@@ -88,9 +87,6 @@ nav:
       - rlike: apache-spark/advanced-string-matching-with-rlike.md
       - Aggregations: apache-spark/aggregations.md
       - Compacting files: apache-spark/compacting-files.md
-  - sqlite:
-      - Create database Python: sqlite/create-database-load-csv-python.md
-      - Write to Parquet file: sqlite/export-tables-queries-to-csv-parquet.md
   - DevRel:
       - Virtuous Content Cycle: devrel/virtuous-content-cycle-developer-advocates.md
       - DevRel Driven Development: devrel/devrel-driven-development.md
@@ -99,7 +95,7 @@ nav:
       - How pyenv works: python/how-pyenv-works-shims.md
       - Split CSV: python/split-csv-write-chunk-pandas.md
       - Writing Parquet: python/writing-parquet-pandas-pyspark-koalas.md
-      - Jupyter and poetry: pyspark/jupyter-workflow-poetry-pandas.md
+      - Jupyter and poetry: python/jupyter-workflow-poetry-pandas.md
   - Pandas:
       - Adding category column: pandas/dataframe-cut-category.md
       - Large data: pandas/large-data-workflow-dask.md
@@ -110,10 +106,6 @@ nav:
   - Golang:
       - CSV to Parquet: go/csv-to-parquet.md
       - DataFrames: go/dataframes-gota-qframe.md
-  - Unix:
-      - Appending Executables Path: unix/appending-executables-path.md
-  - OSS:
-      - Open source is a delight: oss/creating-open-source-software-is-a-delight.md
   - PyArrow:
       - Writing Custom Metadata: pyarrow/arbitrary-metadata-parquet-table.md
       - Parquet metadata: pyarrow/parquet-metadata-min-max-statistics.md
@@ -127,31 +119,20 @@ nav:
       - Templates: scala/scalate-templates-mustache-ssp.md
       - Scalatest: scala/scalatest.md
       - Read and write JSON: scala/read-write-json.md
-  - AWS:
-      - Spark and Athena: aws/athena-spark-best-friends.md
-  - GitHub:
-      - Creating a ticketing system: github/creating-ticketing-system-with-slack.md
-  - Creator:
-      - Creators making money: creator/how-content-creators-make-lots-money.md
-  - Dask:
-      - Compress CSVs: dask/write-csv-compression-filename.md
-      - Output single file: dask/ouput-dataframe-single-csv-file.md
-      - Install with conda: dask/software-environments-conda-miniconda.md
-      - CSV to Parquet: dask/read-csv-to-parquet.md
-      - Read Delta Lake: dask/read-delta-lake.md
-  - Emacs:
-      - Learn Emacs: emacs/learning-emacs-keybindings-after-multiple-failed-attempts.md
-  - Books:
-      - Self publishing: books/self-publishing-programming-books.md
-  - Investing:
-      - Cheap real estate: investing/ultra-cheap-real-estate-1000-square-meter.md
-  - Numpy:
-      - Save to text: numpy/save-numpy-text-txt.md
-  - Career:
-      - Manage calendar: career/7-steps-reject-meeting-zoom.md
   - Java:
       - SDKMAN installation: java/sdkman-multiple-versions-java-sbt-scala.md
       - jenv: java/jenv-multiple-versions-java.md
+  - Misc:
+      - Appending Executables Path: unix/appending-executables-path.md
+      - Open source is a delight: oss/creating-open-source-software-is-a-delight.md
+      - Spark and Athena: aws/athena-spark-best-friends.md
+      - Creating a ticketing system: github/creating-ticketing-system-with-slack.md
+      - Creators making money: creator/how-content-creators-make-lots-money.md
+      - Learn Emacs: emacs/learning-emacs-keybindings-after-multiple-failed-attempts.md
+      - Self publishing programming books: books/self-publishing-programming-books.md
+      - Investing in cheap real estate: investing/ultra-cheap-real-estate-1000-square-meter.md
+      - numpy Save to text: numpy/save-numpy-text-txt.md
+      - Manage calendar invites: career/7-steps-reject-meeting-zoom.md
   - Delta Lake:
       - Merge, update, upserts: delta-lake/merge-update-upserts.md
       - Compact small files: delta-lake/compact-small-files.md
@@ -160,3 +141,12 @@ nav:
       - Vacuum: delta-lake/vacuum-command.md
       - Schema enforcement: delta-lake/schema-enforcement-evolution-mergeschema-overwriteschema.md
       - Time travel: delta-lake/introduction-time-travel.md
+  - sqlite:
+      - Create database Python: sqlite/create-database-load-csv-python.md
+      - Write to Parquet file: sqlite/export-tables-queries-to-csv-parquet.md
+  - Dask:
+      - Compress CSVs: dask/write-csv-compression-filename.md
+      - Output single file: dask/ouput-dataframe-single-csv-file.md
+      - Install with conda: dask/software-environments-conda-miniconda.md
+      - CSV to Parquet: dask/read-csv-to-parquet.md
+      - Read Delta Lake: dask/read-delta-lake.md

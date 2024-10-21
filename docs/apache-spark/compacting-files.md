@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Compacting Files with Spark to Address the Small File Problem
+
 Spark runs slowly when it reads data from a lot of small files in S3. You can make your Spark code run faster by creating a job that compacts small files into larger files.
 
 The “small file problem” is especially problematic for data stores that are updated incrementally. The small problem get progressively worse if the incremental updates are more frequent and the longer incremental updates run between full refreshes.

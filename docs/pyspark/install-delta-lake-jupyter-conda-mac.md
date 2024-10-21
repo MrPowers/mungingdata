@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# Install PySpark, Delta Lake, and Jupyter Notebooks on Mac with conda
+
 This blog post explains how to install PySpark, Delta Lake, and Jupyter Notebooks on a Mac. This setup will let you easily run Delta Lake computations on your local machine in a Jupyter notebook for experimentation or to unit test your business logic.
 
 In order to run PySpark, you need to install Java. This guide will teach you how to install Java with a package manager that lets you easily switch between Java versions.

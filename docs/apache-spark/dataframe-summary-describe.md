@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Exploring DataFrames with summary and describe
+
 The `summary` and `describe` methods make it easy to explore the contents of a DataFrame at a high level.
 
 This post shows you how to use these methods.

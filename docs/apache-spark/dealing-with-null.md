@@ -1,9 +1,11 @@
 ---
-title: "Dealing with null in Spark"
+title: "Dealing with null in Spark"
 date: "2019-01-09"
 categories: 
   - "apache-spark"
 ---
+
+# Dealing with null in Spark
 
 Spark Datasets / DataFrames are filled with null values and you should write code that gracefully handles these null values.
 

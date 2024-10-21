@@ -3,6 +3,8 @@ title: "Introduction to Spark Broadcast Joins"
 date: "2018-10-17"
 ---
 
+# Introduction to Spark Broadcast Joins
+
 Spark broadcast joins are perfect for joining a large DataFrame with a small DataFrame.
 
 Broadcast joins cannot be used when joining two large DataFrames.

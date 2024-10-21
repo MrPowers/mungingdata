@@ -5,6 +5,8 @@ categories:
   - "scala"
 ---
 
+# Scala Filesystem Operations (paths, move, copy, list, delete)
+
 Basic filesystem operations have traditionally been complex in Scala.
 
 A simple operation like copying a file is a one-liner in some languages like Ruby, but a multi-line / multi-import mess if you rely on Java libraries.

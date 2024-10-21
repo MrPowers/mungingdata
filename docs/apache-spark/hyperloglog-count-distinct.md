@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Using HyperLogLog for count distinct computations with Spark
+
 This blog post explains how to use the HyperLogLog algorithm to perform fast count distinct operations.
 
 HyperLogLog sketches can be generated with [spark-alchemy](https://github.com/swoop-inc/spark-alchemy/), loaded into Postgres databases, and queried with millisecond response times.

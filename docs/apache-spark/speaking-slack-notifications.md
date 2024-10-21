@@ -1,9 +1,11 @@
 ---
-title: "Speaking Slack Notifications from Spark"
+title: "Speaking Slack Notifications from Spark"
 date: "2018-04-04"
 categories: 
   - "apache-spark"
 ---
+
+# Speaking Slack Notifications from Spark
 
 The spark-slack library can be used to speak notifications to Slack from your Spark programs and handle Slack Slash command responses.
 

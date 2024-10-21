@@ -5,6 +5,8 @@ categories:
   - "oss"
 ---
 
+# Creating open source software is a delight
+
 Writing open source software gives you the opportunity to collaborate with highly motivated developers and build awesome code that's used by folks around the world.
 
 You can influence community best practices and help others be more productive.

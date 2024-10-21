@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# Combining PySpark arrays with concat, union, except and intersect
+
 This post shows the different ways to combine multiple PySpark arrays into a single array.
 
 These operations were difficult prior to Spark 2.4, but now there are built-in functions that make combining arrays easy.

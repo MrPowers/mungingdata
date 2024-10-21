@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# PySpark UDFs with Dictionary Arguments
+
 Passing a dictionary argument to a PySpark UDF is a powerful programming technique that'll enable you to implement some complicated algorithms that scale.
 
 Broadcasting values and writing UDFs can be tricky. UDFs only accept arguments that are column objects and dictionaries aren't column objects. This blog post shows you the nested function work-around that's necessary for passing a dictionary to a UDF. It'll also show you how to broadcast a dictionary and why broadcasting is important in a cluster environment.

@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# Fetching Random Values from PySpark Arrays / Columns
+
 This post shows you how to fetch a random value from a PySpark array or from a set of columns. It'll also show you how to add a column to a DataFrame with a random value from a Python array and how to fetch n random values from a given column.
 
 ## Random value from PySpark array

@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Working with Spark ArrayType columns
+
 Spark DataFrame columns support arrays, which are great for data sets that have an arbitrary length.
 
 This blog post will demonstrate Spark methods that return ArrayType columns, describe how to create your own ArrayType columns, and explain when to use arrays in your analyses.

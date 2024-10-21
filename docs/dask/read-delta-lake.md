@@ -5,6 +5,8 @@ categories:
   - "dask"
 ---
 
+# Reading Delta Lakes into Dask DataFrames
+
 This post explains how to read Delta Lakes into Dask DataFrames.  It shows how you can leverage powerful data lake management features like time travel, versioned data, and schema evolution with Dask.
 
 Delta Lakes are normally written by Spark, but there are new projects like [delta-rs](https://github.com/delta-io/delta-rs) that provide Rust, Ruby, and Python bindings for Delta lakes.  delta-rs does not depend on Spark, so it doesn’t require Java or other heavy dependencies.

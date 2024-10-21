@@ -5,6 +5,8 @@ categories:
   - "java"
 ---
 
+# Managing Multiple Java, SBT, and Scala Versions with SDKMAN
+
 [SDKMAN](https://sdkman.io/) is an amazing project that makes it easy to manage multiple versions of Java and Scala on a single computer.
 
 It also provides support for other Java ecosystem projects like Maven, SBT, and Spark.

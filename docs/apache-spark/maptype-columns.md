@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Working with Spark MapType Columns
+
 Spark DataFrame columns support maps, which are great for key / value pairs with an arbitrary length.
 
 This blog post describes how to create MapType columns, demonstrates built-in functions to manipulate MapType columns, and explain when to use maps in your analyses.

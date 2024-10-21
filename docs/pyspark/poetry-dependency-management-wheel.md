@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# PySpark Dependency Management and Wheel Packaging with Poetry
+
 This blog post explains how to create a PySpark project with Poetry, the best Python dependency management system. It'll also explain how to package PySpark projects as wheel files, so you can build libraries and easily access the code on Spark clusters.
 
 Poetry is beloved by [the co-creator of Django](https://jacobian.org/2019/nov/11/python-environment-2020/) and [other bloggers](https://hackersandslackers.com/python-poetry-package-manager/). It's even part of the [hypermodern Python](https://cjolowicz.github.io/posts/hypermodern-python-01-setup/) stack.

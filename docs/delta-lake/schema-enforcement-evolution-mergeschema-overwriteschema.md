@@ -5,6 +5,8 @@ categories:
   - "delta-lake"
 ---
 
+# Delta Lake schema enforcement and evolution with mergeSchema and overwriteSchema
+
 Delta lakes prevent data with incompatible schema from being written, unlike Parquet lakes which allow for any data to get written.
 
 Let's demonstrate how Parquet allows for files with incompatible schemas to get written to the same data store. Then let's explore how Delta prevents incompatible data from getting written with schema enforcement.

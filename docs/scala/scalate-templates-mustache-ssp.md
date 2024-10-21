@@ -5,6 +5,8 @@ categories:
   - "scala"
 ---
 
+# Scala Templates with Scalate, Mustache, and SSP
+
 The [scalate](https://github.com/scalate/scalate) library makes it easy to use Mustache or SSP templates with Scala.
 
 This blog post will show how to use Mustache and SSP templates and compares the different templating philosophies (Mustache is logic-less and SSP templates contain logic).

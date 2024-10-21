@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Optimizing Data Lakes for Apache Spark
+
 Spark code will run faster with certain data lakes than others.
 
 For example, Spark will run slowly if the data lake uses gzip compression and has unequally sized files (especially if there are a lot of small files). The code will run fast if the data lake contains equally sized 1GB Parquet files that use snappy compression.

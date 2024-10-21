@@ -5,6 +5,8 @@ categories:
   - "sqlite"
 ---
 
+# Write sqlite tables to CSV / Parquet files
+
 This blog post explains how to write sqlite tables to CSV and Parquet files. It'll also show how to output SQL queries to CSV files.
 
 It'll even show how to output all the tables in a sqlite database to files with a single command.

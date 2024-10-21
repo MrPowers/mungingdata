@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# Creating and reusing the SparkSession with PySpark
+
 This post explains how to create a SparkSession with `getOrCreate` and how to reuse the SparkSession with `getActiveSession`.
 
 You need a SparkSession to read data stored in files, when manually creating DataFrames, and to run arbitrary SQL queries.

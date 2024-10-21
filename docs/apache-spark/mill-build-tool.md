@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Building Spark Projects with Mill
+
 Mill is a SBT alternative that can be used to build Spark projects.
 
 This post explains how to create a Spark project with Mill and why you might want to use it instead of SBT.

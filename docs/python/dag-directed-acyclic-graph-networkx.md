@@ -5,6 +5,8 @@ categories:
   - "python"
 ---
 
+# Building DAGs / Directed Acyclic Graphs with Python
+
 Directed Acyclic Graphs (DAGs) are a critical data structure for data science / data engineering workflows. DAGs are used extensively by popular projects like [Apache Airflow](https://github.com/apache/airflow) and [Apache Spark](https://github.com/apache/spark).
 
 This blog post will teach you how to build a DAG in Python with the [networkx](https://networkx.github.io/) library and run important graph algorithms.

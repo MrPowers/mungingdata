@@ -5,6 +5,8 @@ categories:
   - "java"
 ---
 
+# Running Multiple Versions of Java on MacOS with jenv
+
 [jenv](https://github.com/jenv/jenv) makes it easy to run multiple versions of Java on a Mac computer. It also makes it easy to seamlessly switch between Java versions when you switch projects.
 
 Running multiple Java versions is important for Android and Apache Spark developers. Spark developers should use Java 8 for Spark 2 projects and Java 11 for Spark 3 projects for example.

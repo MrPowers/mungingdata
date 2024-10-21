@@ -5,6 +5,8 @@ categories:
   - "dask"
 ---
 
+# Managing Dask Software Environments with Conda
+
 This post shows you how to set up conda on your machine and explains why it’s the best way to manage software environments for Dask projects.
 
 [This blog post](https://mitelman.engineering/blog/python-best-practice/automating-python-best-practices-for-a-new-project/) says that Python projects should be set up with pyenv and Poetry in 2021.  The arguments apply to web based Python projects, but not data science projects that often leverage low level dependencies like cuda and xgboost that are notoriously hard to install.  Conda is the best way to manage complicated data science software environments.

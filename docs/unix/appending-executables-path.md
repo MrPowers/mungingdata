@@ -5,6 +5,8 @@ categories:
   - "unix"
 ---
 
+# Adding executables to your PATH for fun
+
 Adding executables to your PATH is fun, easy, and a great way to learn about how your machine works.
 
 This pattern is especially useful for long commands that you need to run frequently.

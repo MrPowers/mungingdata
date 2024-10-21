@@ -3,6 +3,8 @@ title: "The Virtuous Content Cycle for Developer Advocates"
 date: "2022-09-02"
 ---
 
+# The Virtuous Content Cycle for Developer Advocates
+
 This post explains how to scale developer advocacy by creating content in a way that answers current user questions and makes it easier to generate additional content in the future.
 
 Developer advocates help engineers leverage technologies to get their jobs done efficiently. Successful software projects grow exponentially, so the number of user questions also grows rapidly. The virtuous content cycle allows developer advocates to scale themselves and meet the needs of a quickly growing community.

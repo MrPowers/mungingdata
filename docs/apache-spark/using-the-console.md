@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# How to use the Spark Shell (REPL)
+
 The Spark console is a great way to run Spark code on your local machine.
 
 You can easily create a DataFrame and play around with code in the Spark console to avoid spinning up remote servers that cost money!

@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# Avoiding Dots / Periods in PySpark Column Names
+
 Dots / periods in PySpark column names need to be escaped with backticks which is tedious and error-prone.
 
 This blog post explains the errors and bugs you're likely to see when you're working with dots in column names and how to eliminate dots from column names.

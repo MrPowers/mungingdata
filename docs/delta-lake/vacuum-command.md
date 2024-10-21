@@ -5,6 +5,8 @@ categories:
   - "delta-lake"
 ---
 
+# Vacuuming Delta Lakes
+
 Delta lakes are versioned so you can easily revert to old versions of the data.
 
 In some instances, Delta lake needs to store multiple versions of the data to enable the rollback feature.

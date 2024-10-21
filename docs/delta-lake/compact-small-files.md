@@ -5,6 +5,8 @@ categories:
   - "delta-lake"
 ---
 
+# Compacting Small Files in Delta Lakes
+
 This post explains how to compact small files in Delta lakes with Spark.
 
 Data lakes can accumulate a lot of small files, especially when they're incrementally updated. Small files cause read operations to be slow.

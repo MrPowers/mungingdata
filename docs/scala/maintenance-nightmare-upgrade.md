@@ -5,6 +5,8 @@ categories:
   - "scala"
 ---
 
+# Scala is a Maintenance Nightmare
+
 This post explains why Scala projects are difficult to maintain.
 
 Scala is a powerful programming language that can make certain small teams hyper-productive.

@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# Converting a PySpark DataFrame Column to a Python List
+
 There are several ways to convert a PySpark DataFrame column to a Python list, but some approaches are much slower / likely to error out with OutOfMemory exceptions than others!
 
 This blog post outlines the different approaches and explains the fastest method for large lists. It'll also explain best practices and the limitations of collecting data in lists.

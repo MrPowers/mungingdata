@@ -5,6 +5,8 @@ categories:
   - "career"
 ---
 
+# 7 Steps for rejecting meeting invites
+
 Meetings are the main way to kill your productivity as a creative professional. Two strategically timed meetings can eliminate your makers hours for an entire day.
 
 Rejecting meeting invites to protect your maker time and stay productive is surprisingly hard. Declining a meeting is perceived as rude.

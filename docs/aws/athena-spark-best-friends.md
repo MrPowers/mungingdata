@@ -5,6 +5,8 @@ categories:
   - "aws"
 ---
 
+# AWS Athena and Apache Spark are Best Friends
+
 Apache Spark makes it easy to build data lakes that are optimized for AWS Athena queries.
 
 This blog post will demonstrate that it's easy to follow the AWS Athena tuning tips with a tiny bit of Spark code - let's dive in!

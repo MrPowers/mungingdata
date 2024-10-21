@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# Adding constant columns with lit and typedLit to PySpark DataFrames
+
 This post explains how to add constant columns to PySpark DataFrames with `lit` and `typedLit`.
 
 You'll see examples where these functions are useful and when these functions are invoked implicitly.

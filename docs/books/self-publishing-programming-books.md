@@ -5,6 +5,8 @@ categories:
   - "books"
 ---
 
+# Self Publishing High Quality Programming Books
+
 This post describes a workflow for self publishing programming books that readers will love.
 
 Writing a book seems like a daunting task, but it's less intimidating if each chapter is "pre-published" as a blog post. Validating user engagement based on blog post traffic metrics gives you confidence that your writing is valuable and you have what it takes to author a book.

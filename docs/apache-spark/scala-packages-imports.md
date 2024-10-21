@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Designing Scala Packages and Imports for Readable Spark Code
+
 This blog post explains how to import core Spark and Scala libraries like [spark-daria](https://github.com/MrPowers/spark-daria/) into your projects.
 
 It's important for library developers to organize package namespaces so it's easy for users to import their code.

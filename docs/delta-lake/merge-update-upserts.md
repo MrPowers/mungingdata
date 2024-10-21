@@ -5,6 +5,8 @@ categories:
   - "delta-lake"
 ---
 
+# Using Delta lake merge to update columns and perform upserts
+
 This blog posts explains how to update a table column and perform upserts with the `merge` command.
 
 We explain how to use the `merge` command and what the command does to the filesystem under the hood.

@@ -5,6 +5,8 @@ categories:
   - "scala"
 ---
 
+# Wrapping Java Code with Clean Scala Interfaces
+
 This post explains how to wrap a Java library with a Scala interface.
 
 You can instantiate Java classes directly in Scala, but it's best to wrap the Java code, so you don't need to interface with it directly. Scala wrappers help hide the Java messiness.

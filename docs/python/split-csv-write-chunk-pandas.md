@@ -5,6 +5,8 @@ categories:
   - "python"
 ---
 
+# Splitting Large CSV files with Python
+
 This blog post demonstrates different approaches for splitting a large CSV file into smaller CSV files and outlines the costs / benefits of the different approaches.
 
 TL;DR

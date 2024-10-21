@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Calculating Month Start and End Dates with Spark
+
 This post shows how to create `beginningOfMonthDate` and `endOfMonthDate` functions by leveraging the native Spark datetime functions.
 
 The native Spark datetime functions are not easy to use, so it's important to build abstractions on top of the standard lib. Using the standard lib functions directly results in code that's difficult to understand.

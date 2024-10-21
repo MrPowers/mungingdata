@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# exists and forall PySpark array functions
+
 This blog post demonstrates how to find if any element in a PySpark array meets a condition with `exists` or if all elements in an array meet a condition with `forall`.
 
 `exists` is similar to the Python `any` function. `forall` is similar to the Python `all` function.

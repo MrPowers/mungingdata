@@ -5,6 +5,8 @@ categories:
   - "delta-lake"
 ---
 
+# Type 2 Slowly Changing Dimension Upserts with Delta Lake
+
 This post explains how to perform type 2 upserts for slowly changing dimension tables with Delta Lake.
 
 We'll start out by covering the basics of type 2 SCDs and when they're advantageous.

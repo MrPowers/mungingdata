@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Advanced String Matching with Spark's rlike Method
+
 The Spark `rlike` method allows you to write powerful string matching algorithms with regular expressions (regexp).
 
 This blog post will outline tactics to detect strings that match multiple different patterns and how to abstract these regular expression patterns to CSV files.

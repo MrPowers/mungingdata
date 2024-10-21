@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# Chaining Custom PySpark DataFrame Transformations
+
 PySpark code should generally be organized as single purpose DataFrame transformations that can be chained together for production analyses (e.g. generating a datamart).
 
 This blog post demonstrates how to monkey patch the DataFrame object with a transform method, how to define custom DataFrame transformations, and how to chain the function calls.

@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Limiting Order Dependencies in Spark Functions
+
 Spark codebases can easily become a collection of order dependent custom transformations (see [this blog post](https://medium.com/@mrpowers/the-different-type-of-spark-functions-custom-transformations-column-functions-udfs-bf556c9d0ce7) for background on custom transformations). Your library will be difficult to use if many functions need to be run in a specific order. This post shows how to run functions to add intermediate columns when necessary and limit order dependencies. This design pattern will provider your users a better experience.
 
 ## Example of order dependent transformations

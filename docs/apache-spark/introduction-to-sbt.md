@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Introduction to SBT for Spark Programmers
+
 SBT is an interactive build tool that is used to run tests and package your projects as JAR files.
 
 SBT lets you create a project in a text editor and package it, so it can be run in a cloud cluster computing environment (like Databricks).

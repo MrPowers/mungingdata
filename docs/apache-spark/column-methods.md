@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Exploring Spark's Column Methods
+
 The Spark [Column class](http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.Column) defines a variety of column methods that are vital for manipulating DataFrames.
 
 This blog post demonstrates how to instantiate Column objects and covers the commonly used Column methods.

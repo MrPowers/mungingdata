@@ -5,6 +5,8 @@ categories:
   - "pyarrow"
 ---
 
+# Analyzing Parquet Metadata and Statistics with PyArrow
+
 The PyArrow library makes it easy to read the metadata associated with a Parquet file.
 
 This blog post shows you how to create a Parquet file with PyArrow and review the metadata that contains important information like the compression algorithm and the min / max value of a given column.

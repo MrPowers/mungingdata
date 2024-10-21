@@ -5,6 +5,8 @@ categories:
   - "apache-spark"
 ---
 
+# Spark Datasets: Advantages and Limitations
+
 Datasets are available to Spark Scala/Java users and offer more type safety than DataFrames.
 
 Python and R infer types during runtime, so these APIs cannot support the Datasets.

@@ -5,6 +5,8 @@ categories:
   - "pyspark"
 ---
 
+# Renaming Multiple PySpark DataFrame columns (withColumnRenamed, select, toDF)
+
 This blog post explains how to rename one or all of the columns in a PySpark DataFrame.
 
 You'll often want to rename columns in a DataFrame. Here are some examples:

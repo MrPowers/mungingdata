@@ -5,6 +5,8 @@ categories:
   - "go"
 ---
 
+# Converting CSV files to Parquet with Go
+
 This blog post explains how to read data from a CSV file and write it out as a Parquet file.
 
 The Parquet file format is better than CSV for a lot of data operations. Columnar data stores allow for column pruning that massively speeds up lots of queries.

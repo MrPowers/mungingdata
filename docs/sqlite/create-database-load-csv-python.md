@@ -5,6 +5,8 @@ categories:
   - "sqlite"
 ---
 
+# Creating a sqlite database from CSVs with Python
+
 This blog post demonstrates how to build a sqlite database from CSV files.
 
 Python is perfect language for this task because it has great libraries for sqlite and CSV DataFrames.
