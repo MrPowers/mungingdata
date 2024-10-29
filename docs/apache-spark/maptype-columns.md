@@ -19,13 +19,13 @@ Let's begin with a little refresher on Scala maps.
 
 Create a Scala map that connects some English and Spanish words.
 
-```
+```scala
 val wordMapping = Map("one" -> "uno", "dog" -> "perro")
 ```
 
 Fetch the value associated with the `dog` key:
 
-```
+```scala
 wordMapping("dog") // "perro"
 ```
 
@@ -33,7 +33,7 @@ wordMapping("dog") // "perro"
 
 Let's create a DataFrame with a MapType column.
 
-```
+```scala
 val singersDF = spark.createDF(
   List(
     ("sublime", Map(
@@ -82,7 +82,7 @@ Let's explore some built-in Spark methods that make it easy to work with MapType
 
 Let's use the `singersDF` DataFrame and append `song_to_love` as a column.
 
-```
+```scala
 singersDF
   .withColumn("song_to_love", element_at(col("songs"), "good_song"))
   .show(false)
@@ -103,7 +103,7 @@ The `element_at()` function fetches a value from a MapType column.
 
 We can use the `map()` method defined in `org.apache.spark.sql.functions` to append a `MapType` column to a DataFrame.
 
-```
+```scala
 val countriesDF = spark.createDF(
   List(
     ("costa_rica", "sloth"),
@@ -146,7 +146,7 @@ root
 
 We can create a `MapType` column from two `ArrayType` columns.
 
-```
+```scala
 val df = spark.createDF(
   List(
     (Array("a", "b"), Array(1, 2)),
@@ -192,7 +192,7 @@ The Spark way of converting to arrays to a map is different that the "regular Sc
 
 Here's how you'd convert two collections to a map with Scala.
 
-```
+```scala
 val list1 = List("a", "b")
 val list2 = List(1, 2)
 
@@ -209,7 +209,7 @@ The key takeaway is that the Spark way of solving a problem is often different f
 
 `map_concat()` can be used to combine multiple MapType columns to a single MapType column.
 
-```
+```scala
 val df = spark.createDF(
   List(
     (Map("a" -> "aaa", "b" -> "bbb"), Map("c" -> "ccc", "d" -> "ddd"))
@@ -236,7 +236,7 @@ df
 
 Let's create a DataFrame that stores information about athletes.
 
-```
+```scala
 val athletesDF = spark.createDF(
   List(
     ("lebron",
@@ -281,7 +281,7 @@ root
 
 `stature` is a MapType column, but we can also store stature as a StructType column.
 
-```
+```scala
 val data = Seq(
   Row("lebron", Row("6.67", "feet")),
   Row("messi", Row("1.7", "meters"))
@@ -338,7 +338,7 @@ The CSV file format cannot handle MapType columns.
 
 This code will error out.
 
-```
+```scala
 val outputPath = new java.io.File("./tmp/csv_with_map/").getCanonicalPath
 
 spark.createDF(
@@ -370,7 +370,7 @@ writing to disk
 
 MapType columns can be written out with the Parquet file format. This code runs just fine:
 
-```
+```scala
 val outputPath = new java.io.File("./tmp/csv_with_map/").getCanonicalPath
 
 spark.createDF(

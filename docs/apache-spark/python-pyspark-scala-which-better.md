@@ -48,7 +48,7 @@ Suppose you have the following DataFrame.
 
 Here's a Scala function that'll append some text to the `country` column:
 
-```
+```scala
 def funify(colName: String, str: String)(df: DataFrame): DataFrame = {
   df.withColumn("funified", concat(col(colName), lit(" "), lit(str)))
 }
@@ -56,7 +56,7 @@ def funify(colName: String, str: String)(df: DataFrame): DataFrame = {
 
 Here's how to invoke the Scala function with the `Dataset#transform` method:
 
-```
+```scala
 df
   .transform(funify("country", "is awesome"))
   .show()
@@ -76,7 +76,7 @@ Notice how the `funify` function is defined with two parameter lists and invoked
 
 Here's an equivalent PySpark function that'll append to the `country` column:
 
-```
+```scala
 from pyspark.sql.functions import col, lit, concat
 
 def funify(col_name, str):
@@ -87,7 +87,7 @@ def funify(col_name, str):
 
 Here's how to invoke the Python function with `DataFrame#transform`:
 
-```
+```scala
 df.transform(funify("country", "is super fun!")).show(truncate=False)
 ```
 
@@ -276,7 +276,7 @@ Python's whitespace sensitivity causes ugly PySpark code when backslash continua
 
 Here's an example from the [python-deequ](https://github.com/awslabs/python-deequ) README:
 
-```
+```python
 checkResult = VerificationSuite(spark) \
     .onData(df) \
     .addCheck(
@@ -293,7 +293,7 @@ Backslash continuation is frowned upon in the Python community, but you'll still
 
 The equivalent Scala code looks nicer without all the backslashes:
 
-```
+```scala
 val verificationResult = VerificationSuite()
   .onData(data)
   .addCheck(
@@ -309,7 +309,7 @@ val verificationResult = VerificationSuite()
 
 You can avoid the Python backslashes by wrapping the code block in parens:
 
-```
+```python
 spark = (SparkSession
     .builder
     .config("spark.jars.packages", pydeequ.deequ_maven_coord)

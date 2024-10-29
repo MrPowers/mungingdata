@@ -17,7 +17,7 @@ Check out [Beautiful Spark Code](https://leanpub.com/beautiful-spark/) for a det
 
 Let's create a DataFrame with two famous soccer players and the number of goals they scored in some games.
 
-```
+```scala
 val goalsDF = Seq(
   ("messi", 2),
   ("messi", 1),
@@ -28,7 +28,7 @@ val goalsDF = Seq(
 
 Let's inspect the contents of the DataFrame:
 
-```
+```scala
 goalsDF.show()
 
 +-----+-----+
@@ -43,7 +43,7 @@ goalsDF.show()
 
 Let's use `groupBy()` to calculate the total number of goals scored by each player.
 
-```
+```scala
 import org.apache.spark.sql.functions._
 
 goalsDF
@@ -69,7 +69,7 @@ Spark makes great use of object oriented programming!
 
 The `RelationalGroupedDataset` class also defines a `sum()` method that can be used to get the same result with less code.
 
-```
+```scala
 goalsDF
   .groupBy("name")
   .sum()
@@ -85,13 +85,11 @@ goalsDF
 +-----+----------+
 ```
 
-[Testing Spark Applications](https://leanpub.com/testing-spark/) teaches you how to package this aggregation in a custom transformation and write a unit test. You should read the book if you want to fast-track you Spark career and become an expert quickly.
-
 ## groupBy() with two arguments
 
 Let's create another DataFrame with information on students, their country, and their continent.
 
-```
+```scala
 val studentsDF = Seq(
   ("mario", "italy", "europe"),
   ("stefano", "italy", "europe"),
@@ -104,7 +102,7 @@ val studentsDF = Seq(
 
 Let's get a count of the number of students in each continent / country.
 
-```
+```scala
 studentsDF
   .groupBy("continent", "country")
   .agg(count("*"))
@@ -124,7 +122,7 @@ studentsDF
 
 We can also leverage the `RelationalGroupedDataset#count()` method to get the same result:
 
-```
+```scala
 studentsDF
   .groupBy("continent", "country")
   .count()
@@ -146,7 +144,7 @@ studentsDF
 
 Let's create another DataFrame with the number of goals and assists for two hockey players during a few seasons:
 
-```
+```scala
 val hockeyPlayersDF = Seq(
   ("gretzky", 40, 102, 1990),
   ("gretzky", 41, 122, 1991),
@@ -160,7 +158,7 @@ val hockeyPlayersDF = Seq(
 
 Let's calculate the average number of goals and assists for each player in the 1991 and 1992 seasons.
 
-```
+```scala
 hockeyPlayersDF
   .where($"season".isin("1991", "1992"))
   .groupBy("name")
@@ -179,7 +177,7 @@ hockeyPlayersDF
 
 Now let's calculate the average number of goals and assists for each player with more than 100 assists on average.
 
-```
+```scala
 hockeyPlayersDF
   .groupBy("name")
   .agg(avg("goals"), avg("assists").as("average_assists"))
@@ -203,7 +201,7 @@ Many SQL implementations use the `HAVING` keyword for filtering after aggregatio
 
 Let's create another sample dataset and replicate the `cube()` examples in [this Stackoverflow answer](https://stackoverflow.com/a/37975484/1125159).
 
-```
+```scala
 val df = Seq(
   ("bar", 2L),
   ("bar", 2L),
@@ -214,7 +212,7 @@ val df = Seq(
 
 The `cube` function "takes a list of columns and applies aggregate expressions to all possible combinations of the grouping columns".
 
-```
+```scala
 df
   .cube($"word", $"num")
   .count()
@@ -243,7 +241,7 @@ The order of the arguments passed to the `cube()` function don't matter, so `cub
 
 `rollup` is a subset of `cube` that "computes hierarchical subtotals from left to right".
 
-```
+```scala
 df
   .rollup($"word", $"num")
   .count()
@@ -279,7 +277,7 @@ df
 
 Let's switch around the order of the arguments passed to `rollup` and view the difference in the results.
 
-```
+```scala
 df
   .rollup($"num", $"word")
   .count()

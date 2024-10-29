@@ -33,7 +33,7 @@ The `build.sc` file specifies the project dependencies, similar to the `build.sb
 
 Let's add a simple DataFrame transformation to the `foo/src/Example.scala` file:
 
-```
+```scala
 package foo
 
 import org.apache.spark.sql.DataFrame
@@ -51,7 +51,7 @@ object Example {
 
 Now let's add a test in `foo/test/src/ExampleTests.scala`:
 
-```
+```scala
 package foo
 
 import utest._
@@ -100,7 +100,7 @@ The `foo/src/Example.scala` needs access to Spark SQL and spark-daria. The `foo/
 
 Let's create a simple `build.sc` file that specifies the application and test dependencies.
 
-```
+```scala
 import mill._
 import mill.scalalib._
 import coursier.maven.MavenRepository
@@ -152,7 +152,7 @@ The fat JAR file contains all the Spark, Scala, spark-daria, and project classes
 
 Let's update the `build.sc` file, so the assembly JAR file does not contain any Spark SQL or Scala classes.
 
-```
+```scala
 import mill._
 import mill.scalalib._
 import mill.modules.Assembly

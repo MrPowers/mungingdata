@@ -19,7 +19,7 @@ This post outlines when null should be used, how native Spark functions handle n
 
 <iframe width="560" height="315" src="https://www.youtube.com/embed/zWhH44Tjjco" allowfullscreen></iframe>
 
-## What is null?
+## What is null?
 
 In SQL databases, "[null means that some value is unknown, missing, or irrelevant](https://www.itprotoday.com/sql-server/sql-design-reason-null)." The SQL concept of null is different than null in programming languages like JavaScript or Scala. Spark DataFrame best practices are aligned with SQL best practices, so DataFrames should use null for values that are unknown, missing or irrelevant.
 

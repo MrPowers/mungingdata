@@ -7,7 +7,18 @@ categories:
 
 # Compacting Files with Spark to Address the Small File Problem
 
-Spark runs slowly when it reads data from a lot of small files in S3. You can make your Spark code run faster by creating a job that compacts small files into larger files.
+Spark runs slowly when it reads data from a lot of small files in S3.  You can make your Spark code run faster by creating a job that compacts small files into larger files.
+
+Open table formats like Delta Lake, Hudi, and Iceberg have built-in file compaction utilities.  It's best to simply use the built-in functionality in an open table format.
+
+Here's what to do if you're stuck with a Parquet data lake that cannot be converted to an open table:
+
+  1. you can temporarily convert it to a Delta table
+  2. compact the small files
+  3. run a vacuum operation to clean up the old files
+  4. convert back to a Parquet data lake
+
+The rest of this post explains how to manually comact small files, but you should not do this anymore.  Using an open table format with reliable transactions is much better.
 
 The “small file problem” is especially problematic for data stores that are updated incrementally. The small problem get progressively worse if the incremental updates are more frequent and the longer incremental updates run between full refreshes.
 
@@ -30,7 +41,7 @@ Our folder has 4.6 GB of data.
 
 Let's use the `repartition()` method to shuffle the data and write it to another directory with five 0.92 GB files.
 
-```
+```scala
 val df = spark.read.parquet("s3_path_with_the_data")
 val repartitionedDF = df.repartition(5)
 repartitionedDF.write.parquet("another_s3_path")
@@ -44,7 +55,7 @@ Files F, G, and H are already perfectly sized, so it'll be more performant to si
 
 The small files contain 1.6 GB of data. We can read in the small files, write out 2 files with 0.8 GB of data each, and then delete all the small files. Let's take a look at some pseudocode.
 
-```
+```scala
 val df = spark.read.parquet("fileA, fileB, fileC, fileD, fileE")
 val newDF = df.repartition(2)
 newDF.write.parquet("s3_path_with_the_data")
@@ -76,7 +87,7 @@ Let's split up this CSV into 6 separate files and store them in the `nhl_game_sh
 
 Let's read game\_shiftsC, game\_shiftsD, game\_shiftsE, and game\_shiftsF into a DataFrame, shuffle the data to a single partition, and write out the data as a single file.
 
-```
+```scala
 import org.apache.spark.sql.SaveMode
 
 val smallFilesDF = spark.read

@@ -17,7 +17,7 @@ Let’s start by writing out a Delta Lake with PySpark and then reading it into 
 
 Use PySpark to write a Delta Lake that has three rows of data.
 
-```
+```python
 from pyspark.sql import SparkSession
 
 from delta import *
@@ -41,7 +41,7 @@ The resources/delta/1 directory contains Parquet files and a transaction log wit
 
 Read in the Delta table to a Dask DataFrame and print it to make sure it’s working properly.
 
-```
+```python
 import dask.dataframe as dd
 from deltalake import DeltaTable
 
@@ -163,7 +163,7 @@ Let’s look at the contents of the first entry in the transaction log (00000000
 
 ```
 
-The transaction log contains important information about the filesystem operations performed on the Delta Lake.  This log entry tells us the following:
+The transaction log contains important information about the filesystem operations performed on the Delta Lake. This log entry tells us the following:
 
 - Four Parquet files were added to the Delta Lake
 - The sizes of all these Parquet files (one is empty)
@@ -178,7 +178,7 @@ Let’s create another Delta Lake with two write transactions so we can demonstr
 
 Here’s the PySpark code with two different write transactions:
 
-```
+```python
 data = [("a", 1), ("b", 2), ("c", 3)]
 df = spark.createDataFrame(data, ["letter", "number"])
 df.write.format("delta").save("resources/delta/2")
@@ -199,7 +199,7 @@ The second transaction wrote this data (version 1 of the dataset):
 
 Read the entire dataset into a Dask DataFrame and print the contents.
 
-```
+```python
 dt = DeltaTable("resources/delta/2")
 filenames = ["resources/delta/2/" + f for f in dt.files()]
 
@@ -220,7 +220,7 @@ Delta will grab the latest version of the dataset by default.
 
 Now let’s time travel back to version 0 of the dataset and view the contents of the data before the second transaction was executed.
 
-```
+```python
 dt = DeltaTable("resources/delta/2")
 dt.load_version(0)
 filenames = ["resources/delta/2/" + f for f in dt.files()]
@@ -257,7 +257,7 @@ You’d like to append this data to the lake:
 
 Here’s how you can perform the initial write with PySpark.
 
-```
+```python
 data = [("a", 1), ("b", 2), ("c", 3)]
 df = spark.createDataFrame(data, ["letter", "number"])
 df.write.format("delta").save("resources/delta/3")
@@ -266,7 +266,7 @@ df.write.format("delta").save("resources/delta/3")
 
 Here’s how to append additional data with a different schema.
 
-```
+```python
 data = [("d", 4, "red"), ("e", 5, "blue"), ("f", 6, "green")]
 df = spark.createDataFrame(data, ["letter", "number", "color"])
 df.write.mode("append").format("delta").save("resources/delta/3")
@@ -275,7 +275,7 @@ df.write.mode("append").format("delta").save("resources/delta/3")
 
 Read in the Delta Lake to a PySpark DataFrame and make sure it can gracefully handle the schema mismatch.
 
-```
+```python
 df = spark.read.format("delta").option("mergeSchema", "true").load("resources/delta/3")
 df.show()
 

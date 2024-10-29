@@ -29,13 +29,13 @@ The Spark console creates a `sc` variable to access the `SparkContext` and a `sp
 
 You can use the `spark` variable to read a CSV file on your local machine into a DataFrame.
 
-```
+```scala
 val df = spark.read.csv("/Users/powers/Documents/tmp/data/silly_file.csv")
 ```
 
 You can use the `sc` variable to convert a sequence of `Row` objects into a RDD:
 
-```
+```scala
 import org.apache.spark.sql.Row
 
 sc.parallelize(Seq(Row(1, 2, 3)))

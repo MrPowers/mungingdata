@@ -19,7 +19,7 @@ Let's create a dataset, write it out to disk, and observe the files that are cre
 
 Create a Dask DataFrame with two partitions and then write it out to disk with `to_csv`:
 
-```
+```python
 pdf = pd.DataFrame(
     {"num1": [1, 2, 3, 4], "num2": [7, 8, 9, 10]},
 )
@@ -47,7 +47,7 @@ Here are the contents of `0.part`:
 
 Dask writes the index by default. You can set a flag, so the index isn't written:
 
-```
+```python
 df.to_csv("./tmp/csv_simple", index=False)
 ```
 
@@ -57,7 +57,7 @@ Now let's see how to customize the filename.
 
 Here's how to write the data out with a proper file extension:
 
-```
+```python
 df.to_csv("./tmp/csv_simple2/number-data-*.csv", index=False)
 ```
 
@@ -71,7 +71,7 @@ csv_simple2/
 
 You can even write the files out to a directory structure:
 
-```
+```python
 df.to_csv("./tmp/csv_simple3/batch-1/numbers-*.csv", index=False)
 ```
 
@@ -88,7 +88,7 @@ csv_simple3/
 
 Write out the files with gzip compression:
 
-```
+```python
 df.to_csv("./tmp/csv_compressed/hi-*.csv.gz", index=False, compression="gzip")
 ```
 
@@ -106,7 +106,7 @@ The `to_csv` writer clobbers existing files in the event of a name conflict. Be 
 
 Let's write some data to a CSV directory.
 
-```
+```python
 pdf = pd.DataFrame(
     {"num1": [1, 2, 3, 4], "num2": [7, 8, 9, 10]},
 )
@@ -124,7 +124,7 @@ csv_danger/
 
 Let's write another file to disk:
 
-```
+```python
 pdf = pd.DataFrame(
     {"firstname": ["cat"], "lastname": ["dog"]},
 )
@@ -157,7 +157,7 @@ You can use a UUID in the filename to make sure none of the underlying files wil
 
 Here's a chunk of code that'll write out two files in the first batch and then write out another file in the second batch:
 
-```
+```python
 import uuid
 
 pdf = pd.DataFrame(
@@ -202,7 +202,7 @@ There are other techniques for writing single files that are more appropriate in
 
 Dask even lets you supply a function argument to customize the number part of the output. Let's write two files as `10.part` and `12.part` instead of `0.part` and `1.part`.
 
-```
+```python
 my_fun = lambda x: str(x * 2 + 10)
 pdf = pd.DataFrame(
     {"num1": [1, 2, 3, 4], "num2": [7, 8, 9, 10]},

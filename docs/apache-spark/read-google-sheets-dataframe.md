@@ -33,7 +33,7 @@ As part of the process, you'll create a credentials file that you can store on y
 
 Add this line to your `build.sbt` file to import the library:
 
-```
+```scala
 libraryDependencies += "com.github.potix2" %% "spark-google-spreadsheets" % "0.6.3"
 ```
 
@@ -47,7 +47,7 @@ Further suppose that the tab name is `people_data`.
 
 Here's how to read the sheet into a DataFrame:
 
-```
+```scala
 val df = spark.sqlContext.read
   .format("com.github.potix2.spark.google.spreadsheets")
   .load("1d6aasdfqwergfds0P1bvmhTRasMbobegRE6Zap-Tkl3k/people_data")

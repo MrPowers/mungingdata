@@ -28,7 +28,7 @@ Suppose you have the following DataFrame:
 
 Calculate the 50th percentile:
 
-```
+```scala
 df
   .agg(expr("percentile(some_int, 0.5)").as("50_percentile"))
   .show()
@@ -46,7 +46,7 @@ Using `expr` to write SQL strings when using the Scala API isn't ideal. It's bet
 
 The [bebe](https://github.com/MrPowers/bebe) library fills in the Scala API gaps and provides easy access to functions like percentile.
 
-```
+```scala
 df
   .agg(bebe_percentile(col("some_int"), lit(0.5)).as("50_percentile"))
   .show()
@@ -66,13 +66,13 @@ df
 
 Create a DataFrame with the integers between 1 and 1,000.
 
-```
+```scala
 val df1 = (1 to 1000).toDF("some_int")
 ```
 
 Use the `approx_percentile` SQL method to calculate the 50th percentile:
 
-```
+```scala
 df1
   .agg(expr("approx_percentile(some_int, array(0.5))").as("approx_50_percentile"))
   .show()
@@ -90,7 +90,7 @@ This `expr` hack isn't ideal. We don't like including SQL strings in our Scala c
 
 Let's use the `bebe_approx_percentile` method instead.
 
-```
+```scala
 df1
   .select(bebe_approx_percentile(col("some_int"), array(lit(0.5))).as("approx_50_percentile"))
   .show()

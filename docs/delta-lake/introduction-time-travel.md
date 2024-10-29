@@ -31,7 +31,7 @@ mia,schmidt,germany
 
 Here's the code that'll read the CSV file into a DataFrame and write it out as a Delta data lake (all of the code in this post in stored in [this GitHub repo](https://github.com/MrPowers/yellow-taxi)).
 
-```
+```scala
 val path = new java.io.File("./src/main/resources/person_data/").getCanonicalPath
 val df = spark
   .read
@@ -113,7 +113,7 @@ Let's use some [New York City taxi data](https://data.cityofnewyork.us/Transport
 
 Here's the code that'll initially build the Delta data lake:
 
-```
+```scala
 val outputPath = new java.io.File("./tmp/incremental_delta_lake/").getCanonicalPath
 
 val p1 = new java.io.File("./src/main/resources/taxi_data/taxi1.csv").getCanonicalPath
@@ -141,7 +141,7 @@ incremental_delta_lake/
 
 Let's inspect the contents of the incremental Delta data lake.
 
-```
+```scala
 spark
   .read
   .format("delta")
@@ -164,7 +164,7 @@ The Delta lake contains 5 rows of data after the first load.
 
 Let's load another file into the Delta data lake with `SaveMode.Append`:
 
-```
+```scala
 val p2 = new java.io.File("./src/main/resources/taxi_data/taxi2.csv").getCanonicalPath
 val df2 = spark
   .read
@@ -192,7 +192,7 @@ incremental_delta_lake/
 
 The Delta lake contains 10 rows of data after the file is loaded:
 
-```
+```scala
 spark
   .read
   .format("delta")
@@ -220,7 +220,7 @@ spark
 
 Delta lets you time travel and explore the state of the data lake as of a given data load. Let's write a query to examine the incrementally updating Delta data lake after the first data load (ignoring the second data load).
 
-```
+```scala
 spark
   .read
   .format("delta")
@@ -246,14 +246,16 @@ Let's say you're training a machine learning model off of a data lake and want t
 
 You can easily access a full history of the Delta lake transaction log.
 
-```
+```scala
 import io.delta.tables._
 
 val lakePath = new java.io.File("./tmp/incremental_delta_lake/").getCanonicalPath
 val deltaTable = DeltaTable.forPath(spark, lakePath)
 val fullHistoryDF = deltaTable.history()
 fullHistoryDF.show()
+```
 
+```
 +-------+-------------------+------+--------+---------+--------------------+----+--------+---------+-----------+--------------+-------------+
 |version|          timestamp|userId|userName|operation| operationParameters| job|notebook|clusterId|readVersion|isolationLevel|isBlindAppend|
 +-------+-------------------+------+--------+---------+--------------------+----+--------+---------+-----------+--------------+-------------+
@@ -293,7 +295,7 @@ root
 
 We can also grab a Delta table version by timestamp.
 
-```
+```scala
 val lakePath = new java.io.File("./tmp/incremental_delta_lake/").getCanonicalPath
 spark
   .read
@@ -304,7 +306,7 @@ spark
 
 This is the same as grabbing version 1 of our Delta table (examine the transaction log history output to see why):
 
-```
+```scala
 val lakePath = new java.io.File("./tmp/incremental_delta_lake/").getCanonicalPath
 spark
   .read

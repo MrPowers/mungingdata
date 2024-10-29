@@ -19,7 +19,7 @@ Open up the [Spark console](https://mungingdata.com/apache-spark/using-the-conso
 
 Use the `lower` method defined in `org.apache.spark.sql.functions` to downcase the string "HI THERE".
 
-```
+```scala
 import org.apache.spark.sql.functions._
 
 lower(lit("HI THERE")).expr.eval() // hi there
@@ -35,14 +35,14 @@ Note that this code returns an Any value. It does not return a string.
 
 Let's use `array_contains` to see if `Array("this", "is", "cool")` contains the string "cool":
 
-```
+```scala
 val myArr = Array("this", "is", "cool")
 array_contains(lit(myArr), "cool").expr.eval() // true
 ```
 
 Let's check to make sure `myArr` doesn't contain the word "blah":
 
-```
+```scala
 array_contains(lit(myArr), "blah").expr.eval() // false
 ```
 
@@ -54,13 +54,13 @@ Column methods are defined in [org.apache.spark.sql.Column](http://spark.apache.
 
 Let's execute the `contains()` method defined in the Column class with expr and eval.
 
-```
+```scala
 lit("i like tacos").contains("tacos").expr.eval() // true
 ```
 
 Let's verify that "i like tacos" does not contain the word "beans".
 
-```
+```scala
 lit("i like tacos").contains("beans").expr.eval() // false
 ```
 
@@ -70,7 +70,7 @@ Creating a DataFrames requires more typing than expr / eval.
 
 Let's execute the `lower` function in a DataFrame:
 
-```
+```scala
 val df = Seq("HI THERE").toDF("col1")
 
 df.withColumn("lower_col1", lower($"col1")).show()
@@ -100,7 +100,7 @@ We don't normally want to return Any type values. Let's create some helper metho
 
 Let's define an `evalString()` method that'll take a Column argument and return a String.
 
-```
+```scala
 import org.apache.spark.sql.Column
 
 def evalString(col: Column) = {
@@ -110,7 +110,7 @@ def evalString(col: Column) = {
 
 This lets us do less typing:
 
-```
+```scala
 evalString(lower(lit("HI THERE"))) // hi there
 ```
 
@@ -120,7 +120,7 @@ A regular function isn't nearly hacky enough! Let's use an implicit class to mon
 
 Here's a code snippet from the [spark-daria](https://github.com/MrPowers/spark-daria) repo that extends the `Column` class with an `evalString()` method.
 
-```
+```scala
 object ColumnExt {
   implicit class ColumnMethods(col: Column) {
     def evalString(): String = {
@@ -132,7 +132,7 @@ object ColumnExt {
 
 Let's `cd` into the spark-daria project directory and run `sbt console` to fire up a console with all the spark-daria code loaded.
 
-```
+```scala
 import com.github.mrpowers.spark.daria.sql.ColumnExt._
 
 lower(lit("HI THERE")).evalString() // hi there
@@ -146,7 +146,7 @@ We typically need to create DataFrames to test column methods. With `evalString`
 
 Here's a `myLowerClean` Column function that removes all whitespace and downcases a string:
 
-```
+```scala
 def myLowerClean(col: Column): Column = {
   lower(regexp_replace(col, "\\s+", ""))
 }
@@ -154,7 +154,7 @@ def myLowerClean(col: Column): Column = {
 
 Here's how we can test `myLowerClean` with `evalString()`.
 
-```
+```scala
 it("runs tests with evalString") {
   assert(myLowerClean(lit("  BOO     ")).evalString() === "boo")
   assert(myLowerClean(lit(" HOO   ")).evalString() === "hoo")
@@ -163,7 +163,7 @@ it("runs tests with evalString") {
 
 This test is slower and more verbose when the [spark-fast-tests](https://github.com/MrPowers/spark-fast-tests/) `assertColumnEquality` method is used.
 
-```
+```scala
 it("assertColumnEquality approach") {
   val df = spark.createDF(
     List(
@@ -193,7 +193,7 @@ expr / eval can be a powerful testing technique, but users need to know the limi
 
 You may have noticed that `.expr` doesn't have parens and `eval()` does have parens.
 
-```
+```scala
 lower(lit("HI THERE")).expr.eval()
 ```
 

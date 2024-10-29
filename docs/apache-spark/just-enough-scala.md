@@ -19,7 +19,7 @@ This section describes how to write vanilla Scala functions and [Spark SQL funct
 
 Here is a Scala function that adds two numbers:
 
-```
+```scala
 def sum(num1: Int, num2: Int): Int = {
   num1 + num2
 }
@@ -33,7 +33,7 @@ sum(10, 5) // returns 15
 
 Let's write a [Spark SQL function](https://www.mungingdata.com/apache-spark/spark-sql-functions) that adds two numbers together:
 
-```
+```scala
 import org.apache.spark.sql.Column
 
 def sumColumns(num1: Column, num2: Column): Column = {
@@ -43,7 +43,7 @@ def sumColumns(num1: Column, num2: Column): Column = {
 
 Let's create a DataFrame in [the Spark shell](https://www.mungingdata.com/apache-spark/using-the-console) and run the `sumColumns()` function.
 
-```
+```scala
 val numbersDF = Seq(
   (10, 4),
   (3, 4),
@@ -74,7 +74,7 @@ Spark SQL functions take `org.apache.spark.sql.Column` arguments whereas vanilla
 
 Scala allows for functions to take multiple parameter lists, which is formally known as currying. This section explains how to use currying with vanilla Scala functions and why currying is important for Spark programmers.
 
-```
+```scala
 def myConcat(word1: String)(word2: String): String = {
   word1 + word2
 }
@@ -92,7 +92,7 @@ Spark has a `Dataset#transform()` method that makes it easy to [chain DataFrame 
 
 Here's an example of a DataFrame transformation function:
 
-```
+```scala
 import org.apache.spark.sql.DataFrame
 
 def withCat(name: String)(df: DataFrame): DataFrame = {
@@ -104,7 +104,7 @@ DataFrame transformation functions can take an arbitrary number of arguments in 
 
 Let's create a DataFrame in [the Spark shell](https://www.mungingdata.com/apache-spark/using-the-console) and run the `withCat()` function.
 
-```
+```scala
 val stuffDF = Seq(
   ("chair"),
   ("hair"),
@@ -134,7 +134,7 @@ Spark functions can be stored in objects.
 
 Let's create a `SomethingWeird` object that defines a vanilla Scala function, a Spark SQL function, and a custom DataFrame transformation.
 
-```
+```scala
 import org.apache.spark.sql.functions._
 
 object SomethingWeird {
@@ -159,7 +159,7 @@ object SomethingWeird {
 
 Let's create a DataFrame in the Spark shell and run the `trimUpper()` and `withScary()` functions.
 
-```
+```scala
 val wordsDF = Seq(
   ("niCE"),
   ("  CaR"),
@@ -188,7 +188,7 @@ Objects are useful for grouping related Spark functions.
 
 Traits can be mixed into objects to add commonly used methods or values. We can define a `SparkSessionWrapper` `trait` that defines a `spark` variable to give objects easy access to the `SparkSession` object.
 
-```
+```scala
 import org.apache.spark.sql.SparkSession
 
 trait SparkSessionWrapper extends Serializable {
@@ -204,7 +204,7 @@ The `Serializable` trait is mixed into the `SparkSessionWrapper` trait.
 
 Let's create a `SpecialDataLake` object that mixes in the `SparkSessionWrapper` trait to provide easy access to a data lake.
 
-```
+```scala
 object SpecialDataLake extends SparkSessionWrapper {
 
   def dataLake(): DataFrame = {
@@ -224,7 +224,7 @@ The Spark project used the `org.apache.spark` namespace. [spark-daria](https://g
 
 Here an example of code that's defined in a package in `spark-daria`:
 
-```
+```scala
 package com.github.mrpowers.spark.daria.sql
 
 import org.apache.spark.sql.Column
@@ -247,7 +247,7 @@ Implicit classes can be used to extend Spark core classes with additional method
 
 Let's add a `lower()` method to the `Column` class that converts all the strings in a column to lower case.
 
-```
+```scala
 package com.github.mrpowers.spark.daria.sql
 
 import org.apache.spark.sql.Column

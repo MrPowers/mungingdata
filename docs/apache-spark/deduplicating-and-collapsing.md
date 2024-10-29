@@ -15,7 +15,7 @@ Make sure to read [Writing Beautiful Spark Code](https://leanpub.com/beautiful-
 
 Let's create a DataFrame with `letter1`, `letter2`, and `number1` columns.
 
-```
+```scala
 val df = Seq(
   ("a", "b", 1),
   ("a", "b", 2),
@@ -61,7 +61,7 @@ The `dropDuplicates` method chooses one record from the duplicates and drops the
 
 We can use the [spark-daria](https://github.com/MrPowers/spark-daria/) `killDuplicates()` method to completely remove all duplicates from a DataFrame.
 
-```
+```scala
 import com.github.mrpowers.spark.daria.sql.DataFrameExt._
 
 df.killDuplicates("letter1", "letter2").show()
@@ -82,7 +82,7 @@ Killing duplicates is similar to dropping duplicates, just a little more aggress
 
 Let's use the `collect_list()` method to eliminate all the rows with duplicate `letter1` and `letter2` rows in the DataFrame and collect all the `number1` entries as a list.
 
-```
+```scala
 df
   .groupBy("letter1", "letter2")
   .agg(collect_list("number1") as "number1s")
@@ -101,7 +101,7 @@ df
 
 Let's create a more realitic example of credit card transactions and use `collect_set()` to aggregate unique records and eliminate pure duplicates.
 
-```
+```scala
 val ccTransactionsDF = Seq(
   ("123", "20180102", 10.49),
   ("123", "20180102", 10.49),
@@ -127,7 +127,7 @@ ccTransactionsDF.show()
 
 Let's eliminate the duplicates with `collect_set()`.
 
-```
+```scala
 ccTransactionsDF
   .groupBy("person_id", "transaction_date")
   .agg(collect_set("amount") as "amounts")
@@ -150,7 +150,7 @@ ccTransactionsDF
 
 Let's examine a DataFrame of with data on hockey players and how many goals they've scored in each game.
 
-```
+```scala
 val playersDF = Seq(
   ("123", 11, "20180102", 0),
   ("123", 11, "20180102", 0),
@@ -176,7 +176,7 @@ playersDF.show()
 
 Let's create a `StructType` column that encapsulates all the columns in the DataFrame and then collapse all records on the `player_id` column to create a player datamart.
 
-```
+```scala
 playersDF
   .withColumn("as_struct", struct("game_id", "game_date", "goals_scored"))
   .groupBy("player_id")

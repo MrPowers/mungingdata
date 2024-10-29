@@ -13,7 +13,7 @@ Spark codebases can easily become a collection of order dependent custom transfo
 
 Suppose we have a DataFrame with a `city` column. We have one transformation to add a `country` column to the DataFrame and another transformation to add a `hemisphere` column to the DataFrame (to indicate if the country is in the Northern Hemisphere or Southern Hemisphere).
 
-```
+```scala
 def withCountry()(df: DataFrame): DataFrame = {
   df.withColumn(
     "country",
@@ -35,7 +35,7 @@ def withHemisphere()(df: DataFrame): DataFrame = {
 
 Let's create a DataFrame with cities and run our transformations.
 
-```
+```scala
 val df = spark.createDF(
   List(
     ("Calgary"),
@@ -66,7 +66,7 @@ This DataFrame is printed to the console:
 
 The `withCountry()` and `withHemisphere()` transformations are order dependent because `withCountry()` must be run before `withHemisphere()`. If `withHemisphere()` is run first, the code will error out.
 
-```
+```scala
 df
   .transform(withHemisphere())
   .transform(withCountry())
@@ -75,19 +75,17 @@ df
 
 Here is the error message:
 
-\[info\]
-
-org.apache.spark.sql.AnalysisException: cannot resolve '\`country\`' given input columns: \[city\];;
-
-\[info\]
+```
+org.apache.spark.sql.AnalysisException: cannot resolve 'country' given input columns: [city];;
 
 'Project \[city#1, CASE WHEN ('country = Canada) THEN Northern Hemisphere WHEN ('country = Argentina) THEN Southern Hemisphere WHEN ('country = South Africa) THEN Southern Hemisphere END AS hemisphere#4\]
+```
 
 ## Intelligently adding dependencies based on DataFrame columns
 
 Let's write a `withHemisphereRefactored()` method that intelligently runs the `withCountry()` method if the underlying DataFrame does not contain a `country` column.
 
-```
+```scala
 def withHemisphereRefactored()(df: DataFrame): DataFrame = {
   if (df.schema.fieldNames.contains("country")) {
     df.withColumn(
@@ -111,7 +109,7 @@ def withHemisphereRefactored()(df: DataFrame): DataFrame = {
 
 We can run `withHemisphereRefactored()` directly on a DataFrame that only contains a `city` column and it will now work:
 
-```
+```scala
 val df = spark.createDF(
   List(
     ("Calgary"),
@@ -145,7 +143,7 @@ END AS hemisphere#26]
 
 `withHemisphereRefactored()` does not run the `withCountry()` code if the DataFrame already contains a `country` column. We don't want to write code that unnecessarily executes functions because that would slow down our codebase. Let's verify this by running `withHemisphereRefactored()` on a DataFrame with a `country` column and inspecting the physical plan.
 
-```
+```scala
 val df = spark.createDF(
   List(
     ("Canada"),
@@ -173,7 +171,7 @@ df
 
 Let's inspect the physical plan to confirm that `withHemisphereRefactored()` is not unnecessarily running the `withCountry()` related logic when the DataFrame already contains a `country` column.
 
-```
+```scala
 df
   .transform(withHemisphereRefactored())
   .explain()
@@ -190,7 +188,7 @@ END AS hemisphere#48]
 
 Let's leverage the [spark-daria](https://github.com/MrPowers/spark-daria) `containsColumn()` DataFrame extension and abstract the transformation logic to a subfunction to express this code more elegantly:
 
-```
+```scala
 import com.github.mrpowers.spark.daria.sql.DataFrameExt._
 
 def withHemisphereElegant()(df: DataFrame): DataFrame = {
@@ -225,7 +223,7 @@ We can leverage the [spark-daria](https://github.com/MrPowers/spark-daria) `Cust
 
 Here's the `CustomTransform` case class definition:
 
-```
+```scala
 case class CustomTransform(
   transform: (DataFrame => DataFrame),
   requiredColumns: Seq[String] = Seq.empty[String],
@@ -236,7 +234,7 @@ case class CustomTransform(
 
 Let's define `countryCT` and `hemisphereCT` objects:
 
-```
+```scala
 val countryCT = new CustomTransform(
   transform = withCountry(),
   requiredColumns = Seq("city"),
@@ -254,7 +252,7 @@ We can immediately identify how `countryCT` and `hemisphereCT` are related - the
 
 Custom transformation objects can be executed by a `trans()` method that's also defined in [spark-daria](https://github.com/MrPowers/spark-daria).
 
-```
+```scala
 import com.github.mrpowers.spark.daria.sql.DataFrameExt._
 
 val df = spark.createDF(
@@ -285,7 +283,7 @@ df
 
 The [spark-daria](https://github.com/MrPowers/spark-daria) `composeTrans()` method runs a list of CustomTransforms intelligently - the DataFrame transformation is only run if the columns that will be added by the transformation are missing from the DataFrame.
 
-```
+```scala
 df.composeTrans(List(countryCT, hemisphereCT))
 ```
 

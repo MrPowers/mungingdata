@@ -9,8 +9,7 @@ categories:
 
 This post shows you how to set up conda on your machine and explains why it’s the best way to manage software environments for Dask projects.
 
-[This blog post](https://mitelman.engineering/blog/python-best-practice/automating-python-best-practices-for-a-new-project/) says that Python projects should be set up with pyenv and Poetry in 2021.  The arguments apply to web based Python projects, but not data science projects that often leverage low level dependencies like cuda and xgboost that are notoriously hard to install.  Conda is the best way to manage complicated data science software environments.
-
+ 
 This post will cover the following topics:
 
 1. Install Miniconda
@@ -19,13 +18,13 @@ This post will cover the following topics:
 4. Useful conda commands
 5. Difference between conda and conda-forge
 
-Most data scientists have a hard time managing software environments and debugging issues.  They absolutely hate the trial and error process that’s required to get a local environment properly set up.
+Most data scientists have a hard time managing software environments and debugging issues.  They absolutely hate the trial and error process that’s required to get a local environment properly set up.
 
 Pay attention to this post closely so you can better understand the process and train yourself how to effectively debug environment issues.
 
 ## Install Miniconda
 
-Go to [the conda page](https://docs.conda.io/en/latest/miniconda.html) to download the installer that suits your machine.  There are a plethora of options on the page.  It’s easiest to pick the Latest Miniconda Installer Link for your operating system.
+Go to [the conda page](https://docs.conda.io/en/latest/miniconda.html) to download the installer that suits your machine.  There are a plethora of options on the page.  It’s easiest to pick the Latest Miniconda Installer Link for your operating system.
 
 I am using a Mac, so I use the Miniconda3 MaxOSX 64-bit pkg link.
 
@@ -33,7 +32,7 @@ Open the downloaded package file and it’ll walk you through the installation p
 
 ![](https://lh6.googleusercontent.com/XoaUG8eGKBCvkNG938fdau6GFkC57diKKkzalEBz6sbm6INmt7XnJOGU5OANEjfrDGQoe9Yz_Y_s3M1KVYplgf2xWUsUr3W3Qaw0r7nw93OqEuDNlE2HI6fWUBhWF94nTpFGbh2b)
 
-Close out your Terminal window, reopen it, and you should be ready to run conda commands.  Make sure the `conda version` runs in your Terminal to verify the installation completed successfully.
+Close out your Terminal window, reopen it, and you should be ready to run conda commands.  Make sure the `conda version` runs in your Terminal to verify the installation completed successfully.
 
 ## Install dependencies in base
 
@@ -91,7 +90,7 @@ Dask depends on other libraries, so when you install Dask conda will install bot
 
 ## Difference between conda and conda-forge
 
-Conda hosts 720+ official packages.  Community contributed packages are stored in conda-forge.
+Conda hosts 720+ official packages.  Community contributed packages are stored in conda-forge.
 
 conda-forge is referred to as a “channel”.
 
@@ -103,9 +102,9 @@ The `-c conda-forge` part of the command is instructing conda to fetch the Dask 
 
 You can specify a list of dependencies in a YAML file and run a command to create a software environment with all of those dependencies (and their transitive dependencies).
 
-This workflow is more complicated, but easier to maintain in the long run and more reliable.  It also allows your teammates to easily recreate your environment, which is key for collaboration.
+This workflow is more complicated, but easier to maintain in the long run and more reliable.  It also allows your teammates to easily recreate your environment, which is key for collaboration.
 
-You’re likely to have different projects with different sets of dependencies on your computer.  Multiple environments allow you to switch the dependencies for the different projects you’re working on.
+You’re likely to have different projects with different sets of dependencies on your computer.  Multiple environments allow you to switch the dependencies for the different projects you’re working on.
 
 Take a look at the following YAML file with conda dependencies:
 
@@ -137,7 +136,7 @@ We can run a single command to create the standard-coiled environment specified 
 You can activate this environment and use all the software you just installed by running `conda activate standard-coiled`.
 
   
-This is a completely different environment than the `base` environment.  You can switch back and forth between the two environments to easily switch between the different sets of dependencies.
+This is a completely different environment than the `base` environment.  You can switch back and forth between the two environments to easily switch between the different sets of dependencies.
 
 ## Useful conda commands
 
@@ -156,7 +155,7 @@ Change back to the base environment with `conda activate base`.
 
 Delete the standard-coiled environment with `conda env remove --name standard-coiled`.
 
-If an environment gets in a weird state, you can easily delete it and recreate it from the YAML file.  Easily recreating environments is a big advantage of creating environments from YAML files.  YAML files can also be referred to in the future as a reminder of how the environment was originally created.
+If an environment gets in a weird state, you can easily delete it and recreate it from the YAML file. Easily recreating environments is a big advantage of creating environments from YAML files. YAML files can also be referred to in the future as a reminder of how the environment was originally created.
 
 ## Dependency hell
 
@@ -164,19 +163,19 @@ It takes a while for conda to create an environment because it needs to perform 
 
 Dependency resolution is when conda figures out the set of dependency versions that’ll satisfy the version requirement of each dependency / transitive dependency for the environment.
 
-Dependency hell is an uncomfortable situation when the dependencies cannot be resolved.  Luckily conda is a mature technology and is good at resolving the dependencies whenever possible, thus saving you from dependency hell.
+Dependency hell is an uncomfortable situation when the dependencies cannot be resolved. Luckily conda is a mature technology and is good at resolving the dependencies whenever possible, thus saving you from dependency hell.
 
-There are times when conda won’t be able to resolve a build.  That’s when you should try relaxing version constraints or installing all packages at the same time.  Conda has a harder time correctly working out the dependencies when they’re installed one-by-one on the command line.  It’s best to put all the dependencies in a YAML file and install them all at once, so conda can perform the full dependency resolution process.
+There are times when conda won’t be able to resolve a build. That’s when you should try relaxing version constraints or installing all packages at the same time. Conda has a harder time correctly working out the dependencies when they’re installed one-by-one on the command line. It’s best to put all the dependencies in a YAML file and install them all at once, so conda can perform the full dependency resolution process.
 
 ## Apple M1 Chip gotcha
 
-If you are using an Apple computer with a M1 chip, you may want to try mambaforge instead of Miniconda.  See this blog post on using Conda with Mac M1 machines for more details.
+If you are using an Apple computer with a M1 chip, you may want to try mambaforge instead of Miniconda. See this blog post on using Conda with Mac M1 machines for more details.
 
   
 Type in `conda info` and look at the results.
 
 ```
-     active environment : base
+active environment : base
     active env location : /Users/powers/opt/miniconda3
             shell level : 1
        user config file : /Users/powers/.condarc
@@ -213,8 +212,8 @@ Conda is a great package manager for Python data science because it can handle t
 
 Data science libraries like xgboost contain a lot of C++ code and that’s why they’re hard for package managers to handle properly.
 
-Python has other package managers, like Poetry, that work fine for simple Python builds that rely on pure Python libraries.  Data scientists don’t have the luxury of working with pure Python libraries, so Poetry isn’t a good option for data scientists.  Conda is the best option for Python data workflows.
+Python has other package managers, like Poetry, that work fine for simple Python builds that rely on pure Python libraries. Data scientists don’t have the luxury of working with pure Python libraries, so Poetry isn’t a good option for data scientists. Conda is the best option for Python data workflows.
 
-This post taught you how to install conda, run basic commands, and manage multiple software environments.  Keep practicing till you’ve memorized all the commands in this post and conda comes naturally for you.  Installing software is a common data science pain point and it’s worth investing time studying the basics, so you’re able to debug complex installation issues.
+This post taught you how to install conda, run basic commands, and manage multiple software environments. Keep practicing till you’ve memorized all the commands in this post and conda comes naturally for you. Installing software is a common data science pain point and it’s worth investing time studying the basics, so you’re able to debug complex installation issues.
 
 Now is a good time to read the post on the [Dask JupyterLab workflow](https://coiled.io/blog/dask-jupyterlab-workflow/) that’ll teach you a great conda-powered Dask development workflow.

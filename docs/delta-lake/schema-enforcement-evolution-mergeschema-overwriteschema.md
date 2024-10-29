@@ -19,7 +19,7 @@ Let's create a Parquet with `num1` and `num2` columns:
 
 We'll use the [spark-daria](https://github.com/MrPowers/spark-daria/) createDF method to build DataFrames for these examples.
 
-```
+```scala
 val df = spark.createDF(
   List(
     (1, 2),
@@ -37,7 +37,7 @@ df.write.parquet(parquetPath)
 
 Let's view the contents of the Parquet lake.
 
-```
+```scala
 spark.read.parquet(parquetPath).show()
 
 +----+----+
@@ -50,7 +50,7 @@ spark.read.parquet(parquetPath).show()
 
 Let's create another Parquet file with only a `num2` column and append it to the same folder.
 
-```
+```scala
 val df2 = spark.createDF(
   List(
     88,
@@ -65,7 +65,7 @@ df2.write.mode("append").parquet(parquetPath)
 
 Let's read the Parquet lake into a DataFrame and view the output that's undesirable.
 
-```
+```scala
 spark.read.parquet(parquetPath).show()
 
 +----+
@@ -86,7 +86,7 @@ This isn't ideal. Let's see if Delta provides a better result.
 
 Let's create the same `df` as earlier and write out a Delta data lake.
 
-```
+```scala
 val df = spark.createDF(
   List(
     (1, 2),
@@ -104,7 +104,7 @@ df.write.format("delta").save(deltaPath)
 
 The Delta table starts with two columns, as expected:
 
-```
+```scala
 spark.read.format("delta").load(deltaPath).show()
 
 +----+----+
@@ -117,7 +117,7 @@ spark.read.format("delta").load(deltaPath).show()
 
 Let's append a file with only the `num1` column to the Delta lake and see how Delta handles the schema mismatch.
 
-```
+```scala
 val df2 = spark.createDF(
   List(
     88,
@@ -132,7 +132,7 @@ df2.write.format("delta").mode("append").save(deltaPath)
 
 Delta gracefully fills in missing column values with `nulls`.
 
-```
+```scala
 spark.read.format("delta").load(deltaPath).show()
 
 +----+----+
@@ -147,7 +147,7 @@ spark.read.format("delta").load(deltaPath).show()
 
 Let's append a DataFrame that only has a `num2` column to make sure Delta also handles that case gracefully.
 
-```
+```scala
 val df3 = spark.createDF(
   List(
     101,
@@ -162,7 +162,7 @@ df3.write.format("delta").mode("append").save(deltaPath)
 
 We can see Delta gracefully populates the `num2` values and nulls out the `num1` values.
 
-```
+```scala
 spark.read.format("delta").load(deltaPath).show()
 
 +----+----+
@@ -179,7 +179,7 @@ spark.read.format("delta").load(deltaPath).show()
 
 Let's see if Delta can handle a DataFrame with `num1`, `num2`, and `num3` columns.
 
-```
+```scala
 val df4 = spark.createDF(
   List(
     (7, 7, 7),
@@ -220,7 +220,7 @@ We can fix this by setting `mergeSchema` to `true`, as indicated by the error me
 
 The codes works perfectly once the option is set:
 
-```
+```scala
 df4
   .write
   .format("delta")
@@ -248,7 +248,7 @@ spark.read.format("delta").load(deltaPath).show()
 
 `mergeSchema` will work when you append a file with a completely different schema, but it probably won't give you the result you're looking for.
 
-```
+```scala
 val df5 = spark.createDF(
   List(
     ("nice", "person"),
@@ -290,7 +290,7 @@ spark.read.format("delta").load(deltaPath).show()
 
 Let's see how `mergeSchema` behaves when using a completely different schema and setting the save mode to overwrite.
 
-```
+```scala
 df5
   .write
   .format("delta")
@@ -314,7 +314,7 @@ spark.read.format("delta").load(deltaPath).show()
 
 Setting `overwriteSchema` to true will wipe out the old schema and let you create a completely new table.
 
-```
+```scala
 df5
   .write
   .format("delta")

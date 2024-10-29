@@ -17,7 +17,7 @@ This blog post will also show how to run Spark ETL processes from the Slack comm
 
 Here’s how to speak a “You are amazing” message in the #general channel:
 
-```
+```scala
 import com.github.mrpowers.spark.slack.Notifier
 
 val webhookUrl = "https://hooks.slack.com/services/..."
@@ -29,7 +29,7 @@ notifier.speak("You are amazing", "general", ":wink:", "Frank")
 
 Here’s how to speak a count of all the records in a DataFrame (df) to a Slack channel.
 
-```
+```scala
 val notifier = new Notifier()
 val formatter = java.text.NumberFormat.getIntegerInstance
 val message = s"Total Count: ${formatter.format(df.count)}"
@@ -69,7 +69,7 @@ response_url=https://hooks.slack.com/commands/1234/5678
 
 Here’s an example of code that will parse the text and run different Databricks notebooks based on the Slack Slash command arguments.
 
-```
+```scala
 import com.github.mrpowers.spark.slack.slash_commands.SlashParser
 import com.github.mrpowers.spark.slack.Notifier
 

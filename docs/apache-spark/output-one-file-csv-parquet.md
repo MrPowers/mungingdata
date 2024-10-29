@@ -15,7 +15,7 @@ Writing out a single file with Spark isn't typical. Spark is designed to write o
 
 Let's create a DataFrame, use `repartition(3)` to create three memory partitions, and then write out the file to disk.
 
-```
+```scala
 val df = Seq("one", "two", "three").toDF("num")
 df
   .repartition(3)
@@ -40,7 +40,7 @@ Spark writes out one file per memory partition. We used `repartition(3)` to crea
 
 We can use `repartition(1)` write out a single file.
 
-```
+```scala
 df
   .repartition(1)
   .write.csv(sys.env("HOME")+ "/Documents/tmp/one-file-repartition")
@@ -64,7 +64,7 @@ This solution isn't sufficient when you want to write data to a file with a spec
 
 We can also use `coalesce(1)` to write out a single file.
 
-```
+```scala
 df
   .coalesce(1)
   .write.csv(sys.env("HOME")+ "/Documents/tmp/one-file-coalesce")
@@ -88,7 +88,7 @@ You can use the `DariaWriters.writeSingleFile` function defined in [spark-daria]
 
 Here's the code that writes out the contents of a DataFrame to the `~/Documents/better/mydata.csv` file.
 
-```
+```scala
 import com.github.mrpowers.spark.daria.sql.DariaWriters
 
 DariaWriters.writeSingleFile(

@@ -19,7 +19,7 @@ Let's create a Delta data lake with 1,000 files and then compact the folder to o
 
 Here's the code to create the Delta lake with 1,000 files:
 
-```
+```scala
 df
   .repartition(1000)
   .write
@@ -45,7 +45,7 @@ The `_delta_log/00000000000000000000.json` file will contain 1,000 rows like thi
 
 Let's compact the data to only contain 10 files.
 
-```
+```scala
 val df = spark
   .read
   .format("delta")
@@ -117,7 +117,7 @@ Suppose our data is stored in the `/some/path/data` folder and is partitioned by
 
 Here's how we can compact the `2019` partition.
 
-```
+```scala
 val table = "/some/path/data"
 val partition = "year = '2019'"
 val numFiles = 1

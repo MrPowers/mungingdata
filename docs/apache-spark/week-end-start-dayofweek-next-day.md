@@ -17,7 +17,7 @@ The Spark datetime functions aren't the best, but they're better than using UDFs
 
 Use the `beginningOfWeek` and `endOfWeek` functions defined in [spark-daria](https://github.com/MrPowers/spark-daria) to easily calculate these values.
 
-```
+```scala
 import com.github.mrpowers.spark.daria.sql.functions._
 
 df
@@ -93,7 +93,7 @@ Notice that Spark considers Sunday to be the first day of the week and Saturday 
 
 The `dayofweek` function will come in handy when calculating the end of the week.
 
-## next\_day
+## `next_day`
 
 Let's look at another DataFrame with a couple of dates.
 
@@ -108,7 +108,7 @@ Let's look at another DataFrame with a couple of dates.
 
 Use the `next_day` function to calculate the next Friday:
 
-```
+```scala
 sourceDF
   .withColumn("next_friday", next_day(col("some_date"), "Friday"))
   .show()
@@ -133,7 +133,7 @@ Take a look at the calendar to see how the `next_day` function is working:
 
 Let's create an `endOfWeek` function that returns the last day of the week. Saturday should be the default week end date, but the function should take an optional parameter to allow for user customization.
 
-```
+```scala
 def dayOfWeekStr(col: Column): Column = {
   when(col.isNull, null)
     .when(col === lit(1), lit("Sun"))
@@ -185,7 +185,7 @@ The last day of the week is Saturday by default.
 
 Now that we have an `endOfWeek` function, it's easy to calculate the beginning of the week:
 
-```
+```scala
 def beginningOfWeek(col: Column, lastDayOfWeek: String = "Sat"): Column = {
   val endOfWeek = endOfWeek(col, lastDayOfWeek)
   date_sub(endOfWeek, 6)
@@ -196,7 +196,7 @@ You take the end of the week and subtract six days to calculate the beginning of
 
 Let's use the same dataset as above and calculate the beginning of the week, assuming the week end on Wednesday (so the weeks start on Thursday).
 
-```
+```scala
 df
   .withColumn("beginning_of_week", beginningOfWeek(col("some_date"), "Wed"))
   .show()
@@ -279,7 +279,7 @@ Spark has a `date_add` function that can be used to calculate the next day, but 
 
 Here's the code for calculating the next weekday:
 
-```
+```scala
 def nextWeekDay(col: Column): Column = {
   val d = dayofweek(col)
   val friday = lit(6)

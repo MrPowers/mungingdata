@@ -45,7 +45,7 @@ Scala dependencies should be added to your `build.sbt` file with the `%%` operat
 
 You should add dependencies to your project like this:
 
-```
+```scala
 libraryDependencies += "com.github.mrpowers" %% "spark-daria" % "0.38.2"
 ```
 
@@ -55,7 +55,7 @@ Make sure all of your Scala dependencies use the `%%` operator.
 
 Java dependencies don't need to use the `%%` operator because they don't need to be cross compiled for different versions of Scala. You can add a Java dependency like this an it'll cross compile fine with different Scala versions:
 
-```
+```scala
 libraryDependencies += "joda-time" % "joda-time" % "2.10.8"
 ```
 
@@ -67,7 +67,7 @@ For Spark 2.0 - Spark 2.3, you could only use Scala 2.11.
 
 Once you upgrade your project to Spark 2.4.x, add the following line to your `build.sbt` file:
 
-```
+```scala
 crossScalaVersions := Seq("2.11.12", "2.12.12")
 ```
 
@@ -99,7 +99,7 @@ Suppose you have the following DataFrame:
 
 Let's run a spark-daria transformations to snake case all of the DataFrame columns:
 
-```
+```scala
 import com.github.mrpowers.spark.daria.sql.transformations._
 df.transform(snakeCaseColumns()).show()
 ```
@@ -142,7 +142,7 @@ When you add a dependency, make sure it's actively maintained and cross compiled
 
 When you're considering adding a library to your project, make sure to evaluate all the transitive dependencies. Here are some dependencies from [spark-testing-base](https://github.com/holdenk/spark-testing-base) for example:
 
-```
+```scala
 lazy val commonDependencies = Seq(
   "org.scalatest" %% "scalatest" % "3.0.5",
   "io.github.nicolasstucki" %% "multisets" % "0.4",

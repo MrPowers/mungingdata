@@ -21,7 +21,7 @@ Here's how to extract all rows with an age less than 18 from a data lake.
 
 We'll use the [spark-daria](https://github.com/MrPowers/spark-daria) `EtlDefinition` object to wire up the extract, [as described in this blog post](https://medium.com/@mrpowers/how-to-write-spark-etl-processes-df01b0c1bec9).
 
-```
+```scala
 val lakeDF = spark.read.parquet("s3a://some-bucket/my-data-lake")
 
 def filterMinors()(df: DataFrame): DataFrame = {
@@ -62,7 +62,7 @@ Spark Structured Streaming coupled with `Trigger.Once` can be used to create ext
 
 The Structured Streaming API is similar to the batch API, so we only need to make minor refactorings to our code.
 
-```
+```scala
 val schema = StructType(
   List(
     StructField("first_name", StringType, true),
@@ -114,7 +114,7 @@ The initial run of an incremental extract needs to be run on a big cluster (init
 
 Whenever the transformation logic is modified, you'll need to do a full refresh of the incremental extract. For example, if the transformation is changed from an age of 18 to 16, then a full refresh is required.
 
-```
+```scala
 def filterMinors()(df: DataFrame): DataFrame = {
   df
     .filter(col(age) < 16)

@@ -15,7 +15,7 @@ This blog post will demonstrate that it's easy to follow the AWS Athena tuning t
 
 We can convert a CSV data lake to a Parquet data lake with AWS Glue or we can write a couple lines of Spark code.
 
-```
+```scala
 val df = spark.read.csv("/mnt/my-bucket/csv-lake/")
 spark.write.parquet("/mnt/my-bucket/parquet-lake/")
 ```
@@ -30,7 +30,7 @@ Spark allows for incremental updates with Structured Streaming and Trigger.Once.
 
 Here's example code for an incremental update job.
 
-```
+```scala
 import org.apache.spark.sql.streaming.Trigger
 
 val sDF = spark.readStream.format("csv").load("/mnt/my-bucket/csv-lake/")
@@ -57,7 +57,7 @@ Read [this blog post for more background on partitioning with Spark](https://www
 
 Let's write some code that converts a standard Parquet data lake into a Parquet data lake that's partitioned in disc on the `country` column.
 
-```
+```scala
 val df = spark.read.parquet("/mnt/my-bucket/parquet-lake/")
 
 df
@@ -105,7 +105,7 @@ Suppose we have this DataFrame (`df`):
 
 Run this [spark-daria](https://github.com/MrPowers/spark-daria) code to generate the Athena `CREATE TABLE` query.
 
-```
+```scala
 import com.github.mrpowers.spark.daria.sql.DataFrameHelpers
 
 DataFrameHelpers.printAthenaCreateTable(
@@ -115,7 +115,7 @@ DataFrameHelpers.printAthenaCreateTable(
 )
 ```
 
-```
+```sql
 CREATE TABLE IF NOT EXISTS my_cool_athena_table(
   team STRING,
   sport STRING,

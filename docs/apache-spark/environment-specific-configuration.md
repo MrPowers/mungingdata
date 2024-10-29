@@ -19,7 +19,7 @@ This episode will demonstrate how to add environment config to your projects and
 
 Let's create a `Config` object with one `Map[String, String]` with test configuration and another `Map[String, String]` with production config.
 
-```
+```scala
 package com.github.mrpowers.spark.spec.sql
 
 object Config {
@@ -71,7 +71,7 @@ res0: String = whatever
 
 Here is how the `Config` object can be used to fetch a file in your GitHub repository in the test environment and also fetch a file from S3 in the production environment.
 
-```
+```scala
 val training = spark
   .read
   .format("libsvm")
@@ -84,7 +84,7 @@ This solution is elegant and does not clutter our application code with environm
 
 Here is an example of how you should not add environment paths to your code.
 
-```
+```scala
 var environment = sys.env.getOrElse("PROJECT_ENV", "production")
 val training = if (environment == "test") {
   spark
@@ -125,7 +125,7 @@ The `Config` object uses the production environment by default. You're not going
 
 You can update your `build.sbt` file as follows to set `PROJECT_ENV` to test whenever the test suite is run.
 
-```
+```scala
 fork in Test := true
 envVars in Test := Map("PROJECT_ENV" -> "test")
 ```

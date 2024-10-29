@@ -43,7 +43,7 @@ As discussed, the `sbt package` builds a thin JAR file of your project.
 
 [spark-daria](https://github.com/MrPowers/spark-daria) is a good example of an open source project that is distributed as a thin JAR file. This is an excerpt of the spark-daria `build.sbt` file:
 
-```
+```scala
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.3.0" % "provided"
 
 libraryDependencies += "com.github.mrpowers" % "spark-fast-tests" % "2.3.0_0.8.0" % "test"
@@ -93,7 +93,7 @@ The sbt-assembly plugin needs to be added to build fat JAR files that include th
 
 Let's take a snippet from the spark-slack `build.sbt` file:
 
-```
+```scala
 libraryDependencies ++= Seq(
   "net.gpedro.integrations.slack" % "slack-webhook" % "1.2.1",
   "org.json4s" %% "json4s-native" % "3.3.0"

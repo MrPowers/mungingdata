@@ -47,14 +47,14 @@ You can specify `libraryDependencies` in your `build.sbt` file to fetch librarie
 
 Here's how to add Spark SQL and Spark ML to a project:
 
-```
+```scala
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.0" % "provided"
 libraryDependencies += "org.apache.spark" %% "spark-mllib" % "2.4.0" % "provided"
 ```
 
 SBT provides shortcut sytax if we'd like to clean up our `build.sbt` file a bit.
 
-```
+```scala
 libraryDependencies ++= Seq(
   "org.apache.spark" %% "spark-sql" % "2.4.0" % "provided",
   "org.apache.spark" %% "spark-mllib" % "2.4.0" % "provided"
@@ -65,7 +65,7 @@ libraryDependencies ++= Seq(
 
 Here's an example of some test dependencies that are only used when we run our test suite:
 
-```
+```scala
 libraryDependencies += "com.lihaoyi" %% "utest" % "0.6.3" % "test"
 libraryDependencies += "MrPowers" % "spark-fast-tests" % "0.17.1-s_2.11" % "test"
 ```

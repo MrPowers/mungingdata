@@ -21,7 +21,7 @@ Let's start with a simple example that illustrates why wilcard imports can gener
 
 Let's look at a little code snippet that uses the Spark `col()` function and the [spark-daria](https://github.com/MrPowers/spark-daria/) `removeAllWhitespace()` function.
 
-```
+```scala
 import org.apache.spark.sql.functions._
 import com.github.mrpowers.spark.daria.sql._
 
@@ -34,7 +34,7 @@ Wildcard imports (imports with underscores) create code that's difficult to foll
 
 We can use the curly brace import style to make it easy for other programmers to search the codebase and find where `removeAllWhitespace()` is defined.
 
-```
+```scala
 import org.apache.spark.sql.functions._
 import com.github.mrpowers.spark.daria.sql.{removeAllWhitespace}
 ```
@@ -51,7 +51,7 @@ That's not the best advice because `import com.github.mrpowers.spark.daria.sql._
 
 We can name imports so all function invocations make it clear where the functions are defined.
 
-```
+```scala
 import org.apache.spark.sql.functions._
 import com.github.mrpowers.spark.daria.sql.{functions => dariaFunctions}
 
@@ -90,7 +90,7 @@ Wildcard imports should be avoided in general, but they're OK for core Spark cla
 
 The following code is completely fine, even though you're importing a ton of functions to the global namespace.
 
-```
+```scala
 import org.apache.spark.sql.functions._
 ```
 
@@ -100,7 +100,7 @@ Spark programmers are familiar with the Spark core functions and will know that 
 
 You have to use the wildcard syntax to import objects that wrap implicit classes. Here's a snippet of code that extends the Spark `Column` class:
 
-```
+```scala
 package com.github.mrpowers.spark.daria.sql
 
 import org.apache.spark.sql.Column

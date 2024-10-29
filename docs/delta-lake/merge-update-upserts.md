@@ -28,7 +28,7 @@ mouseOver,logo
 
 Here's the code to create the Delta lake:
 
-```
+```scala
 val path = new java.io.File("./src/main/resources/event_data/").getCanonicalPath
 val df = spark
   .read
@@ -62,7 +62,7 @@ Let's take a look at what is stored in the `_delta_log/00000000000000000000.json
 
 Let's display the contents of our data lake:
 
-```
+```scala
 val path = new java.io.File("./tmp/event_delta_lake/").getCanonicalPath
 val df = spark.read.format("delta").load(path)
 df.show()
@@ -80,7 +80,7 @@ The second row of data has a typo in the eventType field. It says "clck" instead
 
 Let's write a little code that'll update the typo.
 
-```
+```scala
 val path = new java.io.File("./tmp/event_delta_lake/").getCanonicalPath
 val deltaTable = DeltaTable.forPath(spark, path)
 
@@ -97,11 +97,13 @@ deltaTable.update(
 
 We can check the contents of the Delta lake to confirm the spelling error has been fixed.
 
-```
+```scala
 val path = new java.io.File("./tmp/event_delta_lake/").getCanonicalPath
 val df = spark.read.format("delta").load(path)
 df.show()
+```
 
+```
 +---------+-----------+
 |eventType|websitePage|
 +---------+-----------+
@@ -139,11 +141,13 @@ Let's take a look at the `_delta_log/00000000000000000001.json` to figure out wh
 
 The merge command writes a new file to the filesystem. Let's inspect the contents of the new file.
 
-```
+```scala
 val path = new java.io.File("./tmp/event_delta_lake/part-00000-bcb431ea-f9d1-4399-9da5-3abfe5178d32-c000.snappy.parquet").getCanonicalPath
 val df = spark.read.parquet(path)
 df.show()
+```
 
+```
 +---------+-----------+
 |eventType|websitePage|
 +---------+-----------+
@@ -181,7 +185,7 @@ date,eventId,data
 
 Here's the code to build the Delta lake:
 
-```
+```scala
 val path = new java.io.File("./src/main/resources/upsert_event_data/original_data.csv").getCanonicalPath
 val df = spark
   .read
@@ -199,11 +203,13 @@ df
 
 Let's inspect the starting state of the Delta lake:
 
-```
+```scala
 val path = new java.io.File("./tmp/upsert_event_delta_lake/").getCanonicalPath
 val df = spark.read.format("delta").load(path)
 df.show(false)
+```
 
+```
 +----------+-------+---------------------+
 |date      |eventId|data                 |
 +----------+-------+---------------------+
@@ -226,7 +232,7 @@ Events 4 and 8 will be rephrased with descriptions that'll make mom proud. Event
 
 Here's the code that'll perform the upsert:
 
-```
+```scala
 val updatesPath = new java.io.File("./src/main/resources/upsert_event_data/mom_friendly_data.csv").getCanonicalPath
 val updatesDF = spark
   .read
@@ -260,11 +266,13 @@ DeltaTable.forPath(spark, path)
 
 Let's take a look at the contents of the Delta lake after the upsert:
 
-```
+```scala
 val path = new java.io.File("./tmp/upsert_event_delta_lake/").getCanonicalPath
 val df = spark.read.format("delta").load(path)
 df.show(false)
+```
 
+```
 +----------+-------+---------------------+
 |date      |eventId|data                 |
 +----------+-------+---------------------+
@@ -367,13 +375,15 @@ The `_delta_log/00000000000000000001.json` file reveals that upserts surprisingl
 
 Let's create a little helper method that'll let us easily inspect the content of these parquet files:
 
-```
+```scala
 def displayEventParquetFile(filename: String): Unit = {
   val path = new java.io.File(s"./tmp/upsert_event_delta_lake/$filename.snappy.parquet").getCanonicalPath
   val df = spark.read.parquet(path)
   df.show(false)
 }
+```
 
+```
 UpsertEventProcessor.displayEventParquetFile("part-00000-36aafda3-530d-4bd7-a29b-9c1716f18389-c000")
 
 +----+-------+----+

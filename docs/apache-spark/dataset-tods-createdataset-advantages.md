@@ -17,7 +17,7 @@ This post demonstrates how to create Datasets and describes the advantages of th
 
 Create a `City` case class, instantiate some objects, and then build a Dataset:
 
-```
+```scala
 case class City(englishName: String, continent: String)
 
 val cities = Seq(
@@ -45,7 +45,7 @@ The `cities` Dataset is of type `org.apache.spark.sql.Dataset[City]`.
 
 The `cities` Dataset can also be created with the `createDataset` method:
 
-```
+```scala
 case class City(englishName: String, continent: String)
 
 val cities2 = spark.createDataset(
@@ -63,7 +63,7 @@ val cities2 = spark.createDataset(
 
 Let's create a DataFrame of trees and then convert it to a Dataset. Start by creating the DataFrame.
 
-```
+```scala
 val treesDF = Seq(
   ("Oak", "deciduous"),
   ("Hemlock", "evergreen"),
@@ -87,7 +87,7 @@ treesDF.show()
 
 Define a case class and use `as` to convert the DataFrame to a Dataset.
 
-```
+```scala
 case class Tree(tree_name: String, tree_type: String)
 
 val treesDS = treesDF.as[Tree]
@@ -101,7 +101,7 @@ DataFrame is defined as a Dataset\[Row\] in the Spark codebase with this line: `
 
 `org.apache.spark.sql.Row` is a generic object that can be instantiated with any arguments.
 
-```
+```scala
 import org.apache.spark.sql.Row
 
 val oneRow = Row("hi", 34)
@@ -110,7 +110,7 @@ val anotherRow = Row(34.2, "cool", 4)
 
 case classes cannot be instantiated with any arguments. This code will error out:
 
-```
+```scala
 case class Furniture(furniture_type: String, color: String)
 Furniture("bed", 33)
 ```
@@ -135,7 +135,7 @@ Your text editor will complain about this code, so you don't need to wait until 
 
 Here's some invalid code to create a DataFrame that'll error-out at runtime:
 
-```
+```scala
 val shoesDF = Seq(
   ("nike", "black"),
   ("puma", 42)
@@ -148,7 +148,7 @@ Note that the runtime error is not descriptive, so the bug is hard to trace. The
 
 Let's write some similarly invalid code to create a Dataset.
 
-```
+```scala
 case class Shoe(brand: String, color: String)
 
 val shoesDS = Seq(
@@ -187,7 +187,7 @@ Adding columns is a common operation. You can go through the effort of defining 
 
 Here's an example:
 
-```
+```scala
 case class Sport(name: String, uses_ball: Boolean)
 
 val sportsDS = Seq(
@@ -201,7 +201,7 @@ val sportsDS = Seq(
 
 Append a `short_name` column to the Dataset and view the results.
 
-```
+```scala
 import org.apache.spark.sql.functions._
 val res = sportsDS.withColumn("short_name", substring($"name", 1, 3))
 res.show()
@@ -247,7 +247,7 @@ Python is not compile-time type safe, so it throws runtime exceptions when class
 
 Create a Dataset with an integer column and try to add four months to the integer.
 
-```
+```scala
 case class Cat(name: String, favorite_number: Int)
 
 val catsDS = Seq(
@@ -265,7 +265,7 @@ AnalysisExceptions are thrown at runtime, so this isn't a compile-time error tha
 
 Let's run the `date_trunc` function on a `StringType` column and observe the result.
 
-```
+```scala
 catsDS.withColumn("meaningless", date_trunc("name", lit("cat"))).show()
 ```
 
@@ -283,7 +283,7 @@ Some Spark functions just return `null` when the operation is meaningless. `lit(
 
 Let's create a Dataset with a date column and then reverse the date:
 
-```
+```scala
 import java.sql.Date
 
 case class Birth(hospitalName: String, birthDate: Date)

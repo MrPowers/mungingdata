@@ -17,7 +17,7 @@ This blog post demonstrates how to instantiate Column objects and covers the com
 
 Let's create a little DataFrame with superheros and their city of origin.
 
-```
+```scala
 val df = Seq(
   ("thor", "new york"),
   ("aquaman", "atlantis"),
@@ -27,7 +27,7 @@ val df = Seq(
 
 Let's use the `startsWith()` column method to identify all cities that start with the word `new`:
 
-```
+```scala
 df
   .withColumn("city_starts_with_new", $"city".startsWith("new"))
   .show()
@@ -63,7 +63,7 @@ We will create column objects in all the examples that follow.
 
 Let's create a DataFrame with an integer column so we can run some numerical column methods.
 
-```
+```scala
 val df = Seq(
   (10, "cat"),
   (4, "dog"),
@@ -73,7 +73,7 @@ val df = Seq(
 
 Let's use the `gt()` method to identify all rows with a `num` greater than five.
 
-```
+```scala
 df
   .withColumn("num_gt_5", col("num").gt(5))
   .show()
@@ -93,7 +93,7 @@ df
 
 Let's use the `substr()` method to create a new column with the first two letters of the `word` column.
 
-```
+```scala
 df
   .withColumn("word_first_two", col("word").substr(0, 2))
   .show()
@@ -115,7 +115,7 @@ Notice that the `substr()` method returns `null` when it's supplied `null` as in
 
 Let's use the `+` operator to add five to the `num` column.
 
-```
+```scala
 df
   .withColumn("num_plus_five", col("num").+(5))
   .show()
@@ -133,7 +133,7 @@ df
 
 We can also skip the dot notation when invoking the function.
 
-```
+```scala
 df
   .withColumn("num_plus_five", col("num") + 5)
   .show()
@@ -145,7 +145,7 @@ The syntactic sugar makes it harder to see that `+` is a method defined in the C
 
 Let's use the `/` method to take two divided by the `num` column.
 
-```
+```scala
 df
   .withColumn("two_divided_by_num", lit(2) / col("num"))
   .show()
@@ -163,7 +163,7 @@ df
 
 Notice that the `lit()` function must be used to convert two into a Column object before the division can take place.
 
-```
+```scala
 df
   .withColumn("two_divided_by_num", 2 / col("num"))
   .show()
@@ -190,7 +190,7 @@ The `/` method is defined in both the Scala Int and Spark Column classes. We nee
 
 Let's use the `isNull` method to identify the rows with a `word` of `null`.
 
-```
+```scala
 df
   .withColumn("word_is_null", col("word").isNull)
   .show()
@@ -210,7 +210,7 @@ df
 
 Let's use the `isNotNull` method to filter out all rows with a `word` of `null`.
 
-```
+```scala
 df
   .where(col("word").isNotNull)
   .show()
@@ -229,7 +229,7 @@ df
 
 Let's create a final DataFrame with `word1` and `word2` columns, so we can play around with the `===`, `when()`, and `otherwise()` methods
 
-```
+```scala
 val df = Seq(
   ("bat", "bat"),
   ("snake", "rat"),
@@ -240,7 +240,7 @@ val df = Seq(
 
 Let's write a little word comparison algorithm that analyzes the differences between the two words.
 
-```
+```scala
 import org.apache.spark.sql.functions._
 
 df

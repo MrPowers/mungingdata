@@ -37,7 +37,7 @@ Suppose you have the following DataFrame:
 
 Concatenate the two arrays with the `array_cat` function that's defined in itachi:
 
-```
+```scala
 yaooqinn.itachi.registerPostgresFunctions
 
 spark
@@ -60,7 +60,7 @@ itachi also defines an `age` function [similar to Postgres](https://www.postgres
 
 Here's the `Age` Catalyst code:
 
-```
+```scala
 case class Age(end: Expression, start: Expression)
   extends BinaryExpression with ImplicitCastInputTypes {
   override def left: Expression = end
@@ -92,7 +92,7 @@ We need to take this Catalyst code and package it properly for `registerFunction
 
 itachi defines a package object that helps organize the required arguments:
 
-```
+```scala
 package object extra {
 
   type FunctionDescription = (FunctionIdentifier, ExpressionInfo, FunctionBuilder)
@@ -104,7 +104,7 @@ package object extra {
 
 Let's define the `FunctionDescription` for `Age`:
 
-```
+```scala
 object Age {
   val fd: FunctionDescription = (
     new FunctionIdentifier("age"),
@@ -147,7 +147,7 @@ wget --quiet -O /mnt/driver-daemon/jars/itachi_2.12-0.1.0.jar https://repo1.mave
 
 Before starting the cluster, set the Spark config:
 
-```
+```scala
 spark.sql.extensions org.apache.spark.sql.extra.PostgreSQLExtensions
 ```
 
@@ -163,7 +163,7 @@ This workflow is nice in some circumstances because all notebooks attached to th
 
 All you need to write to support the spark.sql.extensions approach is a class that extends `Extensions`:
 
-```
+```scala
 class PostgreSQLExtensions extends Extensions {
   override def apply(ext: SparkSessionExtensions): Unit = {
     ext.injectFunction(Age.fd)
@@ -187,7 +187,7 @@ bin/spark-sql --packages com.github.yaooqinn:itachi_2.12:0.1.0 --conf spark.sql.
 
 Here's a snippet of the Spark `FunctionRegistry` code:
 
-```
+```scala
 object FunctionRegistry {
 
   type FunctionBuilder = Seq[Expression] => Expression
@@ -219,7 +219,7 @@ The `expression` method is passed an expression class name and a function name a
 
 The code eventually loops over the `expressions` map and registers each function.
 
-```
+```scala
 expressions.foreach {
   case (name, (info, builder)) => fr.registerFunction(FunctionIdentifier(name), info, builder)
 }

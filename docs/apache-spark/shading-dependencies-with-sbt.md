@@ -15,7 +15,7 @@ Let's look at a snippet from the [spark-pika](https://github.com/MrPowers/spark-
 
 You can read [this blog post on building JAR files with SBT](https://www.mungingdata.com/apache-spark/building-jar-files-with-sbt) if you need background information on JAR file basics before diving into shading, which is an advanced feature.
 
-```
+```scala
 libraryDependencies += "mrpowers" % "spark-daria" % "2.3.1_0.24.0"
 libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.3.1" % "provided"
 libraryDependencies += "MrPowers" % "spark-fast-tests" % "2.3.1_0.15.0" % "test"
@@ -53,7 +53,7 @@ We can use SBT to change the `spark-daria` namespace for all the code that's use
 
 Here is the code to shade the `spark-daria` dependency in `spark-pika`.
 
-```
+```scala
 assemblyShadeRules in assembly := Seq(
   ShadeRule.rename("com.github.mrpowers.spark.daria.**" -> "shadedSparkDariaForSparkPika.@1").inAll
 )

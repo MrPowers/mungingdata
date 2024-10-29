@@ -23,14 +23,14 @@ Let's start with the basics and show how uTest can test some pure Scala code.
 
 Add uTest to the `build.sbt` file to add this testing framework to your project.
 
-```
+```scala
 libraryDependencies += "com.lihaoyi" %% "utest" % "0.6.3" % "test"
 testFrameworks += new TestFramework("utest.runner.Framework")
 ```
 
 Create a `Calculator` object with an `add()` method that adds two integers.
 
-```
+```scala
 package com.github.mrpowers.spark.daria.utils
 
 object Calculator {
@@ -44,7 +44,7 @@ object Calculator {
 
 Create a `CalculatorTest` file to test the `Calculator.add()` method.
 
-```
+```scala
 package com.github.mrpowers.spark.daria.utils
 
 import utest._
@@ -84,7 +84,7 @@ Important observations about a uTest test file:
 
 Let's see how uTest and [spark-fast-tests](https://github.com/MrPowers/spark-fast-tests/) are used to test the `removeAllWhitespace()` function in the [spark-daria](https://github.com/MrPowers/spark-daria) project. Here's the `removeAllWhitespace()` function definition.
 
-```
+```scala
 object functions {
 
   def removeAllWhitespace(col: Column): Column = {
@@ -100,7 +100,7 @@ You can create a DataFrame, add a column that removes all the whitespace with th
 
 The [spark-daria](https://github.com/MrPowers/spark-daria) `createDF` method is used to create the DataFrame in this test.
 
-```
+```scala
 object FunctionsTest
     extends TestSuite
     with ColumnComparer
@@ -140,7 +140,7 @@ object FunctionsTest
 
 We can also test this function by creating two DataFrames and verifying equality with the [spark-fast-tests](https://github.com/MrPowers/spark-fast-tests/) `assertSmallDataFrameEquality` method.
 
-```
+```scala
 object FunctionsTest
     extends TestSuite
     with DataFrameComparer

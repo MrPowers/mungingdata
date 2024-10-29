@@ -21,7 +21,7 @@ Read this blog post closely. Filtering properly will make your analyses run fast
 
 Let's create a DataFrame and view the contents:
 
-```
+```scala
 val df = Seq(
   ("famous amos", true),
   ("oreo", true),
@@ -43,7 +43,7 @@ df.show()
 
 Now let's filter the DataFrame to only include the rows with `contains_chocolate` equal to `true`.
 
-```
+```scala
 val filteredDF = df.where(col("contains_chocolate") === lit(true))
 
 filteredDF.show()
@@ -79,7 +79,7 @@ Suppose you have a data lake with 25 billion rows of data and 60,000 memory part
 
 Let's look at some pseudocode:
 
-```
+```scala
 val df = spark.read.parquet("/some/path") // 60,000 memory partitions
 val filteredDF = df.filter(col("age") > 98) // still 60,000 memory partitions
 // at this point, any operations performed on filteredDF will be super inefficient
@@ -92,7 +92,7 @@ Let's use the `person_data.csv` file that contains 100 rows of data and `person_
 
 This code reads in the `person_data.csv` file and [repartitions](https://medium.com/@mrpowers/managing-spark-partitions-with-coalesce-and-repartition-4050c57ad5c4) the data into 200 memory partitions.
 
-```
+```scala
 val path = new java.io.File("./src/test/resources/person_data.csv").getCanonicalPath
 val df = spark
   .read
@@ -105,7 +105,7 @@ println(df.rdd.partitions.size) // 200
 
 Let's filter the DataFrame and verify that the number of memory partitions does not change:
 
-```
+```scala
 val filteredDF = df.filter(col("person_country") === "Cuba")
 println(filteredDF.rdd.partitions.size) // 200
 ```
@@ -167,7 +167,7 @@ If the data lake is partitioned, [Spark can use PartitionFilters](https://mungin
 
 In our example, we could make a partitioned data lake with the `person_country` partition key as follows:
 
-```
+```scala
 val path = new java.io.File("./src/test/resources/person_data.csv").getCanonicalPath
 val df = spark
   .read
@@ -196,7 +196,7 @@ person_data_partitioned/
 
 The "partition key" is `person_country`. Let's use `explain` to verify that PartitionFilters are used when filtering on the partition key.
 
-```
+```scala
 val partitionedPath = new java.io.File("tmp/person_data_partitioned").getCanonicalPath
 spark
   .read
@@ -226,7 +226,7 @@ Let's verify that all the different filter syntaxes generate the same physical p
 
 All of these code snippets generate the same physical plan:
 
-```
+```scala
 df.where("person_country = 'Cuba'").explain()
 df.where($"person_country" === "Cuba").explain()
 df.where('person_country === "Cuba").explain()

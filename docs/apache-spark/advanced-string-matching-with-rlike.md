@@ -17,7 +17,7 @@ This blog post will outline tactics to detect strings that match multiple differ
 
 Let’s create a DataFrame and use `rlike` to identify all strings that contain the substring `"cat"`.
 
-```
+```scala
 val df = List(
   ("the cat and the hat"),
   ("i love your cat"),
@@ -48,7 +48,7 @@ There is nothing special about this example and if you’re only looking to matc
 
 Let’s rework this code to detect all strings that contain the substrings `"cat"` or `"dog"`.
 
-```
+```scala
 df
   .withColumn(
     "contains_cat_or_dog",
@@ -70,7 +70,7 @@ df
 
 We can refactor this code by storing the animals in a list and concatenating them as a pipe delimited string for the `rlike` method.
 
-```
+```scala
 val animals = List("cat", "dog")
 
 df
@@ -96,7 +96,7 @@ df
 
 Let’s create a new DataFrame and match all strings that begin with the substring `"i like"` or `"i want"`.
 
-```
+```scala
 val df = List(
   ("i like tacos"),
   ("i want love"),
@@ -127,7 +127,7 @@ df
 
 We can also append an `ends_with_food` column using regular expresssions.
 
-```
+```scala
 val foods = List("tacos", "pizza", "pie")
 df
   .withColumn(
@@ -155,7 +155,7 @@ Suppose we want to find all the strings that contain the substring `"fun|stuff"`
 
 The approch we’ve been using won’t work as desired, because it will match all strings that contain `fun` or `stuff`.
 
-```
+```scala
 df
   .withColumn(
     "contains_fun_pipe_stuff",
@@ -178,7 +178,7 @@ df
 
 We can use the `java.util.regex.Pattern` to quote the regular expression and properly match the `fun|stuff` string exactly.
 
-```
+```scala
 import java.util.regex.Pattern
 
 df
@@ -207,7 +207,7 @@ The `Pattern.quote()` method wraps the string in `\Q` and `\E` to turn the text 
 
 Alternatively, we can escape the pipe character in the regexp with `\\`.
 
-```
+```scala
 df
   .withColumn(
     "contains_fun_pipe_stuff",
@@ -242,7 +242,7 @@ The pipe character in the CSV file needs to be escaped with `\\`.
 
 Here’s the how to use the CSV file to match strings that match at least one of the regexp criteria.
 
-```
+```scala
 val df = List(
   ("coffee is good"),
   ("i need coffee"),
@@ -288,7 +288,7 @@ df
 
 ## Next steps
 
-> Some people, when confronted with a problem, think “I know, I’ll use regular expressions.” Now they have two problems. — Jamie Zawinski
+> Some people, when confronted with a problem, think “I know, I’ll use regular expressions.” Now they have two problems. —Jamie Zawinski
 
 Using regular expressions is controversial to say the least. Regular expressions are powerful tools for advanced string matching, but can create code bases that are difficult to maintain. Thoroughly testing regular expression behavior and documenting the expected results in comments is vital, especially when multiple regexp criteria are chained together.
 

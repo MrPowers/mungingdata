@@ -15,7 +15,7 @@ Suppose you have an ArrayType column with a bunch of first names. You'd like to 
 
 Here's how we'd write this code for a single Scala array.
 
-```
+```scala
 import scala.util.Try
 
 val firstNames = Array("Matt", "Fred", "Nick")
@@ -28,7 +28,7 @@ res // equals Array("Matthew", "Fred", "Nicholas")
 
 Let's create a DataFrame with an ArrayType column that contains a list of first names and then append a `standardized_names` column that runs all the names through a Map.
 
-```
+```scala
 import scala.util.Try
 
 val nicknames = Map("Matt" -> "Matthew", "Nick" -> "Nicholas")
@@ -71,7 +71,7 @@ We have some code that works which is a great start. Let's clean this code up wi
 
 Let's wrap the `withColumn` code in a [Spark custom transformation](https://medium.com/@mrpowers/chaining-custom-dataframe-transformations-in-spark-a39e315f903c), so it's more modular and easier to test.
 
-```
+```scala
 val nicknames = Map("Matt" -> "Matthew", "Nick" -> "Nicholas")
 val n = spark.sparkContext.broadcast(nicknames)
 
@@ -120,7 +120,7 @@ Nick,Nicholas
 
 Let's read the nickname CSV into a DataFrame, convert it to a Map, and then broadcast it.
 
-```
+```scala
 import com.github.mrpowers.spark.daria.sql.DataFrameHelpers
 
 val nicknamesPath = new java.io.File(s"./src/test/resources/nicknames.csv").getCanonicalPath

@@ -13,7 +13,7 @@ HyperLogLog sketches can be generated with [spark-alchemy](https://github.com/sw
 
 Let's start by exploring the built-in Spark approximate count functions and explain why it's not useful in most situations.
 
-## Simple example with approx\_count\_distinct
+## Simple example with `approx_count_distinct`
 
 Suppose we have the following `users1.csv` file:
 
@@ -28,7 +28,7 @@ user_id,first_name
 
 Let's use the `approx_count_distinct` function to estimate the unique number of distinct `user_id` values in the dataset.
 
-```
+```scala
 val path1 = new java.io.File("./src/test/resources/users1.csv").getCanonicalPath
 
 val df1 = spark
@@ -76,7 +76,7 @@ The open source [spark-alchemy](https://github.com/swoop-inc/spark-alchemy/) lib
 
 Let's use the `hll_init` function to append a HyperLogLog sketch to each row of data in a DataFrame.
 
-```
+```scala
 import com.swoop.alchemy.spark.expressions.hll.functions._
 
 val path1 = new java.io.File("./src/test/resources/users1.csv").getCanonicalPath
@@ -132,7 +132,7 @@ df1
 
 Write out the HyperLogLog sketch to disk and use the `hll_cardinality()` function to estimate the number of unique `user_id` values in the sketch.
 
-```
+```scala
 val sketchPath1 = new java.io.File("./tmp/sketches/file1").getCanonicalPath
 
 df1
@@ -175,7 +175,7 @@ Our new data file has two new `user_id` values (8 and 9) and two existing `user_
 
 Let's build a HyperLogLog sketch with the new data, merge the new HLL sketch with the existing HyperLogLog sketch we wrote to disk, and rerun the `hll_cardinality` computation.
 
-```
+```scala
 val path2 = new java.io.File("./src/test/resources/users2.csv").getCanonicalPath
 
 val df2 = spark
@@ -218,7 +218,7 @@ nora,smash,7
 
 The business would like a count of all the gamers that are adults.
 
-```
+```scala
 val path = new java.io.File("./src/test/resources/gamers.csv").getCanonicalPath
 
 val df = spark
@@ -246,7 +246,7 @@ This result makes sense: sean, powers, cohen, angel, and madison are all adults 
 
 The business would also like a count of all the gamers with a favorite game of smash.
 
-```
+```scala
 val favoriteGameSmash = df
   .where(col("favorite_game") === "smash")
   .select(hll_init_agg("user_id").as("user_id_hll"))
@@ -266,7 +266,7 @@ powers, cohen, and nora like smash in our dataset.
 
 The business would also like a count of all the gamers that are adults or have a smash as their favorite game (this is called a cohort).
 
-```
+```scala
 adults
   .union(favoriteGameSmash)
   .select(hll_merge("user_id_hll").as("user_id_hll"))
@@ -307,7 +307,7 @@ Querying fewer rows of data is how to make big data distinct counts fast.
 
 We can use the `hll_init_agg` function to compute the number of adult and non-adult smash fans.
 
-```
+```scala
 val path = new java.io.File("./src/test/resources/gamers.csv").getCanonicalPath
 
 val df = spark

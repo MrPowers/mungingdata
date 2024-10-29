@@ -21,7 +21,7 @@ Scala has different types of collections: lists, sequences, and arrays. Let's qu
 
 Let's create and sort a collection of numbers.
 
-```
+```scala
 List(10, 2, 3).sorted // List[Int] = List(2, 3, 10)
 Seq(10, 2, 3).sorted // Seq[Int] = List(2, 3, 10)
 Array(10, 2, 3).sorted // Array[Int] = Array(2, 3, 10)
@@ -35,7 +35,7 @@ Spark uses arrays for `ArrayType` columns, so we'll mainly use arrays in our cod
 
 Let’s create a DataFrame with a `name` column and a `hit_songs` pipe delimited string. Then let’s use the `split()` method to convert `hit_songs` into an array of strings.
 
-```
+```scala
 val singersDF = Seq(
   ("beatles", "help|hey jude"),
   ("romeo", "eres mia")
@@ -75,7 +75,7 @@ Let’s use the [spark-daria](https://github.com/MrPowers/spark-daria/) `createD
 
 Let's create another `singersDF` with some different artists.
 
-```
+```scala
 val singersDF = spark.createDF(
   List(
     ("bieber", Array("baby", "sorry")),
@@ -117,7 +117,7 @@ The Spark [functions](http://spark.apache.org/docs/latest/api/scala/index.html#o
 
 Let’s create an array with people and their favorite colors. Then let’s use `array_contains` to append a `likes_red` column that returns true if the person likes red.
 
-```
+```scala
 val peopleDF = spark.createDF(
   List(
     ("bob", Array("red", "blue")),
@@ -151,7 +151,7 @@ actualDF.show()
 
 Let's use the same DataFrame before and the `explode()` to create a new row for every element in each array.
 
-```
+```scala
 val df = peopleDF.select(
   col("name"),
   explode(col("favorite_colors")).as("color")
@@ -180,7 +180,7 @@ The `collect_list` method collapses a DataFrame into fewer rows and stores the c
 
 Let's create a DataFrame with `letter1`, `letter2`, and `number1` columns.
 
-```
+```scala
 val df = Seq(
   ("a", "b", 1),
   ("a", "b", 2),
@@ -206,7 +206,7 @@ df.show()
 
 Let's use the `collect_list()` method to eliminate all the rows with duplicate `letter1` and `letter2` rows in the DataFrame and collect all the `number1` entries as a list.
 
-```
+```scala
 df
   .groupBy("letter1", "letter2")
   .agg(collect_list("number1") as "number1s")
@@ -243,7 +243,7 @@ We will start with the functions for a single `ArrayType` column and then move o
 
 Let's start by creating a DataFrame with an `ArrayType` column.
 
-```
+```scala
 val df = spark.createDF(
   List(
     (Array(1, 2)),
@@ -269,7 +269,7 @@ df.show()
 
 Let's use the `array_distinct()` method to remove all of the duplicate array elements in the `nums` column.
 
-```
+```scala
 df
   .withColumn("nums_distinct", array_distinct($"nums"))
   .show()
@@ -285,7 +285,7 @@ df
 
 Let's use `array_join()` to create a pipe delimited string of all elements in the arrays.
 
-```
+```scala
 df
   .withColumn("nums_joined", array_join($"nums", "|"))
   .show()
@@ -301,7 +301,7 @@ df
 
 Let's use the `printSchema` method to verify that the `nums_joined` column is a `StringType`.
 
-```
+```scala
 df
   .withColumn("nums_joined", array_join($"nums", "|"))
   .printSchema()
@@ -314,7 +314,7 @@ root
 
 Let's use `array_max` to grab the maximum value from the arrays.
 
-```
+```scala
 df
   .withColumn("nums_max", array_max($"nums"))
   .show()
@@ -330,7 +330,7 @@ df
 
 Let's use `array_min` to grab the minimum value from the arrays.
 
-```
+```scala
 df
   .withColumn("nums_min", array_min($"nums"))
   .show()
@@ -346,7 +346,7 @@ df
 
 Let's use the `array_remove` method to remove all the 1s from each of the arrays.
 
-```
+```scala
 df
   .withColumn("nums_sans_1", array_remove($"nums", 1))
   .show()
@@ -362,7 +362,7 @@ df
 
 Let's use `array_sort` to sort all of the arrays in ascending order.
 
-```
+```scala
 df
   .withColumn("nums_sorted", array_sort($"nums"))
   .show()
@@ -395,7 +395,7 @@ Array("taco", "clam").forall(_.startsWith("c")) // false
 
 You can use the [spark-daria](https://github.com/MrPowers/spark-daria) `forall()` method to run this computation on a Spark DataFrame with an `ArrayType` column.
 
-```
+```scala
 import com.github.mrpowers.spark.daria.sql.functions._
 
 val df = spark.createDF(
@@ -428,7 +428,7 @@ The native Spark API doesn't provide access to all the helpful collection method
 
 Let's create a DataFrame with two `ArrayType` columns so we can try out the built-in Spark array functions that take multiple columns as input.
 
-```
+```scala
 val numbersDF = spark.createDF(
   List(
     (Array(1, 2), Array(4, 5, 6)),
@@ -443,7 +443,7 @@ val numbersDF = spark.createDF(
 
 Let's use `array_intersect` to get the elements present in both the arrays without any duplication.
 
-```
+```scala
 numbersDF
   .withColumn("nums_intersection", array_intersect($"nums1", $"nums2"))
   .show()
@@ -459,7 +459,7 @@ numbersDF
 
 Let's use `array_union` to get the elements in either array, without duplication.
 
-```
+```scala
 numbersDF
   .withColumn("nums_union", array_union($"nums1", $"nums2"))
   .show()
@@ -477,7 +477,7 @@ numbersDF
 
 Let's use `array_except` to get the elements that are in `num1` and not in `num2` without any duplication.
 
-```
+```scala
 numbersDF
   .withColumn("nums1_nums2_except", array_except($"nums1", $"nums2"))
   .show()
@@ -495,7 +495,7 @@ numbersDF
 
 We can split an array column into multiple columns with `getItem`. Lets create a DataFrame with a `letters` column and demonstrate how this single `ArrayType` column can be split into a DataFrame with three `StringType` columns.
 
-```
+```scala
 val df = spark.createDF(
   List(
     (Array("a", "b", "c")),
@@ -523,7 +523,7 @@ This example uses the same data as [this Stackoverflow question](https://stackov
 
 Let's use `getItem` to break out the array into `col1`, `col2`, and `col3`.
 
-```
+```scala
 df
   .select(
     $"letters".getItem(0).as("col1"),
@@ -543,7 +543,7 @@ df
 
 Here's how we can use `getItem` with a loop.
 
-```
+```scala
 df
   .select(
     (0 until 3).map(i => $"letters".getItem(i).as(s"col$i")): _*
@@ -561,7 +561,7 @@ df
 
 Our code snippet above is a little ugly because the 3 is hardcoded. We can calculate the size of every array in the column, take the max size, and use that rather than hardcoding.
 
-```
+```scala
 val numCols = df
   .withColumn("letters_size", size($"letters"))
   .agg(max($"letters_size"))
@@ -586,8 +586,6 @@ df
 ## Complex Spark Column types
 
 Spark supports [MapType](https://mungingdata.com/apache-spark/maptype-columns/) and [StructType](https://mungingdata.com/apache-spark/dataframe-schema-structfield-structtype/) columns in addition to the ArrayType columns covered in this post.
-
-Check out [Writing Beautiful Spark Code](https://leanpub.com/beautiful-spark/) for a detailed overview of the different complex column types and how they should be used when architecting Spark applications.
 
 ## Closing thoughts
 

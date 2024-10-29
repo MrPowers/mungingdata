@@ -33,7 +33,7 @@ federica,lugo
 
 Here's the code that'll write out two Parquet files:
 
-```
+```python
 import dask.dataframe as dd
 
 df = dd.read_csv('./data/people/*.csv')
@@ -51,7 +51,7 @@ tmp/
 
 Let's inspect the contents of the `tmp/people_parquet2/part.0.parquet` file:
 
-```
+```python
 import pandas as pd
 pd.read_parquet('./tmp/people_parquet2/part.0.parquet')
 ```
@@ -71,7 +71,7 @@ The `part.0.parquet` file has the same data that was in the `people1.csv` file. 
 
 Here's code that'll read in the same two CSV files and write out four Parquet files:
 
-```
+```python
 df = dd.read_csv('./data/people/*.csv')
 df = df.repartition(npartitions=4)
 df.to_parquet('./tmp/people_parquet4', write_index=False)
@@ -94,7 +94,7 @@ In this example, the Dask DataFrame starts with two partitions and then is updat
 
 Let's take a look at the contents of the `part.0.parquet` file:
 
-```
+```python
 import pandas as pd
 pd.read_parquet('./tmp/people_parquet4/part.0.parquet')
 ```

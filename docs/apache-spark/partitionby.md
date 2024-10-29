@@ -40,7 +40,7 @@ Jack,Ma,China
 
 Let's partition this data on disk with `country` as the partition key. Let's create one file per partition.
 
-```
+```scala
 val path = new java.io.File("./src/main/resources/ss_europe/").getCanonicalPath
 val df = spark
   .read
@@ -74,7 +74,7 @@ Creating one file per disk partition is not going to work for production sized d
 
 Let's run `repartition(5)` to get each row of data in a separate memory partition before running `partitionBy` and see how that impacts how the files get written to disk.
 
-```
+```scala
 val outputPath = new java.io.File("./tmp/partitioned_lake2/").getCanonicalPath
 df
   .repartition(5)
@@ -107,7 +107,7 @@ If we repartition the data to one memory partition before partitioning on disk w
 
 Let's take a look at the code.
 
-```
+```scala
 val outputPath = new java.io.File("./tmp/partitioned_lake2/").getCanonicalPath
 df
   .repartition(1)
@@ -152,7 +152,7 @@ c,Cuba
 
 Let's create 8 memory partitions and scatter the data randomly across the memory partitions (we'll write out the data to disk, so we can inspect the contents of a memory partition).
 
-```
+```scala
 val outputPath = new java.io.File("./tmp/repartition_for_lake4/").getCanonicalPath
 df
   .repartition(8, col("person_country"), rand)
@@ -176,7 +176,7 @@ c,Cuba
 
 This technique helps us set a maximum number of files per partition when creating a partitioned lake. Let's write out the data to disk and observe the output.
 
-```
+```scala
 val outputPath = new java.io.File("./tmp/partitioned_lake4/").getCanonicalPath
 df
   .repartition(8, col("person_country"), rand)
@@ -229,7 +229,7 @@ Let's write some code that'll create partitions with ten rows of data per file. 
 
 We can use the `maxRecordsPerFile` option to output files with 10 rows.
 
-```
+```scala
 val outputPath = new java.io.File("./tmp/partitioned_lake5/").getCanonicalPath
 df
   .repartition(col("person_country"))
@@ -245,7 +245,7 @@ This technique is particularity important for partition keys that are highly ske
 
 The maxRecordsPerFile option was added in Spark 2.2, so you'll need to write your own custom solution if you're using an earlier version of Spark.
 
-```
+```scala
 val countDF = df.groupBy("person_country").count()
 
 val desiredRowsPerPartition = 10

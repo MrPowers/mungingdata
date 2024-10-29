@@ -25,7 +25,7 @@ This blog post will discuss creating DataFrames, defining schemas, adding column
 
 You can import spark implicits and create a DataFrame with the `toDF()` method.
 
-```
+```scala
 import spark.implicits._
 
 val df = Seq(
@@ -55,7 +55,7 @@ Each DataFrame column has `name`, `dataType` and `nullable` properties. The colu
 
 The `printSchema()` method provides an easily readable view of the DataFrame schema.
 
-```
+```scala
 df.printSchema()
 ```
 
@@ -72,7 +72,7 @@ Columns can be added to a DataFrame with the `withColumn()` method.
 
 Let's add an `is_big_city` column to the DataFrame that returns `true` if the city contains more than one million people.
 
-```
+```scala
 import org.apache.spark.sql.functions.col
 
 val df2 = df.withColumn("is_big_city", col("population") > 1)
@@ -107,7 +107,7 @@ DataFrames are immutable, so the `withColumn()` method returns a new DataFrame. 
 
 The `filter()` method removes rows from a DataFrame.
 
-```
+```scala
 df.filter(col("population") > 1).show()
 ```
 
@@ -122,7 +122,7 @@ df.filter(col("population") > 1).show()
 
 It's a little hard to read code with multiple method calls on the same line, so let's break this code up on multiple lines.
 
-```
+```scala
 df
   .filter(col("population") > 1)
   .show()
@@ -130,7 +130,7 @@ df
 
 We can also assign the filtered DataFrame to a separate variable rather than chaining method calls.
 
-```
+```scala
 val filteredDF = df.filter(col("population") > 1)
 filteredDF.show()
 ```
@@ -139,11 +139,11 @@ filteredDF.show()
 
 As previously discussed, the DataFrame schema can be pretty printed to the console with the `printSchema()` method. The `schema` method returns a code representation of the DataFrame schema.
 
-```
+```scala
 df.schema
 ```
 
-```
+```scala
 StructType(
   StructField(city, StringType, true),
   StructField(country, StringType, true),
@@ -155,7 +155,7 @@ Each column of a Spark DataFrame is modeled as a `StructField` object with name,
 
 Let's create a schema for a DataFrame that has `first_name` and `age` columns.
 
-```
+```scala
 import org.apache.spark.sql.types._
 
 StructType(
@@ -172,7 +172,7 @@ Spark's programming interface makes it easy to define the exact schema you'd lik
 
 The `toDF()` method for creating Spark DataFrames is quick, but it's limited because it doesn't let you define your schema (it infers the schema for you). The `createDataFrame()` method lets you define your DataFrame schema.
 
-```
+```scala
 import org.apache.spark.sql.types._
 import org.apache.spark.sql.Row
 

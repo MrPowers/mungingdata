@@ -15,7 +15,7 @@ This blog post shows how to build typed datasets with frameless. It demonstrates
 
 Let's create a regular Spark dataset using the built-in functions.
 
-```
+```scala
 import org.apache.spark.SparkConf
 import org.apache.spark.sql.SparkSession
 
@@ -49,7 +49,7 @@ citiesDS.show()
 
 We can build a typed dataset with the frameless API in a similar manner.
 
-```
+```scala
 import frameless.TypedDataset
 import frameless.syntax._
 val citiesTDS = TypedDataset.create(cities)
@@ -75,7 +75,7 @@ citiesTDS.dataset.show()
 
 Select a column from the Spark Dataset and display the contents to the screen.
 
-```
+```scala
 val cities = citiesDS.select("population")
 cities.show()
 
@@ -90,7 +90,7 @@ cities.show()
 
 Now select a column from the typed dataset and display the contents to the screen.
 
-```
+```scala
 val cities: TypedDataset[Double] = citiesTDS.select(citiesTDS('population))
 cities.dataset.show()
 ```
@@ -159,7 +159,7 @@ The frameless philosophy is to rely on automated compile time checks rather than
 
 You can add a column to a typed dataset with `withColumn`, but the entire dataset schema must be supplied.
 
-```
+```scala
 import frameless.functions._
 
 case class City2(name: String, population: Double, greeting: String)
@@ -179,7 +179,7 @@ tds2.dataset.show()
 
 Supplying an entirely new schema when adding a single column isn't easy, especially for datasets with a lot of columns. You can also add a column with `withColumnTupled`.
 
-```
+```scala
 val tds2 = citiesTDS.withColumnTupled(lit("hi"))
 tds2.dataset.show()
 ```
@@ -207,11 +207,11 @@ This is far from ideal. We don't want to lose existing column names when adding 
 
 [The docs](https://typelevel.org/frameless/FeatureOverview.html) discuss using `asCol` as a potential workaround for this issue.
 
-\## Functions
+## Functions
 
 Let's append "is fun" to all the city names.
 
-```
+```scala
 import frameless.functions.nonAggregate._
 
 val cities = citiesTDS.select(

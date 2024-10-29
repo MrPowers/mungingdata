@@ -26,7 +26,7 @@ Jack,Ma,China
 
 Let's read in the CSV data into a DataFrame:
 
-```
+```scala
 val df = spark
   .read
   .option("header", "true")
@@ -35,7 +35,7 @@ val df = spark
 
 Let's write a query to fetch all the Russians in the CSV file with a `first_name` that starts with `M`.
 
-```
+```scala
 df
   .where($"country" === "Russia" && $"first_name".startsWith("M"))
   .show()
@@ -51,7 +51,7 @@ df
 
 Let's use `explain()` to see how the query is executed.
 
-```
+```scala
 df
   .where($"country" === "Russia" && $"first_name".startsWith("M"))
   .explain()
@@ -79,7 +79,7 @@ The `repartition()` method partitions the data in memory and the `partitionBy()`
 
 Let's write out the data in partitioned CSV files.
 
-```
+```scala
 df
   .repartition($"country")
   .write
@@ -116,7 +116,7 @@ Let's read from the partitioned data folder, run the same filters, and see how t
 
 Let's run the same filter as before, but on the partitioned lake, and examine the physical plan.
 
-```
+```scala
 val partitionedDF = spark
   .read
   .option("header", "true")
@@ -172,7 +172,7 @@ Suppose you have a data lake with information on all 7.6 billion people in the w
 
 This code is problematic because it will write out the data in each partition as a single file.
 
-```
+```scala
 df
   .repartition($"country")
   .write
@@ -185,7 +185,7 @@ We don't our data lake to contain some massive files because that'll make Spark 
 
 If we don't do any in memory reparitioning, Spark will write out a ton of files for each partition and our data lake will contain way too many small files.
 
-```
+```scala
 df
   .write
   .option("header", "true")
@@ -197,7 +197,7 @@ df
 
 Here's how we can limit each partition to a maximum of 100 files.
 
-```
+```scala
 import org.apache.spark.sql.functions.rand
 
 df

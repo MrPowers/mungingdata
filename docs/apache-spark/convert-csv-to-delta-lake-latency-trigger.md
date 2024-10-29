@@ -33,7 +33,7 @@ The data files have three columns: `student_name`, `graduation_year`, and `major
 
 Here's the function that'll normalize the `student_name` column:
 
-```
+```python
 def with_normalized_names(df):
     split_col = pyspark.sql.functions.split(df["student_name"], "XX")
     return (
@@ -45,7 +45,7 @@ def with_normalized_names(df):
 
 When you're reading data with Structured Streaming, you also need to specify the schema as follows:
 
-```
+```python
 schema = (
     StructType()
     .add("student_name", "string")
@@ -60,7 +60,7 @@ Now let's look at how to initialize a PySpark SparkSession with Delta Lake so yo
 
 Here's how to create the PySpark SparkSession when you're using Delta Lake:
 
-```
+```python
 import pyspark
 from delta import *
 from pyspark.sql.types import StructType
@@ -94,7 +94,7 @@ cp data/students/students1.csv data/tmp_students_incremental
 
 Let's read this data into a streaming DataFrame:
 
-```
+```python
 df = (
     spark.readStream.schema(schema)
     .option("header", True)
@@ -104,7 +104,7 @@ df = (
 
 We'd now like to apply the `with_normalized_names` transformation and write the data to a Delta Lake. Let's wrap this trigger once invocation in a function:
 
-```
+```python
 def perform_trigger_once_update():
     checkpointPath = "data/tmp_students_checkpoint/"
     deltaPath = "data/tmp_students_delta"
@@ -117,7 +117,7 @@ You need a `checkpointLocation` to track the files that have already been proces
 
 Run the `perform_trigger_once_update()` function and then observe the contents of the Delta Lake.
 
-```
+```python
 perform_trigger_once_update()
 
 spark.read.format("delta").load(deltaPath).show()
@@ -136,7 +136,7 @@ The CSV data was cleaned with the `with_normalized_names` function and is proper
 
 Now copy over the `students2.csv` file to the `tmp_students_incremental` folder with `cp data/students/students2.csv data/tmp_students_incremental`, perform another trigger once update, and observe the contents of the Delta Lake.
 
-```
+```python
 perform_trigger_once_update()
 
 spark.read.format("delta").load(deltaPath).show()
@@ -163,7 +163,7 @@ cp data/students/students3.csv data/tmp_students_incremental
 
 Perform another incremental update and view the contents of the Delta Lake.
 
-```
+```python
 perform_trigger_once_update()
 
 spark.read.format("delta").load(deltaPath).show()
@@ -198,7 +198,7 @@ This section shows how to use a Structured Streaming cluster to update a Delta L
 
 As before, let's read the CSV data with `readStream`:
 
-```
+```python
 df = (
     spark.readStream.schema(schema)
     .option("header", True)
@@ -208,7 +208,7 @@ df = (
 
 Let's write out any new data to the Delta Lake every two seconds.
 
-```
+```python
 checkpointPath = "data/tmp_students_checkpoint/"
 deltaPath = "data/tmp_students_delta"
 
@@ -221,7 +221,7 @@ Copy over the `students1.csv` data file with `cp data/students/students1.csv dat
 
 Check the contents of the Delta Lake:
 
-```
+```python
 spark.read.format("delta").load(deltaPath).show()
 
 +---------------+-------+----------+---------+
@@ -278,7 +278,7 @@ You can also read the streaming CSV data directly, which will have the lowest la
 
 Here's how to continuously stream data to the console:
 
-```
+```python
 df.writeStream \
   .format("console") \
   .trigger(continuous='1 second') \

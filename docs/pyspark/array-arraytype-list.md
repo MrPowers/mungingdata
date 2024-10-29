@@ -17,7 +17,7 @@ This post covers the important PySpark array operations and highlights the pitfa
 
 Create a DataFrame with an array column.
 
-```
+```python
 df = spark.createDataFrame(
     [("abc", [1, 2]), ("cd", [3, 4])], ["id", "numbers"]
 )
@@ -48,7 +48,7 @@ root
 
 We can also create this DataFrame using the explicit `StructType` syntax.
 
-```
+```python
 from pyspark.sql.types import *
 from pyspark.sql import Row
 
@@ -81,7 +81,7 @@ The explicit syntax makes it clear that we're creating an `ArrayType` column.
 
 Add a `first_number` column to the DataFrame that returns the first element in the `numbers` array.
 
-```
+```python
 df.withColumn("first_number", df.numbers[0]).show()
 ```
 
@@ -102,7 +102,7 @@ The `array` method makes it easy to combine multiple DataFrame columns to an arr
 
 Create a DataFrame with `num1` and `num2` columns:
 
-```
+```python
 df = spark.createDataFrame(
     [(33, 44), (55, 66)], ["num1", "num2"]
 )
@@ -120,7 +120,7 @@ df.show()
 
 Add a `nums` column, which is an array that contains `num1` and `num2`:
 
-```
+```python
 from pyspark.sql.functions import *
 
 df.withColumn("nums", array(df.num1, df.num2)).show()
@@ -141,7 +141,7 @@ Collecting values into a list can be useful when performing aggregations. This s
 
 Create a DataFrame with `first_name` and `color` columns that indicate colors some individuals like.
 
-```
+```python
 df = spark.createDataFrame(
     [("joe", "red"), ("joe", "blue"), ("lisa", "yellow")], ["first_name", "color"]
 )
@@ -161,7 +161,7 @@ df.show()
 
 Group by `first_name` and create an `ArrayType` column with all the colors a given `first_name` likes.
 
-```
+```python
 res = (df
     .groupBy(df.first_name)
     .agg(collect_list(col("color")).alias("colors")))
@@ -180,7 +180,7 @@ res.show()
 
 Print the schema to verify that `colors` is an `ArrayType` column.
 
-```
+```python
 res.printSchema()
 
 root
@@ -197,7 +197,7 @@ A PySpark array can be exploded into multiple rows, the opposite of `collect_lis
 
 Create a DataFrame with an `ArrayType` column:
 
-```
+```python
 df = spark.createDataFrame(
     [("abc", [1, 2]), ("cd", [3, 4])], ["id", "numbers"]
 )
@@ -216,7 +216,7 @@ df.show()
 
 Explode the array column, so there is only one number per DataFrame row.
 
-```
+```python
 df.select(col("id"), explode(col("numbers")).alias("number")).show()
 ```
 
@@ -253,7 +253,7 @@ A PySpark DataFrame column can also be converted to a regular Python list, [as d
 
 You can write DataFrames with array columns to Parquet files without issue.
 
-```
+```python
 df = spark.createDataFrame(
     [("abc", [1, 2]), ("cd", [3, 4])], ["id", "numbers"]
 )
@@ -264,7 +264,7 @@ df.write.parquet(parquet_path)
 
 You cannot write DataFrames with array columns to CSV files:
 
-```
+```python
 csv_path = "/Users/powers/Documents/tmp/csv_path"
 df.write.csv(csv_path)
 ```
@@ -288,7 +288,7 @@ This isn't a limitation of Spark - it's a limitation of the CSV file format. CSV
 
 Let's create a DataFrame with an integer column and a string column to demonstrate the surprising type conversion that takes place when different types are combined in a PySpark array.
 
-```
+```python
 df = spark.createDataFrame(
     [("a", 8), ("b", 9)], ["letter", "number"]
 )
@@ -306,7 +306,7 @@ df.show()
 
 Combine the `letter` and `number` columns into an array and then fetch the number from the array.
 
-```
+```python
 res = (df
   .withColumn("arr", array(df.letter, df.number))
   .withColumn("number2", col("arr")[1]))

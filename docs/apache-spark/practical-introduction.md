@@ -65,7 +65,7 @@ Choosing between Python and Scala would normally be a big technology decision (e
 
 Let's look at some Scala code that adds a column to a DataFrame:
 
-```
+```scala
 import org.apache.spark.sql.functions._
 
 df.withColumn("greeting", lit("hi"))
@@ -73,7 +73,7 @@ df.withColumn("greeting", lit("hi"))
 
 Here's the same code in Python:
 
-```
+```scala
 from pyspark.sql.functions import lit
 
 df.withColumn("greeting", lit("hi"))

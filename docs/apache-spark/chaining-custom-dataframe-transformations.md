@@ -19,7 +19,7 @@ The Dataset transform method provides a “[concise syntax for chaining custom t
 
 Suppose we have a `withGreeting()` method that appends a greeting column to a DataFrame and a `withFarewell()` method that appends a farewell column to a DataFrame.
 
-```
+```scala
 def withGreeting(df: DataFrame): DataFrame = {
   df.withColumn("greeting", lit("hello world"))
 }
@@ -31,7 +31,7 @@ def withFarewell(df: DataFrame): DataFrame = {
 
 We can use the transform method to run the `withGreeting()` and `withFarewell()` methods.
 
-```
+```scala
 val df = Seq(
   "funny",
   "person"
@@ -55,7 +55,7 @@ weirdDf.show()
 
 The transform method can easily be chained with built-in Spark DataFrame methods, like select.
 
-```
+```scala
 df
   .select("something")
   .transform(withGreeting)
@@ -64,7 +64,7 @@ df
 
 If the transform method is not used then we need to nest method calls and the code becomes less readable.
 
-```
+```scala
 withFarewell(withGreeting(df))
 
 // even worse
@@ -77,7 +77,7 @@ Custom DataFrame transformations that take arguments can also use the transform 
 
 Let’s use the same `withGreeting()` method from earlier and add a `withCat()` method that takes a string as an argument.
 
-```
+```scala
 def withGreeting(df: DataFrame): DataFrame = {
   df.withColumn("greeting", lit("hello world"))
 }
@@ -89,7 +89,7 @@ def withCat(name: String)(df: DataFrame): DataFrame = {
 
 We can use the transform method to run the `withGreeting()` and `withCat()` methods.
 
-```
+```scala
 val df = Seq(
   "funny",
   "person"
@@ -117,7 +117,7 @@ The transform method can be used for custom DataFrame transformations that take 
 
 Implicit classes can be used to add methods to existing classes. The following code adds the same `withGreeting()` and `withFarewell()` methods to the DataFrame class itself.
 
-```
+```scala
 object BadImplicit {
 
   implicit class DataFrameTransforms(df: DataFrame) {
@@ -137,7 +137,7 @@ object BadImplicit {
 
 The `withGreeting()` and `withFarewell()` methods can be chained and executed as follows.
 
-```
+```scala
 import BadImplicit._
 
 val df = Seq(

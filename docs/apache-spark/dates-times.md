@@ -15,11 +15,11 @@ Spark supports [ArrayType](https://mungingdata.com/apache-spark/arraytype-column
 
 Check out [Writing Beautiful Spark Code](https://leanpub.com/beautiful-spark/) for a detailed overview of the different complex column types and how they should be used when architecting Spark applications.
 
-## Creating DateType columns
+## Creating DateType columns
 
 Import the `java.sql.Date` library to create a DataFrame with a `DateType` column.
 
-```
+```scala
 import java.sql.Date
 import org.apache.spark.sql.types.{DateType, IntegerType}
 
@@ -53,7 +53,7 @@ root
 
 The `cast()` method can create a `DateType` column by converting a `StringType` column into a date.
 
-```
+```scala
 val sourceDF = spark.createDF(
   List(
     (1, "2013-01-30"),
@@ -89,7 +89,7 @@ root
 
 Let's create a DataFrame with a `DateType` column and use built in Spark functions to extract the year, month, and day from the date.
 
-```
+```scala
 val sourceDF = spark.createDF(
   List(
     (1, Date.valueOf("2016-09-30")),
@@ -125,7 +125,7 @@ sourceDF.withColumn(
 
 Let's create a DataFrame with a `TimestampType` column and use built in Spark functions to extract the minute and second from the timestamp.
 
-```
+```scala
 import java.sql.Timestamp
 
 val sourceDF = spark.createDF(
@@ -160,7 +160,7 @@ sourceDF.withColumn(
 
 The `datediff()` and `current_date()` functions can be used to calculate the number of days between today and a date in a `DateType` column. Let's use these functions to calculate someone's age in days.
 
-```
+```scala
 val sourceDF = spark.createDF(
   List(
     (1, Date.valueOf("1990-09-30")),
@@ -190,7 +190,7 @@ sourceDF.withColumn(
 
 The `date_add()` function can be used to add days to a date. Let's add 15 days to a date column.
 
-```
+```scala
 val sourceDF = spark.createDF(
   List(
     (1, Date.valueOf("1990-09-30")),

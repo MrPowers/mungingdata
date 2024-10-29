@@ -21,7 +21,7 @@ This blog post provides a great introduction to these topics, but [Writing Beaut
 
 Let's invent some sample data, define a schema, and create a DataFrame.
 
-```
+```scala
 import org.apache.spark.sql.types._
 
 val data = Seq(
@@ -66,7 +66,7 @@ The `createDataFrame()` method takes two arguments:
 
 The `schema()` method returns a `StructType` object:
 
-```
+```scala
 df.schema
 
 StructType(
@@ -97,7 +97,7 @@ When the `nullable` field is set to `true`, the column can accept `null` values.
 
 We can also define a schema with the `::` operator, like the examples in the [StructType documentation](http://spark.apache.org/docs/latest/api/scala/index.html#org.apache.spark.sql.types.StructType).
 
-```
+```scala
 val schema = StructType(
   StructField("number", IntegerType, true) ::
   StructField("word", StringType, true) :: Nil
@@ -116,14 +116,14 @@ Notice that the last element always has to be `Nil` or the code will error out.
 
 We can use the `StructType#add()` method to define schemas.
 
-```
+```scala
 val schema = StructType(Seq(StructField("number", IntegerType, true)))
   .add(StructField("word", StringType, true))
 ```
 
 `add()` is an overloaded method and there are several different ways to invoke it - this will work too:
 
-```
+```scala
 val schema = StructType(Seq(StructField("number", IntegerType, true)))
   .add("word", StringType, true)
 ```
@@ -136,7 +136,7 @@ Check the [StructType documentation](http://spark.apache.org/docs/latest/api/sca
 
 The following code has an extra column defined in the schema and will error out with this message: `java.lang.RuntimeException: Error while encoding: java.lang.ArrayIndexOutOfBoundsException: 2`.
 
-```
+```scala
 val data = Seq(
   Row(8, "bat"),
   Row(64, "mouse"),
@@ -163,7 +163,7 @@ The data only contains two columns, but the schema contains three `StructField` 
 
 The following code incorrectly characterizes a string column as an integer column and will error out with this message: `java.lang.RuntimeException: Error while encoding: java.lang.RuntimeException: java.lang.String is not a valid external type for schema of int`.
 
-```
+```scala
 val data = Seq(
   Row(8, "bat"),
   Row(64, "mouse"),
@@ -193,7 +193,7 @@ The second column of data (`"bat"`, `"mouse"`, and `"horse"`) cannot be characte
 
 The following code incorrectly tries to add `null` to a column with a `nullable` property set to false and will error out with this message: `java.lang.RuntimeException: Error while encoding: java.lang.RuntimeException: The 0th field 'word1' of input row cannot be null`.
 
-```
+```scala
 val data = Seq(
   Row("hi", "bat"),
   Row("bye", "mouse"),
@@ -225,7 +225,7 @@ Long values are suitable for bigger integers. You can create a long value in Sca
 
 Let's create a DataFrame with a `LongType` column.
 
-```
+```scala
 val data = Seq(
   Row(5L, "bat"),
   Row(-10L, "mouse"),
@@ -261,7 +261,7 @@ You'll get the following error message if you try to add integers to a `LongType
 
 Here's an example of the erroneous code:
 
-```
+```scala
 val data = Seq(
   Row(45, "bat"),
   Row(2, "mouse"),
@@ -289,13 +289,13 @@ Spark supports columns that contain arrays of values. Scala offers lists, sequen
 
 Here's how to create an array of numbers with Scala:
 
-```
+```scala
 val numbers = Array(1, 2, 3)
 ```
 
 Let's create a DataFrame with an `ArrayType` column.
 
-```
+```scala
 val data = Seq(
   Row("bieber", Array("baby", "sorry")),
   Row("ozuna", Array("criminal"))
@@ -329,19 +329,19 @@ df.show()
 
 Scala [maps](https://docs.scala-lang.org/overviews/collections/maps.html) store key / value pairs (maps are called "hashes" in other programming languages). Let's create a Scala map with beers and their country of origin.
 
-```
+```scala
 val beers = Map("aguila" -> "Colombia", "modelo" -> "Mexico")
 ```
 
 Let's grab the value that's associated with the key `"modelo"`:
 
-```
+```scala
 beers("modelo") // Mexico
 ```
 
 Let's create a DataFrame with a `MapType` column.
 
-```
+```scala
 val data = Seq(
   Row("sublime", Map(
     "good_song" -> "santeria",
@@ -385,7 +385,7 @@ DataFrame schemas can be nested. A DataFrame column can be a `struct` - it's ess
 
 Let's create a DataFrame with a `StructType` column.
 
-```
+```scala
 val data = Seq(
   Row("bob", Row("blue", 45)),
   Row("mary", Row("red", 64))
@@ -442,7 +442,7 @@ The `StructType` object mixes in the [`Seq` trait](https://www.scala-lang.org/ap
 
 Here's how `StructType` is defined:
 
-```
+```scala
 case class StructType(fields: Array[StructField])
   extends DataType
   with Seq[StructField]
@@ -452,7 +452,7 @@ Here's the [StructType source code](https://github.com/apache/spark/blob/a1c1dd3
 
 The Scala `Seq` trait is defined as follows:
 
-```
+```scala
 trait Seq[+A]
   extends PartialFunction[Int, A]
   with Iterable[A]
@@ -465,7 +465,7 @@ By inheriting from the `Seq` trait, the `StructType` class gets access to collec
 
 Let's create a DataFrame schema and use the `foldLeft()` method to create a sequence of all the column names.
 
-```
+```scala
 val data = Seq(
   Row(8, "bat"),
   Row(64, "mouse"),
@@ -497,7 +497,7 @@ In the previous section, we created a DataFrame with a `StructType` column. Let'
 
 We will leverage a `flattenSchema` method from [spark-daria](https://github.com/MrPowers/spark-daria) to make this easy.
 
-```
+```scala
 import com.github.mrpowers.spark.daria.sql.DataFrameExt._
 
 val flattenedDF = df.flattenSchema(delimiter = "_")

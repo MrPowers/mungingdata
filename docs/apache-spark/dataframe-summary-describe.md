@@ -30,7 +30,7 @@ Suppose you have the following DataFrame.
 
 Use `describe` to compute some summary statistics on the DataFrame.
 
-```
+```scala
 df.describe().show()
 ```
 
@@ -85,7 +85,7 @@ Suppose you have the same starting DataFrame from before.
 
 Calculate the summary statistics for all columns in the DataFrame.
 
-```
+```scala
 df.summary().show()
 ```
 
@@ -106,7 +106,7 @@ df.summary().show()
 
 Let's customize the output to return the count, 33rd percentile, 50th percentile, and 66th percentile.
 
-```
+```scala
 df.summary("count", "33%", "50%", "66%").show()
 ```
 
@@ -123,7 +123,7 @@ df.summary("count", "33%", "50%", "66%").show()
 
 Limit the custom summary to the `num1` column cause it doesn't make sense to compute percentiles for string columns.
 
-```
+```scala
 df.select("num1").summary("count", "33%", "50%", "66%").show()
 ```
 
@@ -142,13 +142,13 @@ I worked with the Spark core team to add [some additional options](https://githu
 
 Here's how to get the exact count and distinct count for each column:
 
-```
+```scala
 df.summary("count", "count_distinct").show()
 ```
 
 Here's how to get the approximate count distinct, which will run faster:
 
-```
+```scala
 df.summary("count", "approx_count_distinct").show()
 ```
 
@@ -156,7 +156,7 @@ df.summary("count", "approx_count_distinct").show()
 
 We can use `agg` to manually compute the summary statistics for columns in the DataFrame. Here's how to calculate the distinct count for each column in the DataFrame.
 
-```
+```scala
 df.agg(countDistinct("num1"), countDistinct("letters")).show()
 ```
 
@@ -170,7 +170,7 @@ df.agg(countDistinct("num1"), countDistinct("letters")).show()
 
 Here's how to calculate the distinct count and the max for each column in the DataFrame:
 
-```
+```scala
 val counts = df.agg(
   lit("countDistinct").as("colName"),
   countDistinct("num1").as("num1"),

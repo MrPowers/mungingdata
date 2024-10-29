@@ -58,7 +58,7 @@ Explanatory variables are referred to as "features" in machine learning.
 
 We will create a `trainingDF()` method that returns a DataFrame with all of the features converted to floating point numbers, so they can be plugged into the machine learning model.
 
-```
+```scala
 object TitanicData extends SparkSessionWrapper {
 
   def trainingDF(
@@ -103,7 +103,7 @@ object TitanicData extends SparkSessionWrapper {
 
 Let's write a function that will convert all of the features into a single vector.
 
-```
+```scala
 def withVectorizedFeatures(
   featureColNames: Array[String] = Array("Gender", "Age", "SibSp", "Parch", "Fare"),
   outputColName: String = "features"
@@ -117,7 +117,7 @@ def withVectorizedFeatures(
 
 Now let's write a function that will convert the `Survived` column into a label.
 
-```
+```scala
 def withLabel(
   inputColName: String = "Survived",
   outputColName: String = "label"
@@ -134,7 +134,7 @@ def withLabel(
 
 We can train the model by vectorizing the features, adding a label, and fitting a logistic regression model with a DataFrame that has `feature` and `label` columns.
 
-```
+```scala
 def model(df: DataFrame = TitanicData.trainingDF()): LogisticRegressionModel = {
   val trainFeatures: DataFrame = df
     .transform(withVectorizedFeatures())
@@ -158,7 +158,7 @@ println(model().intercept) // -0.9761016366658759
 
 Let's create a method that does all the data munging and return a properly formatted test dataset so we can run our logistic regresssion model.
 
-```
+```scala
 object TitanicData extends SparkSessionWrapper {
 
   def testDF(
@@ -210,7 +210,7 @@ object TitanicData extends SparkSessionWrapper {
 
 Just like we did with the training dataset, let's add one column with the vectorized features and another column with the label.
 
-```
+```scala
 val testDF: DataFrame = TitanicData
   .testDF()
   .transform(withVectorizedFeatures())
@@ -220,7 +220,7 @@ val testDF: DataFrame = TitanicData
 
 Now we're ready to run the logistic regression model.
 
-```
+```scala
 val predictions: DataFrame = TitanicLogisticRegression
   .model()
   .transform(testDF)
@@ -233,7 +233,7 @@ val predictions: DataFrame = TitanicLogisticRegression
 
 We can use the `BinaryClassificationEvaluator` class to test the accuracy of our model.
 
-```
+```scala
 new BinaryClassificationEvaluator().evaluate(predictions) // 0.83
 ```
 
@@ -247,7 +247,7 @@ model().save("./tmp/titanic_model/")
 
 The predictions can be generated with the model that's been persisted in the filesystem.
 
-```
+```scala
 val predictions: DataFrame = LogisticRegressionModel
   .load("./tmp/titanic_model/")
   .transform(testDF)

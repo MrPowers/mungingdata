@@ -20,13 +20,13 @@ Suppose you have a DataFrame with `team_name`, `num_championships`, and `state` 
 
 Here's how you can filter to only show the teams from TX (short for Texas).
 
-```
+```scala
 df.filter(df("state") === "TX")
 ```
 
 Here's a sample dataset that you can paste into a [Spark console](https://mungingdata.com/apache-spark/using-the-console/) to verify this result yourself.
 
-```
+```scala
 val df = Seq(
   ("Rockets", 2, "TX"),
   ("Warriors", 6, "CA"),
@@ -56,7 +56,7 @@ You'll use the Spark Column class all the time and it's good to [understand how 
 
 Here's the method signature for the `===` method defined in the Column class.
 
-```
+```scala
 def ===(other: Any): Column
 ```
 
@@ -64,7 +64,7 @@ The `===` takes Any object as an argument and returns a Column.
 
 In `df("state") === "TX"`, the `===` method is supplied a string argument. It can also be supplied a `Column` argument.
 
-```
+```scala
 import org.apache.spark.sql.functions.lit
 
 df.filter(df("state") === lit("TX")).show()
@@ -97,7 +97,7 @@ Study the Column methods to become a better Spark programmer!
 
 Let's create a DataFrame with `num` and `is_even_hardcoded` columns.
 
-```
+```scala
 val df = Seq(
   (2, true),
   (6, true),
@@ -119,7 +119,7 @@ df.show()
 
 Let's create a [custom DataFrame transformation](https://mungingdata.com/apache-spark/chaining-custom-dataframe-transformations/) called `isEven` that'll return `true` if the number is even and `false` otherwise.
 
-```
+```scala
 import org.apache.spark.sql.DataFrame
 import org.apache.spark.sql.functions._
 
@@ -148,13 +148,13 @@ Visually verifying column equality isn't good for big datasets or automated proc
 
 Let's get this full DataFrame stored in a new variable, so we don't need to keep on running the `isEven` function.
 
-```
+```scala
 val fullDF = df.transform(isEven("num", "is_even"))
 ```
 
 We can use the `ColumnComparer` trait defined in [spark-fast-tests](https://github.com/MrPowers/spark-fast-tests) to verify column equality.
 
-```
+```scala
 import com.github.mrpowers.spark.fast.tests.ColumnComparer
 
 assertColEquality(df, "is_even_hardcoded", "is_even")
@@ -164,7 +164,7 @@ When you're writing unit tests, you'll definitely want to use the spark-fast-tes
 
 Let's hack together some code that'll return `true` if two columns are equal.
 
-```
+```scala
 def areColumnsEqual(df: DataFrame, colName1: String, colName2: String) = {
   val elements = df
     .select(colName1, colName2)
@@ -199,7 +199,7 @@ fullDF.show()
 
 Let's append a column to `fullDF` that returns `true` if `is_even_hardcoded` and `is_even` are equal:
 
-```
+```scala
 fullDF
   .withColumn("are_cols_equal", $"is_even_hardcoded" === $"is_even")
   .show()
@@ -215,7 +215,7 @@ fullDF
 
 Let's write a function to verify that all the values in a given column are true.
 
-```
+```scala
 def areAllRowsTrue(df: DataFrame, colName: String) = {
   val elements = df
     .select(colName)
@@ -227,7 +227,7 @@ def areAllRowsTrue(df: DataFrame, colName: String) = {
 
 Let's verify that `areAllRowsTrue` returns `true` for the `are_cols_equal` column.
 
-```
+```scala
 areAllRowsTrue(
   fullDF.withColumn("are_cols_equal", $"is_even_hardcoded" === $"is_even"),
   "are_cols_equal"
@@ -240,7 +240,7 @@ This `===` approach unfortunately doesn't work for all column types.
 
 Let's create a `numbersDF` with two ArrayType columns that contain integers.
 
-```
+```scala
 val numbersDF = Seq(
   (Seq(1, 2), Seq(1, 2)),
   (Seq(3, 3), Seq(3, 3)),
@@ -250,7 +250,7 @@ val numbersDF = Seq(
 
 We can use `===` to assess ArrayType column equality.
 
-```
+```scala
 numbersDF
   .withColumn("nah", $"nums1" === $"nums2")
   .show()
@@ -268,7 +268,7 @@ Let's see if `===` works for nested arrays.
 
 Start by making a `fakeDF` DataFrame with two nested array columns.
 
-```
+```scala
 val fakeDF = Seq(
   (Seq(Seq(1, 2)), Seq(Seq(1, 2))),
   (Seq(Seq(1, 3)), Seq(Seq(1, 2)))
@@ -277,7 +277,7 @@ val fakeDF = Seq(
 
 The code below confirms that the `===` operator can handle deep column comparisons gracefully.
 
-```
+```scala
 fakeDF
   .withColumn("nah", $"nums1" === $"nums2")
   .show()
@@ -296,7 +296,7 @@ But watch out, the `===` operator doesn't work for all complex column types.
 
 The `===` operator does not work for MapType columns.
 
-```
+```scala
 val mapsDF = Seq(
   (Map("one" -> 1), Map("one" -> 1))
 ).toDF("m1", "m2")
@@ -365,19 +365,19 @@ We need to use different tactics for MapType column equality.
 
 The Scala `==` operator can successfully compare maps:
 
-```
+```scala
 Map("one" -> 1) == Map("one" -> 1) // true
 ```
 
 The `sameElements` Scala method also works:
 
-```
+```scala
 Map("one" -> 1) sameElements Map("one" -> 1)
 ```
 
 Recall that `sameElements` was used in the `areColumnsEqual` method we defined earlier:
 
-```
+```scala
 def areColumnsEqual(df: DataFrame, colName1: String, colName2: String) = {
   val elements = df
     .select(colName1, colName2)
@@ -408,7 +408,7 @@ You'll want to leverage a library like [spark-fast-tests](https://github.com/MrP
 
 Let's look at how [spark-daria](https://github.com/MrPowers/spark-daria) uses the spark-fast-tests `assertColumnEquality` method to test the `removeNonWordCharacters()` function that removes all the non-word characters from a string.
 
-```
+```scala
 def removeNonWordCharacters(col: Column): Column = {
   regexp_replace(col, "[^\\w\\s]+", "")
 }
@@ -418,7 +418,7 @@ Let's write a test to make sure the `removeNonWordCharacters` converts `"Bruce &
 
 Here's the test:
 
-```
+```scala
 import utest._
 
 import com.github.mrpowers.spark.fast.tests.ColumnComparer

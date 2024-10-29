@@ -19,7 +19,7 @@ Create a Dask DataFrame with two partitions and output the DataFrame to disk to 
 
 Start by creating the Dask DataFrame:
 
-```
+```python
 import pandas as pd
 from dask import dataframe as dd
 
@@ -66,7 +66,7 @@ Once all the data is collected to a single Pandas partition, you can write it ou
 
 Here's how to write the Dask DataFrame to a single file with `compute`:
 
-```
+```python
 df.compute().to_csv("./tmp/my_one_file.csv", index=False)
 ```
 
@@ -86,11 +86,11 @@ This approach only works if your data is small enough to fit in a single Pandas 
 
 [The Pandas rule of thumb](https://wesmckinney.com/blog/apache-arrow-pandas-internals/) is "have 5 to 10 times as much RAM as the size of your dataset". This rule of thumb is from 2017 - let me know if it has been updated.
 
-## single\_file
+## `single_file`
 
 You can also write out a single CSV file with the `single_file` flag:
 
-```
+```python
 df.to_csv("./tmp/my_single_file.csv", index=False, single_file=True)
 ```
 

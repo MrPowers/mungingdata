@@ -15,7 +15,7 @@ The native Spark datetime functions are not easy to use, so it's important to bu
 
 Spark has a function that calculates the last day of the month, but it's poorly named. Let's give the Spark function a more descriptive name so our code is readable.
 
-```
+```scala
 def endOfMonthDate(col: Column): Column = {
   last_day(col)
 }
@@ -38,7 +38,7 @@ Suppose you have the following data:
 
 Append an `end_of_month` column to the DataFrame:
 
-```
+```scala
 import com.github.mrpowers.spark.daria.sql.functions._
 
 df
@@ -76,7 +76,7 @@ You can calculate the start of the month with the `trunc` or `date_trunc` functi
 
 Here are the two different ways to calculate the beginning of the month:
 
-```
+```scala
 datesDF
   .withColumn("beginning_of_month_date", trunc(col("some_date"), "month"))
   .withColumn("beginning_of_month_time", date_trunc("month" ,col("some_date")))
@@ -102,7 +102,7 @@ Important observations:
 
 Let's define `beginningOfMonthDate` and `beginningOfMonthTime` functions that are more intuitive.
 
-```
+```scala
 def beginningOfMonthDate(col: Column): Column = {
   trunc(col, "month")
 }
@@ -114,7 +114,7 @@ def beginningOfMonthTime(col: Column): Column = {
 
 These functions let us write code that's easier to read:
 
-```
+```scala
 datesDF
   .withColumn("beginning_of_month_date", beginningOfMonthDate(col("some_date")))
   .withColumn("beginning_of_month_time", beginningOfMonthTime(col("some_date")))

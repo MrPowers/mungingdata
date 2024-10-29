@@ -25,7 +25,7 @@ spot,bulldog
 
 Let's use Spark Structured Streaming and Trigger.Once to write our all the CSV data in `dog_data_csv` to a `dog_data_parquet` data lake.
 
-```java
+```scala
 import org.apache.spark.sql.streaming.Trigger
 import org.apache.spark.sql.types._
 
@@ -57,7 +57,7 @@ df
 
 The parquet data is written out in the `dog_data_parquet` directory. Let's print out the Parquet data to verify it only contains the two rows of data from our CSV file.
 
-```
+```scala
 val parquetPath = new java.io.File("./tmp/dog_data_parquet/").getCanonicalPath
 spark.read.parquet(parquetPath).show()
 
@@ -137,7 +137,7 @@ The Trigger.Once code was wrapped in a method (see [this file](https://github.co
 
 Let's verify the Parquet data lake has been updated with the new data:
 
-```
+```scala
 val parquetPath = new java.io.File("./tmp/dog_data_parquet/").getCanonicalPath
 spark.read.parquet(parquetPath).show()
 
@@ -210,7 +210,7 @@ Let's start over and create a job that creates a running count of each dog by na
 
 We'll run the following code to create an initial cache of the counts by name.
 
-```
+```scala
 val csvPath = new java.io.File("./tmp/dog_data_csv/dogs1.csv").getCanonicalPath
 val df = spark.read
   .option("header", "true")
@@ -228,7 +228,7 @@ df
 
 Let's inspect the aggregation after processing the first file.
 
-```
+```scala
 val parquetPath = new java.io.File("./tmp/dog_data_name_counts/").getCanonicalPath
 spark.read.parquet(parquetPath).show()
 
@@ -242,7 +242,7 @@ spark.read.parquet(parquetPath).show()
 
 Let's run some code that will combine the aggregations from the first data file with the second data file, rerun the aggregations, and then write out the results. We will not aggregate the results in the first file again - we'll just combine our existing results with the second data file.
 
-```
+```scala
 val csvPath = new java.io.File("./tmp/dog_data_csv/dogs2.csv").getCanonicalPath
 val df = spark.read
   .option("header", "true")
@@ -275,7 +275,7 @@ spark
 
 Let's inspect the aggregation after processing the incremental update.
 
-```
+```scala
 val parquetPath = new java.io.File("./tmp/dog_data_name_counts/").getCanonicalPath
 spark.read.parquet(parquetPath).show()
 
@@ -294,7 +294,7 @@ This implementation isn't ideal because the initial run and incremental update r
 
 Let's start out with a little helper method to check if a directory exists.
 
-```
+```scala
 def dirExists(hdfsDirectory: String): Boolean = {
   val hadoopConf = new org.apache.hadoop.conf.Configuration()
   val fs = org.apache.hadoop.fs.FileSystem.get(hadoopConf)
@@ -304,7 +304,7 @@ def dirExists(hdfsDirectory: String): Boolean = {
 
 Now we can write a method that's flexible enough to create or incrementally update the aggregate name counts, depending on if an output file already exists.
 
-```
+```scala
 def refactoredUpdateCountByName(csvPath: String): Unit = {
   val df = spark.read
     .option("header", "true")
@@ -342,7 +342,7 @@ def refactoredUpdateCountByName(csvPath: String): Unit = {
 
 Let's run this method with both CSV files and examine the output.
 
-```
+```scala
 val csvPath1 = new java.io.File("./tmp/dog_data_csv/dogs1.csv").getCanonicalPath
 refactoredUpdateCountByName(csvPath1)
 showDogDataNameCounts()

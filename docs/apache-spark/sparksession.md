@@ -23,7 +23,7 @@ Let's open the Spark console and use the `spark` variable to create a RDD from a
 
 Notice that the message `Spark session available as 'spark'` is printed when you start the Spark shell.
 
-```
+```scala
 val data = Seq(2, 4, 6)
 val myRDD = spark.sparkContext.parallelize(data)
 ```
@@ -39,7 +39,7 @@ The SparkSession is used twice when manually creating a DataFrame:
 1. Converts a sequence into a RDD
 2. Converts a RDD into a DataFrame
 
-```
+```scala
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.types._
 
@@ -77,7 +77,7 @@ The SparkSession is also used to read CSV, JSON, and Parquet files.
 
 Here are some examples.
 
-```
+```scala
 val df1 = spark.read.csv("/mnt/my-bucket/csv-data")
 val df2 = spark.read.json("/mnt/my-bucket/json-data")
 val df3 = spark.read.parquet("/mnt/my-bucket/parquet-data")
@@ -89,7 +89,7 @@ There are separate posts on CSV, JSON, and Parquet files that do deep dives into
 
 You can create a SparkSession in your applications with the `getOrCreate` method:
 
-```
+```scala
 val spark = SparkSession.builder().master("local").appName("my cool app").getOrCreate()
 ```
 
@@ -99,7 +99,7 @@ A lot of Spark programmers have trouble writing high quality code because they c
 
 Wrapping the `spark` variable in a `trait` is the best way to share it across different classes and objects in your codebase.
 
-```
+```scala
 import org.apache.spark.sql.SparkSession
 
 trait SparkSessionWrapper extends Serializable {
@@ -119,7 +119,7 @@ Your production environment will probably already define the `spark` variable, s
 
 Here is how the `SparkSessionWrapper` can be used in some example objects.
 
-```
+```scala
 object transformations extends SparkSessionWrapper {
 
   def withSomeDatamart(
@@ -140,7 +140,7 @@ Notice how the `spark` variable is used to set our smart default.
 
 We will use the `SparkSessionWrapper` trait and `spark` variable again when testing the `withSomeDatamart` method.
 
-```
+```scala
 import utest._
 
 object TransformsTest extends TestSuite with SparkSessionWrapper with ColumnComparer {
@@ -190,7 +190,7 @@ Prior to Spark 2.0, developers needed to explicly create `SparkConf`, `SparkCont
 
 The following code snippet uses the `SparkSession` to access the `sparkContext`, so the `parallelize` method can be used to create a DataFrame (we saw this same snippet earlier in the blog post).
 
-```
+```scala
 spark.sparkContext.parallelize(
   Seq(
     Row("bob", 55)
