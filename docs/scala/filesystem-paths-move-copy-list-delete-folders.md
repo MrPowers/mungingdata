@@ -30,7 +30,7 @@ src/
 
 Here's how to copy `src/test/resources/people.csv` into the `tmp` directory with os-lib:
 
-```
+```scala
 os.copy(
   os.pwd/"src"/"test"/"resources"/"people.csv",
   os.pwd/"tmp"/"people_copy.csv"
@@ -41,7 +41,7 @@ Here's the [top ranked Stackoverflow answer](https://stackoverflow.com/questions
 
 The top ranked answer uses `java.io`:
 
-```
+```scala
 import java.io.{File,FileInputStream,FileOutputStream}
 val src = new File(args(0))
 val dest = new File(args(1))
@@ -51,7 +51,7 @@ new FileOutputStream(dest) getChannel() transferFrom(
 
 There's another answer that uses `java.nio`:
 
-```
+```scala
 import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import java.nio.file.Files.copy
 import java.nio.file.Paths.get
@@ -71,7 +71,7 @@ The path / filesystem operations are both packed into os-lib, so you don't need 
 
 The `os-lib` solution is similar to how you can copy a file in Ruby:
 
-```
+```scala
 require 'fileutils'
 
 FileUtils.cp(
@@ -98,13 +98,13 @@ Libraries generally shouldn't be exposed in this manner, but Li can get away wit
 
 Let's create a `my_folder` directory:
 
-```
+```scala
 os.makeDir(os.pwd/"my_folder")
 ```
 
 Now let's add a `story.txt` file to the folder with some text.
 
-```
+```scala
 os.write(os.pwd/"my_folder"/"story.txt", "once upon a time")
 ```
 
@@ -114,13 +114,13 @@ These commands feel Unix-like.
 
 Let's delete the `story.txt` file:
 
-```
+```scala
 os.remove(os.pwd/"my_folder"/"story.txt")
 ```
 
 `os.remove` can also be used to delete empty folders:
 
-```
+```scala
 os.remove(os.pwd/"my_folder")
 ```
 
@@ -128,7 +128,7 @@ os.remove(os.pwd/"my_folder")
 
 Let's create a folder with a few files and then list the folder contents.
 
-```
+```scala
 os.makeDir(os.pwd/"dogs")
 os.write(os.pwd/"dogs"/"dog1.txt", "ruff ruff")
 os.write(os.pwd/"dogs"/"dog2.txt", "bow wow")
@@ -137,7 +137,7 @@ os.write(os.pwd/"dogs"/"dog3.txt", "rrrrr")
 
 `os.list(os.pwd/"dogs")` returns a listing of the files as an ArraySeq:
 
-```
+```scala
 ArraySeq(
   /Users/powers/Documents/code/my_apps/scala-design/dogs/dog1.txt,
   /Users/powers/Documents/code/my_apps/scala-design/dogs/dog2.txt,

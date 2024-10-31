@@ -21,7 +21,7 @@ Spark 3 [includes a native DataFrame transform method](https://github.com/apache
 
 Spark 2 users can monkey patch the DataFrame object with a transform method so we can chain DataFrame transformations.
 
-```
+```python
 from pyspark.sql.dataframe import DataFrame
 
 
@@ -38,7 +38,7 @@ This code snippet is from the [quinn project](https://github.com/MrPowers/quinn/
 
 Let's define a couple of simple DataFrame transformations to test the transform method.
 
-```
+```python
 def with_greeting(df):
     return df.withColumn("greeting", lit("hi"))
 
@@ -48,7 +48,7 @@ def with_something(df, something):
 
 Let's create a DataFrame and then run the `with_greeting` and `with_something` DataFrame transformations.
 
-```
+```python
 data = [("jose", 1), ("li", 2), ("liz", 3)]
 source_df = spark.createDataFrame(data, ["name", "age"])
 
@@ -71,7 +71,7 @@ print(actual_df.show())
 
 The `lambda` is optional for custom DataFrame transformations that only take a single DataFrame argument so we can refactor `with_greeting` line as follows:
 
-```
+```python
 actual_df = (source_df
     .transform(with_greeting)
     .transform(lambda df: with_something(df, "crazy")))
@@ -97,9 +97,9 @@ def with_jacket(word, df):
     return df.withColumn("jacket", lit(word))
 ```
 
-We'll use the same source\_df DataFrame and with\_greeting method from before and chain the transformations with `functools.partial`.
+We'll use the same `source_df` DataFrame and `with_greeting` method from before and chain the transformations with `functools.partial`.
 
-```
+```python
 from functools import partial
 
 actual_df = (source_df
@@ -125,7 +125,7 @@ print(actual_df.show())
 
 DataFrame transformations that are defined with nested functions have the most elegant interface for chaining. Let's define a `with_funny` function that appends a `funny` column to a DataFrame.
 
-```
+```python
 def with_funny(something_funny):
     return lambda df: (
         df.withColumn("funny1", F.lit(something_funny))
@@ -134,7 +134,7 @@ def with_funny(something_funny):
 
 We'll use the same `source_df` DataFrame and `with_greeting` method from before.
 
-```
+```python
 actual_df = (source_df
      .transform(with_greeting)
      .transform(with_funny("haha")))
@@ -156,7 +156,7 @@ This is much better! 🎊. Thanks for suggesting this implementation [hoffrocket
 
 We can also define a custom transformation with an inner function (the inner function underscore in this example).
 
-```
+```python
 def with_funny(word):
     def _(df):
         return df.withColumn("funny", lit(word))
@@ -165,7 +165,7 @@ def with_funny(word):
 
 The inner function is named `_`. If you're going to explicitly name the inner function, using an underscore is a good choice because it's easy to apply consistently throughout the codebase. This design pattern was suggested by the developer that added the `transform` method to the DataFrame API, [see here](https://github.com/apache/spark/pull/23877#issuecomment-649198577).
 
-```
+```python
 def with_funny(word):
     def _(df):
         return df.withColumn("funny", lit(word))
@@ -178,7 +178,7 @@ The inner function is named `_`. Naming the inner function as underscore makes i
 
 We can define custom DataFrame transformations with the `@curry` decorator and run them with function composition provided by `cytoolz`.
 
-```
+```python
 from cytoolz import curry
 from cytoolz.functoolz import compose
 
@@ -213,7 +213,7 @@ print(actual_df.show())
 
 The `compose` function applies transformations from right to left (bottom to top). We can modify the function to apply the transformations from left to right (top to bottom):
 
-```
+```python
 pipeline = compose(*reversed([
     with_stuff1("nice", "person"),
     with_stuff2("yoyo")

@@ -15,7 +15,7 @@ There are multiple different ways to rename columns and you'll often want to per
 
 Create a Pandas DataFrame and print the contents.
 
-```
+```python
 df = pd.DataFrame({"num": [1, 2], "let": ["a", "b"]})
 print(df)
 ```
@@ -28,7 +28,7 @@ print(df)
 
 Let's rename the columns to be `number` and `letter` so they're more descriptive.
 
-```
+```python
 df.rename({"num": "number", "let": "letter"}, axis="columns", inplace=True)
 print(df)
 ```
@@ -45,7 +45,7 @@ print(df)
 
 Create a DataFrame with `first_name` and `last-name` columns.
 
-```
+```python
 df = pd.DataFrame({"first_name": ["li", "karol"], "last-name": ["Fung", "G"]})
 print(df)
 ```
@@ -58,7 +58,7 @@ print(df)
 
 We don't want one column in our DataFrame to use underscores and the other to use hyphens. Rename the `last-name` column to be `last_name`.
 
-```
+```python
 df.rename({"last-name": "last_name"}, axis="columns", inplace=True)
 print(df)
 ```
@@ -77,7 +77,7 @@ You can also apply a function to all column names. This is especially useful whe
 
 Create a DataFrame with spaces in the column names.
 
-```
+```python
 df = pd.DataFrame({"some place": ["hawaii", "costa rica"], "fun activity": ["surfing", "zip lining"]})
 print(df)
 ```
@@ -90,7 +90,7 @@ print(df)
 
 Write a function that'll replace all the spaces with underscores in the column names.
 
-```
+```python
 df.rename(lambda x: x.replace(" ", "_"), axis="columns", inplace=True)
 print(df)
 ```

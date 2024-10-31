@@ -17,14 +17,14 @@ This section demonstrates how `any` is used to determine if one or more elements
 
 Create a regular Python array and use `any` to see if it contains the letter `b`.
 
-```
+```python
 arr = ["a", "b", "c"]
 any(e == "b" for e in arr) # True
 ```
 
 We can also wrap `any` in a function that's takes array and anonymous function arguments. This is similar to what we'll see in PySpark.
 
-```
+```python
 def any_lambda(iterable, function):
   return any(function(i) for i in iterable)
 
@@ -37,7 +37,7 @@ We've seen how `any` works with vanilla Python. Let's see how `exists` works sim
 
 Create a DataFrame with an array column.
 
-```
+```python
 df = spark.createDataFrame(
     [(["a", "b", "c"],), (["x", "y", "z"],)], ["some_arr"]
 )
@@ -55,7 +55,7 @@ df.show()
 
 Append a column that returns `True` if the array contains the letter `b` and `False` otherwise.
 
-```
+```python
 equals_b = lambda e: e == "b"
 res = df.withColumn("has_b", exists(col("some_arr"), equals_b))
 res.show()
@@ -78,14 +78,14 @@ The `exists` function takes an array column as the first argument and an anonymo
 
 Create an array of numbers and use `all` to see if every number is even.
 
-```
+```python
 nums = [1, 2, 3]
 all(e % 2 == 0 for e in nums) # False
 ```
 
 You can also wrap `all` in a function that's easily invoked with an array and an anonymous function.
 
-```
+```python
 def all_lambda(iterable, function):
   return all(function(i) for i in iterable)
 
@@ -99,7 +99,7 @@ all_lambda(evens, is_even) # True
 
 Create a DataFrame with an array column.
 
-```
+```python
 df = spark.createDataFrame(
     [([1, 2, 3],), ([2, 6, 12],)], ["some_arr"]
 )
@@ -117,7 +117,7 @@ df.show()
 
 Append a column that returns `True` if the array only contains even numbers and `False` otherwise.
 
-```
+```python
 is_even = lambda e: e % 2 == 0
 res = df.withColumn("all_even", forall(col("some_arr"), is_even))
 res.show()

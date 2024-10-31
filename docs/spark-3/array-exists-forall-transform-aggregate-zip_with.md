@@ -38,7 +38,7 @@ People "a" and "b" have at least one favorite number that's even, person "c" onl
 
 Start by creating an `isEven` column function that returns `true` is a number is even:
 
-```
+```scala
 def isEven(col: Column): Column = {
   col % 2 === lit(0)
 }
@@ -46,7 +46,7 @@ def isEven(col: Column): Column = {
 
 Let's create a DataFrame and then run the `org.apache.spark.sql.functions.exists` function to append a `even_best_number_exists` column.
 
-```
+```scala
 val df = spark.createDF(
   List(
     ("a", Array(3, 4, 5)),
@@ -82,7 +82,7 @@ resDF.show()
 
 You don't have to defined `isEven` as a named function. You can also use an anonymous function and get the same result.
 
-```
+```scala
 df.withColumn(
   "even_best_number_exists",
   exists(
@@ -113,7 +113,7 @@ Let's take a look at some arrays that contain words:
 
 Let's use `forall` to identify the arrays with words that all begin with the letter "a":
 
-```
+```scala
 val df = spark.createDF(
   List(
     (Array("ants", "are", "animals")),
@@ -171,7 +171,7 @@ Suppose you have the following data:
 
 Let's filter out all the array values equal to "bad":
 
-```
+```scala
 val df = spark.createDF(
   List(
     (Array("bad", "bunny", "is", "funny")),
@@ -227,7 +227,7 @@ Suppose we have a dataset with arrays that contain fun cities.
 
 Let's add a `fun_places` column that makes it clear how fun all of these cities really are!
 
-```
+```scala
 val df = spark.createDF(
   List(
     (Array("New York", "Seattle")),
@@ -268,7 +268,7 @@ Using a method name that already exists confuses folks that don't understand OOP
 
 Let's not focus on the negative. `org.apache.spark.functions.transform` now exists and is an absolute joy to work with. This is a great addition to the API.
 
-## aggregate
+## `aggregate`
 
 Suppose you have a DataFrame with an array of numbers:
 
@@ -284,7 +284,7 @@ Suppose you have a DataFrame with an array of numbers:
 
 You can calculate the sum of the numbers in the array with the `aggregate` function.
 
-```
+```scala
 val df = spark.createDF(
   List(
     (Array(1, 2, 3, 4)),
@@ -329,7 +329,7 @@ The `aggregate` docs are hard to follow because there are so many column argumen
 
 Let me know if you have a good example of an `aggregate` function that uses the `finish` function.
 
-## zip\_with
+## `zip_with`
 
 Suppose we have a DataFrame with `letters1` and `letters2` columns that contain arrays of letters.
 
@@ -345,7 +345,7 @@ Suppose we have a DataFrame with `letters1` and `letters2` columns that contain 
 
 Let's zip the `letters1` and `letters2` arrays and join them with a `***` delimiter. We want to convert `[a, b]` and `[c, d]` into a single array: `[a***c, b***d]`.
 
-```
+```scala
 val df = spark.createDF(
   List(
     (Array("a", "b"), Array("c", "d")),
@@ -385,7 +385,7 @@ resDF.show()
 
 [spark-daria](https://github.com/MrPowers/spark-daria/) implemented `exists` as a UDF and the code is pretty gross:
 
-```
+```scala
 def exists[T: TypeTag](f: (T => Boolean)) = udf[Boolean, Seq[T]] { (arr: Seq[T]) =>
   arr.exists(f(_))
 }
@@ -393,7 +393,7 @@ def exists[T: TypeTag](f: (T => Boolean)) = udf[Boolean, Seq[T]] { (arr: Seq[T])
 
 The spark-daria `forall` UDF implementation was equally unappealing:
 
-```
+```scala
 def forall[T: TypeTag](f: T => Boolean) = udf[Boolean, Seq[T]] { arr: Seq[T] =>
   arr.forall(f(_))
 }

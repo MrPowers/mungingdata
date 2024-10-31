@@ -19,7 +19,7 @@ os-lib is a great example of a project that [hides the underlying Java messiness
 
 Here's the basic commonmark-java usage, per the README:
 
-```
+```scala
 import org.commonmark.node.*;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
@@ -40,7 +40,7 @@ Let's see if we can clean this up.
 
 Start by including the commonmark-java project in your `build.sbt` file:
 
-```
+```scala
 libraryDependencies += "com.atlassian.commonmark" % "commonmark" % "0.16.1"
 ```
 
@@ -52,7 +52,7 @@ Java projects are not cross compiled, so they don't need the double `%%`.
 
 Let's create a single function that takes a Markdown string argument and returns a HTML string.
 
-```
+```scala
 object CommonmarkWrapper {
 
   def renderMd(text: String) = {
@@ -69,7 +69,7 @@ See how we've added `val` to the Java code to build syntactically correct Scala 
 
 Let's see how this library can be used:
 
-```
+```scala
 CommonmarkWrapper.renderMd("This is *Sparta*") // "<p>This is <em>Sparta</em></p>\n"
 ```
 

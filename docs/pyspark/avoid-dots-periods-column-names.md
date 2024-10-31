@@ -15,7 +15,7 @@ This blog post explains the errors and bugs you're likely to see when you're wor
 
 Let's create a DataFrame with `country.name` and `continent` columns.
 
-```
+```python
 df = spark.createDataFrame(
     [("china", "asia"), ("colombia", "south america")],
     ["country.name", "continent"]
@@ -48,7 +48,7 @@ Dot notation is used to fetch values from fields that are nested. When you use `
 
 Create a DataFrame with a nested schema:
 
-```
+```python
 schema = StructType([
     StructField("person.name", StringType(), True),
     StructField("person", StructType([
@@ -74,7 +74,7 @@ df.show()
 
 In this example, `"person.name"` refers to the `name` field that's nested in the `person` column and ``"`person.name`"`` refers to the `person.name` column. Let's run a `select()` query to verify:
 
-```
+```python
 cols = ["person", "person.name", "`person.name`"]
 df.select(cols).show()
 ```
@@ -94,7 +94,7 @@ This code is error prone because you might forget backticks and get the wrong re
 
 Here's how to replace dots with underscores in DataFrame column names.
 
-```
+```python
 clean_df = df.toDF(*(c.replace('.', '_') for c in df.columns))
 clean_df.show()
 ```
@@ -110,9 +110,11 @@ clean_df.show()
 
 You can access the `person_name` and `person.name` fields in `clean_df` without worrying about backticks.
 
-```
+```python
 clean_df.select("person_name", "person.name", "person.age").show()
+```
 
+```
 +-----------+-----+---+
 |person_name| name|age|
 +-----------+-----+---+

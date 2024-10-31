@@ -25,7 +25,7 @@ animals/
 
 Here's how to load the files into a pandas DataFrame.
 
-```
+```python
 import glob
 import os
 import pandas as pd
@@ -49,7 +49,7 @@ This script loads each file into a separate pandas DataFrames and then concatena
 
 Here's how to load the files into a pandas DataFrame when the files aren't located in the present working directory. The files are located in the `~/Documents/code/coiled/coiled-datasets/data/animals` directory on my machine.
 
-```
+```python
 home = os.path.expanduser("~")
 
 path = f"{home}/Documents/code/coiled/coiled-datasets/data/animals/"
@@ -68,7 +68,7 @@ You'd need to tweak the script to make it multiplatform. It's tedious to write l
 
 Read the files into a Dask DataFrame with Dask's `read_csv` method.
 
-```
+```python
 import dask.dataframe as dd
 
 ddf = dd.read_csv(f"{path}/*.csv")
@@ -76,7 +76,7 @@ ddf = dd.read_csv(f"{path}/*.csv")
 
 Now convert the Dask DataFrame to a pandas DataFrame with the `compute()` method and print the contents.
 
-```
+```python
 df = ddf.compute()
 
 print(df)
@@ -117,7 +117,7 @@ fish/
 
 Load all of these files into a pandas DataFrame and print the result.
 
-```
+```python
 path = f"{home}/Documents/code/coiled/coiled-datasets/data/fish/"
 all_files = glob.glob(path + "/**/*.csv")
 

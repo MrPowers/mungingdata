@@ -31,7 +31,7 @@ mia,schmidt,germany
 
 Here's the code to create the Delta lake.
 
-```
+```scala
 val path = new java.io.File("./src/main/resources/person_data/people1.csv").getCanonicalPath
 val df = spark
   .read
@@ -49,7 +49,7 @@ df
 
 Let's view the content of the Delta lake:
 
-```
+```scala
 val path = new java.io.File("./tmp/vacuum_example/").getCanonicalPath
 val df = spark.read.format("delta").load(path)
 df.show()
@@ -85,7 +85,7 @@ bradley,nowell,usa
 
 Here's the code that'll overwrite the lake:
 
-```
+```scala
 val path = new java.io.File("./src/main/resources/person_data/people2.csv").getCanonicalPath
 val df = spark
   .read
@@ -104,7 +104,7 @@ df
 
 Here's what the data looks like after the overwrite:
 
-```
+```scala
 val path = new java.io.File("./tmp/vacuum_example/").getCanonicalPath
 val df = spark.read.format("delta").load(path)
 df.show()
@@ -134,7 +134,7 @@ This allows us to rollback to an older version of the data.
 
 Let's display the contents of our Delta lake as of version 0:
 
-```
+```scala
 val path = new java.io.File("./tmp/vacuum_example/").getCanonicalPath
 val df = spark.read.format("delta").option("versionAsOf", 0).load(path)
 df.show()
@@ -155,7 +155,7 @@ Delta lake provides a vacuum command that deletes older versions of the data (an
 
 Let's run the `vacuum` command and verify the file is deleted in the filesystem.
 
-```
+```scala
 val path = new java.io.File("./tmp/vacuum_example/").getCanonicalPath
 import io.delta.tables._
 val deltaTable = DeltaTable.forPath(spark, path)
@@ -202,11 +202,13 @@ The `remove` part of the JSON file indicates that `part-00000-d7ec54f9-....snapp
 
 We cannot access version 0 of the Delta lake after the vacuum command has been run:
 
-```
+```scala
 val path = new java.io.File("./tmp/vacuum_example/").getCanonicalPath
 val df = spark.read.format("delta").option("versionAsOf", 0).load(path)
 df.show()
+```
 
+```
 org.apache.spark.SparkException: Job aborted due to stage failure: Task 0 in stage 1645.0 failed 1 times, most recent failure: Lost task 0.0 in stage 1645.0 (TID 21123, localhost, executor driver): java.io.FileNotFoundException: File file:/Users/powers/Documents/code/my_apps/yello-taxi/tmp/vacuum_example/part-00000-618d3c69-3d1b-402c-818f-9d3995b5639f-c000.snappy.parquet does not exist
 It is possible the underlying files have been updated. You can explicitly invalidate the cache in Spark by running 'REFRESH TABLE tableName' command in SQL or by recreating the Dataset/DataFrame involved.
 Cause: java.io.FileNotFoundException: File file:/Users/powers/Documents/code/my_apps/yello-taxi/tmp/vacuum_example/part-00000-618d3c69-3d1b-402c-818f-9d3995b5639f-c000.snappy.parquet does not exist
@@ -235,7 +237,7 @@ If you are not sure, please use a value not less than "168 hours".
 
 We need to update the Spark configuration to allow for such a short retention period.
 
-```
+```scala
 lazy val spark: SparkSession = {
   SparkSession
     .builder()
@@ -268,7 +270,7 @@ lou,pug
 
 Here's some code to write out `dog1.csv` and `dogs2.csv` as Delta lake files.
 
-```
+```scala
 val path = new java.io.File("./src/main/resources/dog_data/dogs1.csv").getCanonicalPath
 val df = spark
   .read
@@ -358,7 +360,7 @@ None of the JSON files contain any `remove` lines so a `vacuum` won't delete any
 
 This code doesn't change anything:
 
-```
+```scala
 val path = new java.io.File("./tmp/vacuum_example2/").getCanonicalPath
 import io.delta.tables._
 val deltaTable = DeltaTable.forPath(spark, path)

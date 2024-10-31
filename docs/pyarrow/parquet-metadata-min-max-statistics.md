@@ -25,7 +25,7 @@ jon,smith
 
 You can read in this CSV file and write out a Parquet file with just a few lines of PyArrow code:
 
-```
+```python
 import pyarrow.csv as pv
 import pyarrow.parquet as pq
 
@@ -39,7 +39,7 @@ Let's look at the metadata associated with the Parquet file we just wrote out.
 
 Let's create a PyArrow Parquet file object to inspect the metadata:
 
-```
+```python
 import pyarrow.parquet as pq
 
 parquet_file = pq.ParquetFile('./tmp/pyarrow_out/people1.parquet')
@@ -102,7 +102,7 @@ parquet_file.metadata.row_group(0).column(0)
 
 The compression algorithm used by the file is stored in the column chunk metadata and you can fetch it as follows:
 
-```
+```python
 parquet_file.metadata.row_group(0).column(0).compression # => 'SNAPPY'
 ```
 
@@ -123,17 +123,19 @@ lulu,9
 
 Convert the CSV file to a Parquet file.
 
-```
+```python
 table = pv.read_csv('./data/pets/pets1.csv')
 pq.write_table(table, './tmp/pyarrow_out/pets1.parquet')
 ```
 
 Inspect the Parquet metadata statistics to see the min and max values of the `age` column.
 
-```
+```python
 parquet_file = pq.ParquetFile('./tmp/pyarrow_out/pets1.parquet')
 print(parquet_file.metadata.row_group(0).column(1).statistics)
+```
 
+```
 <pyarrow._parquet.Statistics object at 0x11ac17eb0>
   has_min_max: True
   min: 1
@@ -148,7 +150,7 @@ print(parquet_file.metadata.row_group(0).column(1).statistics)
 
 The Parquet metadata statistics can make certain types of queries a lot more efficient. Suppose you'd like to find all the pets that are 10 years or older in a Parquet data lake containing thousands of files. You know that the max age in the `tmp/pyarrow_out/pets1.parquet` file is 9 based on the Parquet metadata, so you know that none of the data in that file is relevant for your analysis of pets that are 10 or older. You can simply skip the file entirely.
 
-## num\_rows and serialized\_size
+## `num_rows` and `serialized_size`
 
 The number of rows and dataset size are also included in the Parquet metadata.
 

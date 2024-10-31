@@ -15,7 +15,7 @@ You'll want to break up a map to multiple columns for performance gains and when
 
 Let's create a DataFrame with a map column called `some_data`:
 
-```
+```python
 data = [("jose", {"a": "aaa", "b": "bbb"}), ("li", {"b": "some_letter", "z": "zed"})]
 df = spark.createDataFrame(data, ["first_name", "some_data"])
 df.show(truncate=False)
@@ -44,7 +44,7 @@ You can see `some_data` is a MapType column with string keys and values.
 
 Add a `some_data_a` column that grabs the value associated with the key `a` in the `some_data` column. The `getItem` method helps when fetching values from PySpark maps.
 
-```
+```python
 df.withColumn("some_data_a", F.col("some_data").getItem("a")).show(truncate=False)
 ```
 
@@ -67,7 +67,7 @@ df.withColumn("some_data_a", F.col("some_data")["a"]).show()
 
 We can manually append the `some_data_a`, `some_data_b`, and `some_data_z` columns to our DataFrame as follows:
 
-```
+```python
 df\
     .withColumn("some_data_a", F.col("some_data").getItem("a"))\
     .withColumn("some_data_b", F.col("some_data").getItem("b"))\
@@ -86,7 +86,7 @@ df\
 
 We can refactor this code to be more concise and to generate a more efficient parsed logical plan.
 
-```
+```python
 cols = [F.col("first_name")] + list(map(
     lambda f: F.col("some_data").getItem(f).alias(str(f)),
     ["a", "b", "z"]))
@@ -108,7 +108,7 @@ Manually appending the columns is fine if you know all the distinct keys in the 
 
 Here's the code to programatically expand the DataFrame (keep reading to see all the steps broken down individually):
 
-```
+```python
 keys_df = df.select(F.explode(F.map_keys(F.col("some_data")))).distinct()
 keys = list(map(lambda row: row[0], keys_df.collect()))
 key_cols = list(map(lambda f: F.col("some_data").getItem(f).alias(str(f)), keys))
@@ -129,7 +129,7 @@ Let's break down each step of this code.
 
 **Step 1**: Create a DataFrame with all the unique keys
 
-```
+```python
 keys_df = df.select(F.explode(F.map_keys(F.col("some_data")))).distinct()
 keys_df.show()
 ```
@@ -146,7 +146,7 @@ keys_df.show()
 
 **Step 2**: Convert the DataFrame to a list with all the unique keys
 
-```
+```python
 keys = list(map(lambda row: row[0], keys_df.collect()))
 print(keys) # => ['z', 'b', 'a']
 ```
@@ -155,7 +155,7 @@ The `collect()` method gathers all the data on the driver node, which can be slo
 
 **Step 3**: Create an array of column objects for the map items
 
-```
+```python
 key_cols = list(map(lambda f: F.col("some_data").getItem(f).alias(str(f)), keys))
 print(key_cols)
 # => [Column<b'some_data[z] AS `z`'>, Column<b'some_data[b] AS `b`'>, Column<b'some_data[a] AS `a`'>]
@@ -163,7 +163,7 @@ print(key_cols)
 
 **Step 4**: Add any additional columns before calculating the final result
 
-```
+```python
 final_cols = [F.col("first_name")] + key_cols
 print(final_cols)
 # => [Column<b'first_name'>, Column<b'some_data[z] AS `z`'>, Column<b'some_data[b] AS `b`'>, Column<b'some_data[a] AS `a`'>]
@@ -171,7 +171,7 @@ print(final_cols)
 
 **Step 5**: Run a `select()` to get the final result
 
-```
+```python
 df.select(final_cols).show()
 ```
 
@@ -192,9 +192,11 @@ Steps 3 and 4 should run very quickly. Running a single select operation in Step
 
 Use the `explain()` function to print the logical plans and see if the parsed logical plan needs a lot of optimizations:
 
-```
+```python
 df.select(final_cols).explain(True)
+```
 
+```
 == Parsed Logical Plan ==
 'Project [unresolvedalias('first_name, None), 'some_data[z] AS z#28, 'some_data[b] AS b#29, 'some_data[a] AS a#30]
 +- LogicalRDD [first_name#0, some_data#1], false

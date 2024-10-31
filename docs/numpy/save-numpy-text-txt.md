@@ -20,7 +20,7 @@ Let's dig in!
 
 Let's create a 1D array and write it to the `Documents` directory.
 
-```
+```python
 import os
 import numpy as np
 
@@ -40,7 +40,7 @@ Here are the contents of the `cat.txt` file:
 
 Here's how to get the data to write row-wise instead of column-wise:
 
-```
+```python
 np.savetxt(f"{home}/Documents/numpy/dog.txt", a, newline=" ")
 ```
 
@@ -52,7 +52,7 @@ Here are the contents of `dog.txt` (removed zeros for brevity):
 
 You can also convert the 1D array to a 2D array to get the data to write row-wise.
 
-```
+```python
 np.savetxt(f"{home}/Documents/numpy/dog2.txt", [a])
 ```
 
@@ -60,7 +60,7 @@ np.savetxt(f"{home}/Documents/numpy/dog2.txt", [a])
 
 2D arrays get written row-wise, as would be expected. Let's create a two dimensional array and write it out to demonstrate.
 
-```
+```python
 b = np.array([[1, 2], [3, 4]])
 
 np.savetxt(f"{home}/Documents/numpy/racoon.txt", b)
@@ -79,7 +79,7 @@ The default save behavior for 2D arrays is more intuitive than for 1D arrays.
 
 Let's create a 3D array and try to write it out to a text file.
 
-```
+```python
 c = np.array([[[1, 2], [3, 4]]])
 
 np.savetxt(f"{home}/Documents/numpy/fox.txt", c)
@@ -111,13 +111,13 @@ Text files cannot handle three dimensional data structures and that's why this o
 
 The NumPy file format can handle three dimensional arrays without issue.
 
-```
+```python
 np.save(f"{home}/Documents/numpy/parrot.npy", c)
 ```
 
 The `parrot.npy` file is binary and isn't human readable. You can easily read in the file to a NumPy array to inspect the contents instead of opening the file itself.
 
-```
+```python
 np.load(f"{home}/Documents/numpy/parrot.npy")
 
 # array([[[1, 2],

@@ -48,61 +48,21 @@ If you cloned the [blake repo](https://github.com/MrPowers/blake), you could sim
 
 Run `poetry shell` in your Terminal to create a subshell within the virtual environment. This is the key step that lets you run a Jupyter notebook with all the right project dependencies.
 
-<figure>
-
 ![](images/Screen-Shot-2020-09-04-at-8.00.06-AM-1024x115.png)
-
-<figcaption>
-
-poetry shell
-
-</figcaption>
-
-</figure>
 
 Run `jupyter notebook` to open the project with Jupyter in your browser.
 
 Click New => Folder to create a folder called `notebooks/`.
 
-<figure>
-
 ![](images/Screen-Shot-2020-09-04-at-8.05.01-AM.png)
-
-<figcaption>
-
-Create folder
-
-</figcaption>
-
-</figure>
 
 Go to the `notebooks` folder and click New => Notebook: Python 3 to create a notebook.
 
-<figure>
-
 ![](images/Screen-Shot-2020-09-04-at-8.06.28-AM.png)
-
-<figcaption>
-
-Create notebook
-
-</figcaption>
-
-</figure>
 
 Click Untitled at the top of the page that opens and rename the notebook to be `some_pandas_fun`:
 
-<figure>
-
 ![](images/Screen-Shot-2020-09-04-at-8.07.27-AM.png)
-
-<figcaption>
-
-Rename notebook
-
-</figcaption>
-
-</figure>
 
 Run `2 + 2` in the first cell to make sure the notebook can run a basic Python command.
 
@@ -126,17 +86,9 @@ def some_message():
 
 Create another Jupyter notebook, import the `some_message` function, and run the code to make sure it's accessible.
 
-<figure>
-
 ![](images/Screen-Shot-2020-09-04-at-9.05.21-AM.png)
 
-<figcaption>
-
 Access application code in notebook
-
-</figcaption>
-
-</figure>
 
 ## Testing application code
 
@@ -153,17 +105,7 @@ def test_some_message():
 
 Run the test suite with the `poetry run pytest tests/` command.
 
-<figure>
-
 ![](images/Screen-Shot-2020-09-04-at-10.53.51-AM.png)
-
-<figcaption>
-
-Run tests
-
-</figcaption>
-
-</figure>
 
 As you can see, Poetry makes it easy to organize the application code, notebooks, and tests for a project.
 
@@ -196,17 +138,7 @@ os.makedirs(out_dirname, exist_ok=True)
 df.to_parquet(out_dirname + '/coffee.parquet')
 ```
 
-<figure>
-
 ![](images/Screen-Shot-2020-09-05-at-7.18.55-AM.png)
-
-<figcaption>
-
-Create Parquet file
-
-</figcaption>
-
-</figure>
 
 ## Read a Parquet file
 
@@ -223,17 +155,7 @@ coffees_with_milk = df[df['has_milk'] == True]
 coffees_with_milk.count()
 ```
 
-<figure>
-
 ![](images/Screen-Shot-2020-09-05-at-7.45.46-AM.png)
-
-<figcaption>
-
-Read Parquet file to DataFrame
-
-</figcaption>
-
-</figure>
 
 Parquet is a better file format than CSV for almost all data analyses. Use this design pattern to build Parquet files, so you can perform your analyses quicker.
 

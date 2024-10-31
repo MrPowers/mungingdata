@@ -28,7 +28,7 @@ Jack,Ma,China
 
 Let's create a Delta lake from the CSV file:
 
-```
+```scala
 val df = spark
   .read
   .option("header", "true")
@@ -51,7 +51,7 @@ We're appending a blank `continent` column to the DataFrame before writing it ou
 
 Let's define a custom DataFrame transformation that'll append a `continent` column to a DataFrame:
 
-```
+```scala
 def withContinent()(df: DataFrame): DataFrame = {
   df.withColumn(
     "continent",
@@ -64,7 +64,7 @@ def withContinent()(df: DataFrame): DataFrame = {
 
 Suppose the business would like us to populate the `continent` column, but only for the China partition. We can use `replaceWhere` to only update the China partition.
 
-```
+```scala
 spark.read.format("delta").load(deltaPath)
   .where(col("country") === "China")
   .transform(withContinent())
@@ -77,7 +77,7 @@ spark.read.format("delta").load(deltaPath)
 
 Let's view the contents of the Delta lake:
 
-```
+```scala
 spark
   .read
   .format("delta")

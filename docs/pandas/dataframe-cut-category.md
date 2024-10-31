@@ -21,7 +21,7 @@ Suppose you have the following DataFrame.
 
 Here's the code to create the DataFrame.
 
-```
+```python
 import pandas as pd
 import numpy as np
 
@@ -32,7 +32,7 @@ df = pd.DataFrame(
 
 Add an `age_bins` column to the DataFrame that categorizes the people into these buckets: child, teenager, or adult.
 
-```
+```python
 df["age_bins"] = pd.cut(
     x=df["age"],
     bins=[1, 12, 19, np.inf],
@@ -50,7 +50,7 @@ The rightmost value is inclusive in the `bins` argument, so the buckets are 1-12
 
 Let's inspect the `dtypes` of the resulting DataFrame.
 
-```
+```python
 df.dtypes
 ```
 

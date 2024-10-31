@@ -30,7 +30,7 @@ Suppose you have the following DataFrame:
 
 Here's how to convert the `mvv` column to a Python list with `toPandas`.
 
-```
+```python
 list(df.select('mvv').toPandas()['mvv']) # => [1, 2, 3, 4]
 ```
 
@@ -54,7 +54,7 @@ The list comprehension approach failed and the toLocalIterator took more than 80
 
 Here's the `toPandas` code:
 
-```
+```python
 list(df.select('mvv').toPandas()['mvv']) # => [1, 2, 3, 4]
 ```
 
@@ -62,25 +62,25 @@ list(df.select('mvv').toPandas()['mvv']) # => [1, 2, 3, 4]
 
 Here's the `flatMap` code:
 
-```
+```python
 df.select('mvv').rdd.flatMap(lambda x: x).collect()
 ```
 
 Here's the `map` code:
 
-```
+```python
 df.select('mvv').rdd.map(lambda row : row[0]).collect()
 ```
 
 Here's the `collect()` list comprehension code:
 
-```
+```python
 [row[0] for row in df.select('mvv').collect()]
 ```
 
 Here's the `toLocalIterator` list comprehension code:
 
-```
+```python
 [r[0] for r in df.select('mvv').toLocalIterator()]
 ```
 
@@ -134,7 +134,7 @@ It's best to run the collect operation once and then split up the data into two 
 
 Here's an example of collecting one and then splitting out into two lists:
 
-```
+```python
 df = spark.createDataFrame([(1, 5), (2, 9), (3, 3), (4, 1)], ["mvv", "count"])
 collected = df.select('mvv', 'count').toPandas()
 mvv = list(collected['mvv'])

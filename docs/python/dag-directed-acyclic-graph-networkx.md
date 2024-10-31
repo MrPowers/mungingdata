@@ -23,7 +23,7 @@ root, a, b, c, d, and e are referred to as nodes. The arrows that connect the no
 
 Here's how we can construct our sample graph with the [networkx](https://networkx.github.io/) library.
 
-```
+```python
 import networkx as nx
 
 graph = nx.DiGraph()
@@ -36,7 +36,7 @@ The directed graph is modeled as a list of tuples that connect the nodes. Rememb
 
 networkx is smart enough to infer the nodes from a collection of edges.
 
-```
+```python
 graph.nodes() # => NodeView(('root', 'a', 'b', 'e', 'c', 'd'))
 ```
 
@@ -48,7 +48,7 @@ The shortest path between two nodes in a graph is the quickest way to travel fro
 
 Let's use the shortest path algorithm to calculate the quickest way to get from root to e.
 
-```
+```python
 nx.shortest_path(graph, 'root', 'e') # => ['root', 'a', 'e']
 ```
 
@@ -58,7 +58,7 @@ You could also go from root => a => b => d => e to get from root to e, but that'
 
 The `dag_longest_path` method returns the longest path in a DAG.
 
-```
+```python
 nx.dag_longest_path(graph) # => ['root', 'a', 'b', 'd', 'e']
 ```
 
@@ -75,7 +75,7 @@ Our graph has nodes (a, b, c, etc.) and directed edges (ab, bc, bd, de, etc.). H
 
 Let's run the algorithm and see if all our requirements are met:
 
-```
+```python
 list(nx.topological_sort(graph)) # => ['root', 'a', 'b', 'd', 'e', 'c']
 ```
 
@@ -85,13 +85,13 @@ Observe that a comes before b, b comes before c, b comes before d, and d comes b
 
 We can check to make sure the graph is directed.
 
-```
+```python
 nx.is_directed(graph) # => True
 ```
 
 We can also make sure it's a directed acyclic graph.
 
-```
+```python
 nx.is_directed_acyclic_graph(graph) # => True
 ```
 
@@ -101,7 +101,7 @@ Let's make a graph that's directed, but not acyclic. A "not acyclic graph" is mo
 
 ![](images/Screen-Shot-2020-07-25-at-11.21.58-AM.png)
 
-```
+```python
 graph = nx.DiGraph()
 graph.add_edges_from([(1, 2), (2, 3), (3, 4), (4, 1)])
 nx.is_directed(graph) # => True
@@ -112,7 +112,7 @@ An acyclic graph is when a node can't reach itself. This graph isn't acyclic bec
 
 Directed graphs that aren't acyclic can't be topologically sorted.
 
-```
+```python
 list(nx.topological_sort(graph)) # throws this error - networkx.exception.NetworkXUnfeasible: Graph contains a cycle or graph changed during iteration
 ```
 
@@ -133,7 +133,7 @@ We've been using the `DiGraph` class to make graphs that are directed thus far. 
 
 ![](images/Screen-Shot-2020-07-25-at-11.24.38-AM.png)
 
-```
+```python
 graph = nx.Graph()
 graph.add_edges_from([('x', 'y'), ('y', 'z')])
 nx.is_directed(graph) # => False
@@ -148,7 +148,7 @@ A DAG can have multiple root nodes.
 
 ![](images/Screen-Shot-2020-07-25-at-11.27.13-AM.png)
 
-```
+```python
 graph = nx.DiGraph()
 graph.add_edges_from([('m', 'p'), ('n', 'p'), ('o', 'p'), ('p', 'q')])
 nx.is_directed(graph) # => True
@@ -164,7 +164,7 @@ It's easy to visualized networkx graphs with [matplotlib](https://github.com/mat
 
 Here's how we can visualize the first DAG from this blog post:
 
-```
+```python
 from matplotlib import pyplot as plt
 
 g1 = nx.DiGraph()
@@ -180,7 +180,7 @@ plt.clf()
 
 Here's how to visualize our directed, cyclic graph.
 
-```
+```python
 g2 = nx.DiGraph()
 g2.add_edges_from([(1, 2), (2, 3), (3, 4), (4, 1)])
 plt.tight_layout()

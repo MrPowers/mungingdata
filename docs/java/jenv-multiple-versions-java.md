@@ -19,7 +19,7 @@ Install jenv with `brew install jenv`. This is a Homebrew command.
 
 jenv uses the [shim design pattern](https://mungingdata.com/python/how-pyenv-works-shims/) to route commands to the appropriate Java version. Run these commands to update your `PATH`:
 
-```
+```bash
 echo 'export PATH="$HOME/.jenv/bin:$PATH"' >> ~/.zshrc
 echo 'eval "$(jenv init -)"' >> ~/.zshrc
 ```
@@ -60,7 +60,7 @@ All Java commands will be routed to Java 8 now that the global version is set. T
 
 Lots of Java libraries depend on having a `JAVA_HOME` environment variable set. Set the environment variable by running these commands:
 
-```
+```bash
 jenv enable-plugin export
 exec $SHELL -l
 ```

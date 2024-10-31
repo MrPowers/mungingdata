@@ -21,7 +21,7 @@ Let's start by creating a Delta Lake so we can read it into pandas DataFrames in
 
 Use PySpark to create the a Delta Lake:
 
-```
+```python
 data = [("jose", 10), ("li", 12), ("luisa", 14)]
 df = spark.createDataFrame(data, ["name", "num"])
 df.write.format("delta").save("resources/delta/1")
@@ -33,7 +33,7 @@ Feel free to clone the [dask-interop](https://github.com/MrPowers/dask-interop) 
 
 Here's how to read the Delta Lake into a pandas DataFrame.
 
-```
+```python
 from deltalake import DeltaTable
 
 dt = DeltaTable("resources/delta/1")
@@ -56,7 +56,7 @@ Delta Lakes also allow for time travel between different versions of the data. T
 
 Let's build another Delta Lake with two transactions and demonstrate how to time travel between the two different versions of the data. Start by creating a Delta Lake with two write transactions.
 
-```
+```python
 data = [("a", 1), ("b", 2), ("c", 3)]
 df = spark.createDataFrame(data, ["letter", "number"])
 df.write.format("delta").save("resources/delta/2")
@@ -84,7 +84,7 @@ The second transaction wrote this data (version 1 of the dataset):
 
 Read in the entire dataset to a pandas DataFrame.
 
-```
+```python
 dt = DeltaTable("resources/delta/2")
 df = dt.to_pandas()
 print(df)
@@ -102,7 +102,7 @@ Delta Lakes will read the latest version of the data by default.
 
 Now time travel back to the first version of the data.
 
-```
+```python
 dt.load_version(0)
 df = dt.to_pandas()
 print(df)
@@ -145,7 +145,7 @@ Second transaction:
 
 Here's the PySpark code to create the Delta Lake:
 
-```
+```python
 data = [("a", 1), ("b", 2), ("c", 3)]
 df = spark.createDataFrame(data, ["letter", "number"])
 df.write.format("delta").save("resources/delta/3")
@@ -157,7 +157,7 @@ df.write.mode("append").format("delta").save("resources/delta/3")
 
 Let's read the Delta Lake into a pandas DataFrame and print the results.
 
-```
+```python
 dt = DeltaTable("resources/delta/3")
 df = dt.to_pandas()
 print(df)
@@ -187,7 +187,7 @@ You can also read Delta Lakes and convert them to pandas DataFrames with PySpark
 
 Here's an example:
 
-```
+```python
 pyspark_df = (
     spark.read.format("delta").option("mergeSchema", "true").load("resources/delta/3")
 )

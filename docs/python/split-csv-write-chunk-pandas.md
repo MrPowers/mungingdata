@@ -38,7 +38,7 @@ This approach has a number of key downsides:
 
 You can also use the Python filesystem readers / writers to split a CSV file.
 
-```
+```python
 chunk_size = 40000
 
 def write_chunk(part, lines):
@@ -71,16 +71,16 @@ Let’s look at some approaches that are a bit slower, but more flexible.
 
 Here’s how to read in chunks of the CSV file into Pandas DataFrames and then write out each DataFrame.
 
-```
+```python
 source_path = "../nyc-parking-tickets/Parking_Violations_Issued_-_Fiscal_Year_2015.csv"
 
 for i,chunk in enumerate(pd.read_csv(source_path, chunksize=40000, dtype=dtypes)):
     chunk.to_csv('../tmp/split_csv_pandas/chunk{}.csv'.format(i), index=False)
 ```
 
-This approach writes 296 files, each with around 40,000 rows of data.  It takes 160 seconds to execute.
+This approach writes 296 files, each with around 40,000 rows of data. It takes 160 seconds to execute.
 
-The Pandas approach is more flexible than the Python filesystem approaches because it allows you to process the data before writing.  You could easily update the script to add columns, filter rows, or write out the data to different file formats.
+The Pandas approach is more flexible than the Python filesystem approaches because it allows you to process the data before writing. You could easily update the script to add columns, filter rows, or write out the data to different file formats.
 
 Manipulating the output isn’t possible with the shell approach and difficult / error-prone with the Python filesystem approach.
 
@@ -88,7 +88,7 @@ Manipulating the output isn’t possible with the shell approach and difficult /
 
 Here’s how to read the CSV file into a Dask DataFrame in 10 MB chunks and write out the data as 287 CSV files.
 
-```
+```python
 ddf = dd.read_csv(source_path, blocksize=10000000, dtype=dtypes)
 
 ddf.to_csv("../tmp/split_csv_dask")
@@ -96,9 +96,9 @@ ddf.to_csv("../tmp/split_csv_dask")
 
 The Dask script runs in 172 seconds.
 
-For this particular computation, the Dask runtime is roughly equal to the Pandas runtime.  The Dask task graph that builds instructions for processing a data file is similar to the Pandas script, so it makes sense that they take the same time to execute.
+For this particular computation, the Dask runtime is roughly equal to the Pandas runtime. The Dask task graph that builds instructions for processing a data file is similar to the Pandas script, so it makes sense that they take the same time to execute.
 
-Dask allows for some intermediate data processing that wouldn’t be possible with the Pandas script, like sorting the entire dataset.  The Pandas script only reads in chunks of the data, so it couldn’t be tweaked to perform shuffle operations on the entire dataset.
+Dask allows for some intermediate data processing that wouldn’t be possible with the Pandas script, like sorting the entire dataset. The Pandas script only reads in chunks of the data, so it couldn’t be tweaked to perform shuffle operations on the entire dataset.
 
 ## Comparing approaches
 
@@ -108,21 +108,21 @@ This graph shows the program execution runtime by approach.
 
 If you need to quickly split a large CSV file, then stick with the Python filesystem API.
 
-Processing time generally isn’t the most important factor when splitting a large CSV file.  Production grade data analyses typically involve these steps:
+Processing time generally isn’t the most important factor when splitting a large CSV file. Production grade data analyses typically involve these steps:
 
 - Validating data and throwing out junk rows
 - Properly assigning types to each column
 - Writing data to a good file format for data analysis, like Parquet
 - Compressing the data
 
-The main objective when splitting a large CSV file is usually to make downstream analyses run faster and more reliably.  Dask is the most flexible option for a production-grade solution.
+The main objective when splitting a large CSV file is usually to make downstream analyses run faster and more reliably. Dask is the most flexible option for a production-grade solution.
 
 ## Next steps
 
-Large CSV files are not good for data analyses because they can’t be read in parallel.  Multiple files can easily be read in parallel.
+Large CSV files are not good for data analyses because they can’t be read in parallel. Multiple files can easily be read in parallel.
 
-CSV files in general are limited because they don’t contain schema metadata, the header row requires extra processing logic, and the row based nature of the file doesn’t allow for column pruning.  The main advantage of CSV files is that they’re human readable, but that doesn’t matter if you’re processing your data with a production-grade data processing engine, like Python or Dask.
+CSV files in general are limited because they don’t contain schema metadata, the header row requires extra processing logic, and the row based nature of the file doesn’t allow for column pruning. The main advantage of CSV files is that they’re human readable, but that doesn’t matter if you’re processing your data with a production-grade data processing engine, like Python or Dask.
 
-Splitting up a large CSV file into multiple Parquet files (or another good file format) is a great first step for a production-grade data processing pipeline.  Dask takes longer than a script that uses the Python filesystem API, but makes it easier to build a robust script.  The performance drag doesn’t typically matter.  You only need to split the CSV once.
+Splitting up a large CSV file into multiple Parquet files (or another good file format) is a great first step for a production-grade data processing pipeline. Dask takes longer than a script that uses the Python filesystem API, but makes it easier to build a robust script. The performance drag doesn’t typically matter. You only need to split the CSV once.
 
 The more important performance consideration is figuring out how to split the file in a manner that’ll make all your downstream analyses run significantly faster.

@@ -17,7 +17,7 @@ You'll see examples where these functions are useful and when these functions ar
 
 Create a DataFrame with `num` and `letter` columns.
 
-```
+```python
 df = spark.createDataFrame([(1, "a"), (2, "b")], ["num", "letter"])
 df.show()
 ```
@@ -33,7 +33,7 @@ df.show()
 
 Add a `cool` column to the DataFrame with the constant value 23.
 
-```
+```python
 from pyspark.sql.functions import *
 
 df.withColumn("cool", lit(23)).show()
@@ -50,7 +50,7 @@ df.withColumn("cool", lit(23)).show()
 
 Let's try this code without using `lit`:
 
-```
+```python
 df.withColumn("cool", 23).show()
 ```
 
@@ -70,7 +70,7 @@ The second argument to `withColumn` must be a Column object and cannot be an int
 
 Let's add 5 to the `num` column:
 
-```
+```python
 df.withColumn("num_plus_5", df.num + lit(5)).show()
 ```
 
@@ -96,7 +96,7 @@ The `+` operator works when both operands are Column objects.
 
 The `+` operator will also work if one operand is a Column object and the other is an integer.
 
-```
+```python
 df.withColumn("num_plus_5", df.num + 5).show()
 ```
 
@@ -125,13 +125,13 @@ Here's an example that uses implicit conversion.
 
 Programmers can also explicitly convert integers to floating point values, so no implicit conversions are needed.
 
-```
+```python
 float(3) + 1.2 # 4.2
 ```
 
 Python doesn't always perform implicit type conversions. This code will error out for example:
 
-```
+```python
 "hi" + 3
 ```
 
@@ -143,7 +143,7 @@ TypeError: can only concatenate str (not "int") to str
 
 You need to make an explicit type conversion if you'd like to concatenate a string with an integer in Python.
 
-```
+```python
 "hi" + str(3) # 'hi3'
 ```
 
@@ -169,7 +169,7 @@ The Scala API has a `typedLit` function to handle complex types like arrays, but
 
 Here's how to add a constant `[5, 8]` array column to the DataFrame.
 
-```
+```python
 df.withColumn("nums", array(lit(5), lit(8))).show()
 ```
 
@@ -184,7 +184,7 @@ df.withColumn("nums", array(lit(5), lit(8))).show()
 
 This code does not work.
 
-```
+```python
 df.withColumn("nums", lit([5, 8])).show()
 ```
 

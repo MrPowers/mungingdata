@@ -31,7 +31,7 @@ Follow the instructions in the [coiled-datasets](https://github.com/coiled/coile
 
 Let's run a query to compute the number of unique values in the `id` column with pandas on the small dataset. The `1-month` directory contains 4 Parquet files with 228 MB of data, so they can easily get loaded into a pandas DataFrame.
 
-```
+```python
 import os
 import glob
 
@@ -52,7 +52,7 @@ It only takes 0.4 seconds to find the number of unique elements in the `id` colu
 
 Now let's run the same query on a large dataset with 1,094 files and 58.2 GB of data.
 
-```
+```python
 path = f"{home}/data/timeseries/20-years/parquet"
 all_files = glob.glob(path + "/*.parquet")
 
@@ -72,7 +72,7 @@ Let's see how we can run this query the large `20-years` dataset using Dask.
 
 Let's run the same query on the large dataset with Dask. The syntax for loading multiple files into a Dask DataFrame is more elegant.
 
-```
+```python
 import dask
 import dask.dataframe as dd
 

@@ -21,7 +21,7 @@ We'll start by creating a sqlite database. The database will contain the followi
 
 We'll use Pandas to create DataFrames that can be loaded into the sqlite database.
 
-```
+```python
 import pandas as pd
 import sqlite3
 
@@ -57,7 +57,7 @@ We're ready to start exporting tables to files now that we have data loaded into
 
 Here's how to export the `orders` table to a CSV file.
 
-```
+```python
 # save sqlite table in a DataFrame
 df = pd.read_sql('SELECT * from orders', conn)
 
@@ -80,7 +80,7 @@ Notice that the CSV file includes the data header row.
 
 Here's how to export all the `orders` that cost more than $25 to a CSV file.
 
-```
+```python
 df = pd.read_sql_query('SELECT * from orders where price > 25', conn)
 df.to_csv('orders_over_25.csv', index = False)
 ```
@@ -99,7 +99,7 @@ The SQL query is executed in the database before the data is passed to the DataF
 
 Here's how to export all the sqlite tables to CSV files with a single command:
 
-```
+```python
 for table in c.execute("SELECT name FROM sqlite_master WHERE type='table';").fetchall():
     t = table[0]
     df = pd.read_sql('SELECT * from ' + t, conn)
@@ -130,7 +130,7 @@ id,tree_type,has_leaves
 
 Here's code that'll export the `trees` table to a Parquet file:
 
-```
+```python
 df = pd.read_sql('SELECT * from trees', conn)
 df.to_parquet('trees.parquet', index = False)
 ```

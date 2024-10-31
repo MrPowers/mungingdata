@@ -49,7 +49,7 @@ david,18
 
 Let's open the CSV file and read it into a DataFrame:
 
-```
+```go
 csvfile, err := os.Open("data/example.csv")
 if err != nil {
     log.Fatal(err)
@@ -77,7 +77,7 @@ qframe intelligently infers the schema (it doesn't blindly assume all columns ar
 
 Let's add an `is_even` column to the DataFrame that contains `true` if `favorite_number` is even.
 
-```
+```go
 f = f.Apply(
     qframe.Instruction{
         Fn:      isEven,
@@ -118,7 +118,7 @@ first_name(s) favorite_number(i) is_even(b)
 
 Let's write out this result to a CSV file:
 
-```
+```go
 file, err := os.Create("tmp/qframe_main_ouput.csv")
 if err != nil {
     log.Fatal(err)
@@ -143,7 +143,7 @@ Let's use the same dataset and run the same operations with dataframe-go.
 
 Read the CSV into a DataFrame.
 
-```
+```go
 ctx := context.TODO()
 
 csvfile, err := os.Open("data/example.csv")
@@ -184,7 +184,7 @@ Points to note when reading CSVs with dataframe-go:
 
 Let's multiply the `favorite_number` column by two:
 
-```
+```go
 s := df.Series[1]
 
 applyFn := dataframe.ApplySeriesFn(func(val interface{}, row, nRows int) interface{} {
@@ -220,7 +220,7 @@ I couldn't figure out filtering easily.
 
 Here's the filtering example in the README:
 
-```
+```go
 filterFn := dataframe.FilterDataFrameFn(func(vals map[interface{}]interface{}, row, nRows int) (dataframe.FilterAction, error) {
     if vals["title"] == nil {
         return dataframe.DROP, nil
@@ -239,7 +239,7 @@ The dataframe-go maintainers are great to work with. Hopefully we can [add dataf
 
 Let's load the `data/example.csv` file into a gota DataFrame:
 
-```
+```go
 csvfile, err := os.Open("data/example.csv")
 if err != nil {
     log.Fatal(err)
@@ -265,7 +265,7 @@ gota has smartly inferred that `favorite_number` is an integer column.
 
 Add an `is_even` column to the DataFrame if `favorite_number` is even:
 
-```
+```go
 isEven := func(s series.Series) series.Series {
     num, _ := s.Int()
     isFavoriteNumberEven := num[0]%2 == 0
@@ -295,7 +295,7 @@ df with is even:  [4x3] DataFrame
 
 Let's filter the DataFrame so it only contains people with a `favorite_number` that's even (i.e. only include the rows where the `is_even` column is `true`).
 
-```
+```go
 df = df.Filter(dataframe.F{"is_even", "==", true})
 fmt.Println("df filtered: ", df)
 ```
@@ -314,7 +314,7 @@ df filtered:  [3x3] DataFrame
 
 Now let's write our filtered DataFrame to disk. Here's the code that'll write this data to your local filesystem:
 
-```
+```go
 f, err := os.Create("tmp/gota_example_output.csv")
 if err != nil {
     log.Fatal(err)

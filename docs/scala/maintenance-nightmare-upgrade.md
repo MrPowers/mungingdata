@@ -33,7 +33,7 @@ Minor versions are compatible in most languages. Python projects that are built 
 
 ## Scala itself is unstable
 
-Scala doesn't use `major.minor.patch` versioning as described in [semver](https://semver.org/). It uses the pvp `epoch.major.minor` versioning.
+Scala doesn't use `major.minor.patch` versioning as described in [semver](https://semver.org/). It uses the pvp `epoch.major.minor` versioning.
 
 So Scala 2.11 => Scala 2.12 is a major release. It's not a minor release!
 

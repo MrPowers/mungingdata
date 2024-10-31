@@ -20,14 +20,14 @@ This post shows the two most popular types of DataFrame tests:
 
 Let's create a function that adds a `starts_with_s` column to a DataFrame that returns `True` if a string starts with the letter "s".
 
-```
+```python
 def startswith_s(df, input_col, output_col):
     df[output_col] = df[input_col].str.startswith("s")
 ```
 
 Now let's write a unit test that runs the `startswith_s` function and make sure it returns the correct result. We'll start with the built-in `pd.testing.assert_series_equal` method.
 
-```
+```python
 df = pd.DataFrame({"col1": ["sap", "hi"], "col2": [3, 4]})
 startswith_s(df, "col1", "col1_startswith_s")
 expected = pd.Series([True, False], name="col1_startswith_s")
@@ -36,7 +36,7 @@ pd.testing.assert_series_equal(df["col1_startswith_s"], expected)
 
 `assert_series_equal` isn't easy to use cause it requires you to manually create a Pandas Series. Let's write the same test with [beavis](https://github.com/MrPowers/beavis).
 
-```
+```python
 df = pd.DataFrame({"col1": ["sap", "hi"], "col2": [3, 4], "expected": [True, False]})
 startswith_s(df, "col1", "col1_startswith_s")
 beavis.assert_pd_column_equality(df, "col1_startswith_s", "expected")
@@ -60,7 +60,7 @@ The beavis error messages are also more descriptive compared to the built-in Pan
 
 Here's the built-in error message when comparing series that are not equal.
 
-```
+```python
 df = pd.DataFrame({"col1": [1042, 2, 9, 6], "col2": [5, 2, 7, 6]})
 pd.testing.assert_series_equal(df["col1"], df["col2"])
 ```
@@ -79,7 +79,7 @@ It's hard to tell which columns are mismatched because they're not aligned.
 
 Here's the beavis error message that aligns rows and highlights the mismatches in red.
 
-```
+```python
 import beavis
 
 beavis.assert_pd_column_equality(df, "col1", "col2")
@@ -95,7 +95,7 @@ You may want to compare the equality of two entire DataFrames as well, not just 
 
 Here's how to compare DataFrame equality with the built-in `pandas.testing.assert_frame_equal` function.
 
-```
+```python
 df1 = pd.DataFrame({'col1': [1, 2], 'col2': [3, 4]})
 df2 = pd.DataFrame({'col1': [5, 2], 'col2': [3, 4]})
 pd.testing.assert_frame_equal(df1, df2)
@@ -124,7 +124,7 @@ beavis.assert_pd_equality(df1, df2)
 
 You may want to compare DataFrame equality with a custom equality function for certain columns. Here's how to compare two DataFrames with a custom equality function for the float columns.
 
-```
+```python
 def approx_equality(a, b):
     return math.isclose(a, b, rel_tol=0.1)
 
@@ -145,7 +145,7 @@ You can also use the `assert_approx_pd_equality` method to automatically perform
 
 Here's an example:
 
-```
+```python
 df1 = pd.DataFrame({"col1": ["hi", "aa"], "col2": [3.05, 3.99]})
 df2 = pd.DataFrame({"col1": ["hi", "aa"], "col2": [3, 4]})
 beavis.assert_approx_pd_equality(df1, df2, 0.1, check_dtype=False)

@@ -23,21 +23,21 @@ Serializing a Scala object for JSON storage means converting the object to a str
 
 Start by creating a case class and instantiating an object.
 
-```
+```scala
 case class City(name: String, funActivity: String, latitude: Double)
 val bengaluru = City("Bengaluru", "South Indian food", 12.97)
 ```
 
 Define a upickle writer and then serialize the object to be a string.
 
-```
+```scala
 implicit val cityRW = upickle.default.macroRW[City]
 upickle.default.write(bengaluru) // "{\"name\":\"Bengaluru\",\"funActivity\":\"South Indian food\",\"latitude\":12.97}"
 ```
 
 Here's how to write the serialized object to disk.
 
-```
+```scala
 os.write(
   os.pwd/"tmp"/"serialized_city.json",
   upickle.default.write(bengaluru)
@@ -46,7 +46,7 @@ os.write(
 
 Here's the content of the `serialized_city.json` file:
 
-```
+```json
 {"name":"Bengaluru","funActivity":"South Indian food","latitude":12.97}
 ```
 
@@ -60,7 +60,7 @@ Deserializing an object means reading data from a string / file to create a Scal
 
 Lets create a string and use it to build a `City` object.
 
-```
+```scala
 val str = """{"name":"Barcelona","funActivity":"Eat tapas","latitude":41.39}"""
 val barcelona = upickle.default.read[City](str)
 barcelona.getClass // City
@@ -71,13 +71,13 @@ upickle does all the hard work of parsing the JSON string and instantiating the 
 
 Let's show how to deserialize a JSON file. Suppose you have the following `beirut.json` file.
 
-```
+```json
 {"name":"Beirut","funActivity":"Eat hummus","latitude":33.89}
 ```
 
 Let's read in the JSON data and create a Scala object:
 
-```
+```scala
 val path = os.pwd/"src"/"test"/"resources"/"beirut.json"
 val data = os.read(path)
 val beirut = upickle.default.read[City](data)

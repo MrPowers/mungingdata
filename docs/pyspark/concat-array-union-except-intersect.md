@@ -17,7 +17,7 @@ These operations were difficult prior to Spark 2.4, but now there are built-in f
 
 Creating a DataFrame with two array columns so we can demonstrate with an example.
 
-```
+```python
 df = spark.createDataFrame(
     [(["a", "a", "b", "c"], ["c", "d"])], ["arr1", "arr2"]
 )
@@ -34,7 +34,7 @@ df.show()
 
 Concatenate the two arrays with `concat`:
 
-```
+```python
 res = df.withColumn("arr_concat", concat(col("arr1"), col("arr2")))
 res.show()
 ```
@@ -51,7 +51,7 @@ Notice that `arr_concat` contains duplicate values.
 
 We can remove the duplicates with `array_distinct`:
 
-```
+```python
 df.withColumn(
     "arr_concat_distinct", array_distinct(concat(col("arr1"), col("arr2")))
 ).show()
@@ -67,11 +67,11 @@ df.withColumn(
 
 Let's look at another way to return a distinct concatenation of two arrays that isn't as verbose.
 
-## array\_union
+## `array_union`
 
 `array_union` combines two arrays, without any duplicates.
 
-```
+```python
 res = df.withColumn("arr_union", array_union(col("arr1"), col("arr2")))
 res.show()
 ```
@@ -86,11 +86,11 @@ res.show()
 
 We can get the same result by nesting `concat` in `array_distinct`, but that's less efficient and unnecessarily verbose.
 
-## array\_intersect
+## `array_intersect`
 
 `array_intersect` returns the elements that are in both arrays.
 
-```
+```python
 res = df.withColumn("arr_intersect", array_intersect(col("arr1"), col("arr2")))
 res.show()
 ```
@@ -105,11 +105,11 @@ res.show()
 
 In our example, `c` is the only element that's in both `arr1` and `arr2`.
 
-## array\_except
+## `array_except`
 
 `array_except` returns a distinct list of the elements that are in `arr1`, but not in `arr2`.
 
-```
+```python
 res = df.withColumn("arr_except", array_except(col("arr1"), col("arr2")))
 res.show()
 ```

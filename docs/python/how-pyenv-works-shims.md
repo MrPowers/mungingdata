@@ -250,7 +250,7 @@ You can also find where executables are located with the `whereis` command:
 
 pyenv adds this code to the `~/.bash_profile` which changes the `PATH` on your machine:
 
-```
+```bash
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
@@ -285,7 +285,7 @@ Let's describe these steps in more detail:
 - `/Users/matthewpowers/.pyenv/shims/pip` is an executable file that's referred to as a "shim". A shim [intercepts a call and redirects the operation elsewhere](https://en.wikipedia.org/wiki/Shim_\(computing\)).
 - The shim redirects the command to pyenv. Let's take a look at the code with `cat /Users/matthewpowers/.pyenv/shims/pip`:
 
-```
+```bash
 #!/usr/bin/env bash
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
@@ -324,7 +324,7 @@ The code in `/Users/matthewpowers/.pyenv/shims/python` is exactly the same as th
 
 This is what `cat /Users/matthewpowers/.pyenv/shims/python` returns:
 
-```
+```bash
 #!/usr/bin/env bash
 set -e
 [ -n "$PYENV_DEBUG" ] && set -x
@@ -356,7 +356,7 @@ Let's look at the pyenv executable that's being passed commands from the shims.
 
 Run `cat /usr/local/Cellar/pyenv/1.2.18/libexec/pyenv` to inspect the contents of the `pyenv` executable. Prepare yourself for 150 lines of Bash code.
 
-```
+```bash
 #!/usr/bin/env bash
 set -e
 

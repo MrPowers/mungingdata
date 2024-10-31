@@ -33,7 +33,7 @@ Check out the [parquet-go-example](https://github.com/MrPowers/parquet-go-exampl
 
 Create a `Shoe` struct that'll be used for each row of data in the CSV file:
 
-```
+```go
 type Shoe struct {
     ShoeBrand string `parquet:"name=shoe_brand, type=UTF8"`
     ShoeName  string `parquet:"name=shoe_name, type=UTF8"`
@@ -42,7 +42,7 @@ type Shoe struct {
 
 Setup the Parquet writer so it's ready to accept data writes:
 
-```
+```go
 var err error
 
 fw, err := local.NewLocalFileWriter("tmp/shoes.parquet")
@@ -63,7 +63,7 @@ pw.CompressionType = parquet.CompressionCodec_SNAPPY
 
 Open up the CSV file, iterate over every line in the file, and then write each line to the Parquet file:
 
-```
+```go
 csvFile, _ := os.Open("data/shoes.csv")
 reader := csv.NewReader(bufio.NewReader(csvFile))
 
@@ -86,7 +86,7 @@ for {
 
 Once we've iterated over all the lines in the file, we can stop the `NewParquetWriter` and close the `NewLocalFileWriter`.
 
-```
+```go
 if err = pw.WriteStop(); err != nil {
     log.Println("WriteStop error", err)
     return

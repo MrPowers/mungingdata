@@ -31,7 +31,7 @@ It's best to use a `~/.bash_profile` alias for something simple like this, [as d
 
 Let's start by creating a `~/.cali/ll` file. We'll put our executables in the `~/.cali` directory, [following this design pattern](https://github.com/MrPowers/cali).
 
-```
+```bash
 mkdir ~/.cali
 touch ~/.cali/ll
 ```
@@ -48,7 +48,7 @@ Let's append `~/.cali` to our PATH environment variable.
 
 Add this code to the `~/.bash_profile` file:
 
-```
+```bash
 export PATH=$PATH:~/.cali
 ```
 
@@ -97,7 +97,7 @@ Let's type `which ll` and see where the `ll` executable is stored:
 
 Of course, `ll` is in the `~/.cali` directory - that's where we put it!
 
-## Adding s3\_ll
+## Adding `s3_ll`
 
 The AWS CLI offers this command to see the size of a S3 bucket: `aws s3 ls --summarize --human-readable --recursive s3://bucket-name/directory`.
 
@@ -105,7 +105,7 @@ This command is too long to remember. Let's create an executable that takes a si
 
 Let's create the `~/.cali/s3_ll` file.
 
-```
+```bash
 touch `~/.cali/s3_ll`
 ```
 

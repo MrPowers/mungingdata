@@ -15,7 +15,7 @@ This blog post shows how to add Scalatest to a sbt project and write some basic 
 
 Make a `Calculator` object with an `addNumbers` method that adds two integers:
 
-```
+```scala
 package com.github.mrpowers.scalatest.example
 
 object Calculator {
@@ -29,7 +29,7 @@ object Calculator {
 
 Let's verify that `addNumbers` returns 7 when the inputs are 3 and 4. Let's take a look at the test code.
 
-```
+```scala
 package com.github.mrpowers.scalatest.example
 
 import org.scalatest.FunSpec
@@ -101,7 +101,7 @@ You should mark Scalatest as a test dependency, so it's not included in your JAR
 
 Let's create a `CardiB` object with a couple of methods.
 
-```
+```scala
 object CardiB {
 
   def realName(): String = {
@@ -117,7 +117,7 @@ object CardiB {
 
 Let's use the `describe()` and `it()` method provided by `FunSpec` to neatly organize our `CardiB` tests:
 
-```
+```scala
 class CardiBSpec extends FunSpec {
 
   describe("realName") {
@@ -159,7 +159,7 @@ We can run the `sbt` command to open the SBT console and run the tests from the 
 
 Let's update the `build.sbt` file with [configuration options](https://stackoverflow.com/a/46535105/1125159) that will show the runtime for each individual test.
 
-```
+```scala
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-oD")
 ```
 
@@ -173,7 +173,7 @@ There are a variety of test output settings that can be configured for your proj
 
 Let's update the `iLike()` method to throw an error if the argument list is empty:
 
-```
+```scala
 def iLike(args: String*): String = {
   if (args.isEmpty) {
     throw new java.lang.IllegalArgumentException
@@ -184,7 +184,7 @@ def iLike(args: String*): String = {
 
 We can use `assertThrows` to verify that the exception is thrown when `iLike()` is run without any arguments:
 
-```
+```scala
 it("throws an error if an integer argument is supplied") {
   assertThrows[java.lang.IllegalArgumentException]{
     CardiB.iLike()
@@ -210,7 +210,7 @@ required: String
 
 Here's a test to verify that this code does not compile.
 
-```
+```scala
 it("does not compile with integer arguments") {
   assertDoesNotCompile("""CardiB.iLike(1, 2, 3)""")
 }
@@ -232,7 +232,7 @@ Let's create another example with FreeSpec, another test style that's also defin
 
 Start by defining a `Person` class with a `fullName()` method that concatenates the `firstName` and `lastName`.
 
-```
+```scala
 class Person(firstName: String, lastName: String) {
 
   def fullName(): String = {
@@ -244,7 +244,7 @@ class Person(firstName: String, lastName: String) {
 
 Here's a `PersonSpec` test that leverages the `FreeSpec` test style.
 
-```
+```scala
 import org.scalatest.FreeSpec
 
 class PersonSpec extends FreeSpec {

@@ -78,7 +78,7 @@ The rest of this post explains how to make this upsert.
 
 Let's create a Delta table with our example data:
 
-```
+```scala
 val df = Seq(
   (1, "elon musk", "south africa", "pretoria", true, "1971-06-28", null),
   (2, "jeff bezos", "us", "albuquerque", true, "1964-01-12", null),
@@ -112,7 +112,7 @@ The elegant `os.pwd` syntax is powered by [os-lib](https://github.com/lihaoyi/os
 
 Create another DataFrame with the update data so we can perform an upsert.
 
-```
+```scala
 val updatesDF = Seq(
   (1, "elon musk", "canada", "montreal", "1989-06-01"),
   (4, "dhh", "us", "chicago", "2005-11-01")
@@ -142,7 +142,7 @@ Delta uses Parquet files, which are immutable, so updates aren't performed in th
 
 Let's compute the rows for existing people in the data that have new data. This is the existing Elon Musk row. Notice that the `mergeKey` is intentionally set to `null` in the following code.
 
-```
+```scala
 val stagedPart1 = updatesDF
   .as("updates")
   .join(techCelebsTable.toDF.as("tech_celebs"), "personId")
@@ -162,7 +162,7 @@ stagedPart1.show()
 
 Here are the other rows that need to be inserted.
 
-```
+```scala
 val stagedPart2 = updatesDF.selectExpr("personId as mergeKey", "*")
 
 stagedPart2.show()
@@ -179,7 +179,7 @@ stagedPart2.show()
 
 Create the staged update table by unioning the two DataFrames.
 
-```
+```scala
 val stagedUpdates = stagedPart1.union(stagedPart2)
 
 stagedUpdates.show()
@@ -203,7 +203,7 @@ We're ready to perform the upsert now that the staged upsert table is properly f
 
 Delta exposes an elegant Scala DSL for performing upserts.
 
-```
+```scala
 techCelebsTable
   .as("tech_celebs")
   .merge(stagedUpdates.as("staged_updates"), "tech_celebs.personId = mergeKey")

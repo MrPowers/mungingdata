@@ -39,7 +39,7 @@ her,2013
 
 Import the necessary PyArrow code libraries and read the CSV file into a PyArrow table:
 
-```
+```python
 import pyarrow.csv as pv
 import pyarrow.parquet as pq
 import pyarrow as pa
@@ -49,7 +49,7 @@ table = pv.read_csv('movies.csv')
 
 Define a custom schema for the table, with metadata for the columns and the file itself.
 
-```
+```python
 my_schema = pa.schema([
     pa.field("movie", "string", False, metadata={"spanish": "pelicula"}),
     pa.field("release_year", "int64", True, metadata={"portuguese": "ano"})],
@@ -60,13 +60,13 @@ t2 = table.cast(my_schema)
 
 Write out the table as a Parquet file.
 
-```
+```python
 pq.write_table(t2, 'movies.parquet')
 ```
 
 Let's inspect the metadata of the Parquet file:
 
-```
+```python
 s = pq.read_table('movies.parquet').schema
 
 s.metadata # => {b'great_music': b'reggaeton'}
@@ -77,7 +77,7 @@ Notice that b-strings, aka byte strings, are used in the metadata dictionaries. 
 
 Fetch the metadata associated with the `release_year` column:
 
-```
+```python
 parquet_file = pq.read_table('movies.parquet')
 parquet_file.schema.field('release_year').metadata[b'portuguese'] # => b'ano'
 ```
@@ -97,21 +97,21 @@ lulu,9
 
 Read in the CSV data to a PyArrow table and demonstrate that the schema metadata is `None`:
 
-```
+```python
 table = pv.read_csv('pets1.csv')
 table.schema.metadata # => None
 ```
 
 Define some custom metadata and merge it with the existing metadata.
 
-```
+```python
 custom_metadata = {b'is_furry': b'no_fluffy', b'likes_cats': b'negative'}
 merged_metadata = { **custom_metadata, **(table.schema.metadata or {}) }
 ```
 
 Create a new PyArrow table with the `merged_metadata`, write it out as a Parquet file, and then fetch the metadata to make sure it was written out correctly.
 
-```
+```python
 fixed_table = table.replace_schema_metadata(merged_metadata)
 pq.write_table(fixed_table, 'pets1_with_metadata.parquet')
 parquet_table = pq.read_table('pets1_with_metadata.parquet')

@@ -19,7 +19,7 @@ It's important to understand both. The rest of this post provides clear examples
 
 Suppose you have the following DataFrame with a `some_arr` column that contains numbers.
 
-```
+```python
 df = spark.createDataFrame(
     [([1, 2, 3, 5, 7],), ([2, 4, 9],)], ["some_arr"]
 )
@@ -37,7 +37,7 @@ df.show()
 
 Use `filter` to append an `arr_evens` column that only contains the even numbers from `some_arr`:
 
-```
+```python
 from pyspark.sql.functions import *
 
 is_even = lambda x: x % 2 == 0
@@ -56,7 +56,7 @@ res.show()
 
 The vanilla `filter` method in Python works similarly:
 
-```
+```python
 list(filter(is_even, [2, 4, 9])) # [2, 4]
 ```
 
@@ -68,7 +68,7 @@ Now let's turn our attention to filtering entire rows.
 
 Suppose you have the following DataFrame.
 
-```
+```python
 df = spark.createDataFrame(
     [(["one", "two", "three"],), (["four", "five"],), (["one", "nine"],)], ["some_arr"]
 )
@@ -87,7 +87,7 @@ df.show()
 
 Here's how to filter out all the rows that don't contain the string `one`:
 
-```
+```python
 res = df.filter(array_contains(col("some_arr"), "one"))
 res.show()
 ```
@@ -109,7 +109,7 @@ res.show()
 
 Create a DataFrame with some words:
 
-```
+```python
 df = spark.createDataFrame(
     [(["apple", "pear"],), (["plan", "pipe"],), (["cat", "ant"],)], ["some_words"]
 )
@@ -128,7 +128,7 @@ df.show()
 
 Filter out all the rows that don't contain a word that starts with the letter `a`.
 
-```
+```python
 starts_with_a = lambda s: s.startswith("a")
 res = df.filter(exists(col("some_words"), starts_with_a))
 res.show()
@@ -151,7 +151,7 @@ See the [PySpark exists and forall](https://mungingdata.com/pyspark/exists-foral
 
 Create a DataFrame with some integers:
 
-```
+```python
 df = spark.createDataFrame(
     [([1, 2, 3, 5, 7],), ([2, 4, 9],), ([2, 4, 6],)], ["some_ints"]
 )
@@ -170,7 +170,7 @@ df.show()
 
 Filter out all the rows that contain any odd numbers.
 
-```
+```python
 is_even = lambda x: x % 2 == 0
 res = df.filter(forall(col("some_ints"), is_even))
 res.show()

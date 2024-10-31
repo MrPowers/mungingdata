@@ -49,7 +49,7 @@ You can see [the compatible versions here](https://docs.delta.io/latest/releases
 
 Here's an example YAML file with the required dependencies.
 
-```
+```yml
 name: mr-delta
 channels:
   - conda-forge
@@ -92,7 +92,7 @@ Here's how the computations should look in your Jupyter notebook:
 
 Take a look at the following code snippet and pay close attention on how you need to initialize the `SparkSession`:
 
-```
+```python
 import pyspark
 from delta import *
 

@@ -21,7 +21,7 @@ Thankfully, Li created a clean solution, so we don't need to suffer.
 
 Add this to your `build.sbt` file:
 
-```
+```scala
 libraryDependencies += "com.lihaoyi" %% "upickle" % "0.9.5"
 ```
 
@@ -41,7 +41,7 @@ Suppose you have the following JSON file:
 
 Here's how you can read this JSON data into a `LinkedHashMap`:
 
-```
+```scala
 val jsonString = os.read(os.pwd/"src"/"test"/"resources"/"phil.json")
 val data = ujson.read(jsonString)
 data.value // LinkedHashMap("first_name" -> Str("Phil"), "last_name" -> Str("Hellmuth"), "birth_year" -> Num(1964.0))
@@ -51,7 +51,7 @@ The [os-lib](https://github.com/lihaoyi/os-lib) library is used to construct the
 
 We can fetch the `first_name` value as follows:
 
-```
+```scala
 data("first_name") // ujson.Value = Str("Phil")
 data("first_name").str // String = "Phil"
 data("first_name").value // Any = "Phil"
@@ -63,7 +63,7 @@ You need to fetch the value correctly to get the correct result type.
 
 Let's change the last name from the `phil.json` file to "Poker Brat" and then write the updated JSON to disk.
 
-```
+```scala
 val jsonString = os.read(os.pwd/"src"/"test"/"resources"/"phil.json")
 val data = ujson.read(jsonString)
 data("last_name") = "Poker Brat"
@@ -84,7 +84,7 @@ Some Scala JSON libraries try to stick with immutable data structures, but that 
 
 Suppose you have the following `colombia.json` file:
 
-```
+```json
 {
   "continent": "South America",
   "cities": ["Medellin", "Cali", "Bogotá"]
@@ -93,7 +93,7 @@ Suppose you have the following `colombia.json` file:
 
 You can read this JSON file as follows:
 
-```
+```scala
 val jsonString = os.read(os.pwd/"src"/"test"/"resources"/"colombia.json")
 val data = ujson.read(jsonString)
 ```
@@ -113,7 +113,7 @@ A mutable collection is returned, so you can easily modify the array.
 
 Let's read the `colombia.json` file, add a city to the array, and write it out as a separate JSON file.
 
-```
+```scala
 val jsonString = os.read(os.pwd/"src"/"test"/"resources"/"colombia.json")
 val data = ujson.read(jsonString)
 data("cities").arr.append("Cartagena")
@@ -122,7 +122,7 @@ os.write(os.pwd/"tmp"/"more_colombia.json", data)
 
 Here are the contents of the `more_colombia.json` file:
 
-```
+```json
 {"continent":"South America","cities":["Medellin","Cali","Bogotá","Cartagena"]}
 ```
 
@@ -132,7 +132,7 @@ uJSON makes it easy to modify an array and write out a JSON file.
 
 We've been constructing uJSON objects by reading files on disk. Let's built a JSON object in memory and then write it out to disk.
 
-```
+```scala
 val brasil = ujson.Obj("population" -> "210 million")
 brasil("cities") = ujson.Arr("recife", "sao paolo")
 os.write(os.pwd/"tmp"/"brasil.json", brasil)
@@ -140,7 +140,7 @@ os.write(os.pwd/"tmp"/"brasil.json", brasil)
 
 Here are the contents of the `brasil.json` file:
 
-```
+```json
 {"population":"210 million","cities":["recife","sao paolo"]}
 ```
 

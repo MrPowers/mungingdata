@@ -27,7 +27,7 @@ abe lincoln,1809
 
 You can easily read this file into a Pandas DataFrame and write it out as a Parquet file [as described in this Stackoverflow answer](https://stackoverflow.com/questions/50604133/convert-csv-to-parquet-file-using-python).
 
-```
+```python
 import pandas as pd
 
 def write_parquet_file():
@@ -56,7 +56,7 @@ Pandas provides a beautiful Parquet interface. Pandas leverages the PyArrow libr
 
 PyArrow lets you read a CSV file into a table and write out a Parquet file, [as described in this blog post](https://mungingdata.com/pyarrow/parquet-metadata-min-max-statistics/). The code is simple to understand:
 
-```
+```python
 import pyarrow.csv as pv
 import pyarrow.parquet as pq
 
@@ -72,7 +72,7 @@ Dask is a parallel computing framework that makes it easy to convert a lot of CS
 
 Here's a code snippet, but you'll need to read the blog post to fully understand it:
 
-```
+```python
 import dask.dataframe as dd
 
 df = dd.read_csv('./data/people/*.csv')
@@ -87,7 +87,7 @@ Let's read the CSV data to a PySpark DataFrame and write it out in the Parquet f
 
 We'll start by creating a `SparkSession` that'll provide us access to the Spark CSV reader.
 
-```
+```python
 from pyspark.sql import SparkSession
 
 spark = SparkSession.builder \
@@ -115,7 +115,7 @@ The `part-00000-81...snappy.parquet` file contains the data. Spark uses the Snap
 
 Let's read `tmp/pyspark_us_presidents` Parquet data into a DataFrame and print it out.
 
-```
+```python
 df = spark.read.parquet('tmp/pyspark_us_presidents')
 df.show()
 
@@ -135,7 +135,7 @@ Setting up a PySpark project on your local machine is surprisingly easy, see [th
 
 Let's read the CSV and write it out to a Parquet folder (notice how the code looks like Pandas):
 
-```
+```python
 import databricks.koalas as ks
 
 df = ks.read_csv('data/us_presidents.csv')
@@ -144,7 +144,7 @@ df.to_parquet('tmp/koala_us_presidents')
 
 Read the Parquet output and display the contents:
 
-```
+```python
 df = ks.read_parquet('tmp/koala_us_presidents')
 print(df)
 

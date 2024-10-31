@@ -17,7 +17,7 @@ This blog post explains how to setup MUnit and use its basic features.
 
 Let's create a `Calculator` object with an `addNumbers` method that adds two integers:
 
-```
+```scala
 package com.github.mrpowers.munit.example
 
 object Calculator {
@@ -31,7 +31,7 @@ object Calculator {
 
 Let's add a MUnit test to verify that `addNumbers` returns 7 when 3 and 4 are supplied as inputs.
 
-```
+```scala
 package com.github.mrpowers.munit.example
 
 class CalculatorSpec extends munit.FunSuite {
@@ -59,7 +59,7 @@ Let's take a look at how MUnit outputs test failure messages.
 
 Here's an example of a failing test:
 
-```
+```scala
 test("equality error message") {
   val obtained = 42
   val expected = 43
@@ -75,7 +75,7 @@ The failing message includes the obtained value, expected value, and line number
 
 MUnit's `assertEquals` method can be used to compare collections that have the same elements:
 
-```
+```scala
 test("considers collections with the same elements equal") {
   assertEquals(Seq(1, 2), Seq(1, 2))
 }
@@ -87,7 +87,7 @@ MUnit gives nicely formatted error messages for collection comparisons that are 
 
 Here's a test that compares two collections that aren't equal.
 
-```
+```scala
 test("gives good error messages for different collections") {
   assertEquals(Seq(1, 2), Seq(1, 8))
 }
@@ -103,7 +103,7 @@ MUnit can also check that errors are thrown.
 
 Let's create a `crankyMethod` that throws a `java.lang.IllegalArgumentException`.
 
-```
+```scala
 def crankyMethod(): String = {
   throw new java.lang.IllegalArgumentException()
 }
@@ -111,7 +111,7 @@ def crankyMethod(): String = {
 
 Let's write a test using `intercept` to verify that this method throws a `IllegalArgumentException`:
 
-```
+```scala
 test("can intercept exceptions") {
   intercept[java.lang.IllegalArgumentException]{
     Calculator.crankyMethod()
@@ -125,7 +125,7 @@ test("can intercept exceptions") {
 
 Write a `crankyKong` method that'll throw a `java.lang.Exception` with the message "DK is my grandchild".
 
-```
+```scala
 def crankyKong(): String = {
   throw new java.lang.Exception("DK is my grandchild")
 }
@@ -133,7 +133,7 @@ def crankyKong(): String = {
 
 Write a test that makes sure the `crankyKong` method throws a `java.lang.Exception` with the expected message.
 
-```
+```scala
 test("can intercept exceptions with messages") {
   interceptMessage[java.lang.Exception]("DK is my grandchild"){
     Calculator.crankyKong()
@@ -149,7 +149,7 @@ Our `Calculator.addNumbers()` method takes two integer arguments. The code won't
 
 Let's write a test to make sure `addNumbers()` errors out with a particular message when it's invoked with String arguments.
 
-```
+```scala
 test("checks the error message of code that doesn't compile") {
   assertNoDiff(
     compileErrors("""Calculator.addNumbers("hi", "there")"""),
@@ -184,7 +184,7 @@ These let you customize what tests are run on different operating systems and wi
 
 Let's create a test file with one test that runs for a Scala versions / operating systems and other test that only runs on Windows with Scala 2.13.
 
-```
+```scala
 package com.github.mrpowers.munit.example
 
 import scala.util.Properties

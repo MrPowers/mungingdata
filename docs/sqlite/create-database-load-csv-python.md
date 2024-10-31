@@ -15,7 +15,7 @@ Python is perfect language for this task because it has great libraries for sqli
 
 sqlite is a lightweight database that can be started as an empty text file. You can create the file with `touch my_data.db` or with this equivalent Python code:
 
-```
+```python
 from pathlib import Path
 Path('my_data.db').touch()
 ```
@@ -26,7 +26,7 @@ A zero byte text file is a great starting point for a lightweight database!
 
 Create a database connection and cursor to execute queries.
 
-```
+```python
 import sqlite3
 
 conn = sqlite3.connect('my_data.db')
@@ -35,7 +35,7 @@ c = conn.cursor()
 
 Execute a query that'll create a `users` table with `user_id` and `username` columns.
 
-```
+```python
 c.execute('''CREATE TABLE users (user_id int, username text)''')
 ```
 
@@ -51,7 +51,7 @@ user_id,username
 
 Pandas makes it easy to load this CSV data into a sqlite table:
 
-```
+```python
 import pandas as pd
 
 # load the data into a Pandas DataFrame
@@ -66,7 +66,7 @@ The `to_sql` method makes it easy to write DataFrames to databases.
 
 Fetch all the rows from the `users` table:
 
-```
+```python
 c.execute('''SELECT * FROM users''').fetchall() # [(1, 'pokerkid'), (2, 'crazyken')]
 ```
 
@@ -89,7 +89,7 @@ order_id,user_id,item_name
 
 Create a table and then load the orders data into the database.
 
-```
+```python
 c.execute('''CREATE TABLE orders (order_id int, user_id int, item_name text)''')
 orders = pd.read_csv('orders.csv') # load to DataFrame
 orders.to_sql('orders', conn, if_exists='append', index = False) # write to sqlite table
@@ -99,7 +99,7 @@ orders.to_sql('orders', conn, if_exists='append', index = False) # write to sqli
 
 Join the `users` and `orders` tables on the `user_id` value and print the results:
 
-```
+```python
 c.execute('''SELECT * FROM users u LEFT JOIN orders o ON u.user_id = o.user_id''')
 c.fetchall()
 ```

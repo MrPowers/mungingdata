@@ -24,7 +24,7 @@ The code is {{code_description}}
 
 Here's how to generate a file with `programming_language` set to "Scala" and `code_description` set to "pretty".
 
-```
+```scala
 import org.fusesource.scalate.TemplateEngine
 
 val sourceDataPath = new java.io.File("./src/test/resources/simple_example.mustache").getCanonicalPath
@@ -47,7 +47,7 @@ The code is pretty
 
 You need to add the following line to your `build.sbt` file to access the scalate library:
 
-```
+```scala
 libraryDependencies += "org.scalatra.scalate" %% "scalate-core" % "1.9.6"
 ```
 
@@ -69,7 +69,7 @@ Here's a Mustache template that'll display a list of values:
 
 And here is the Scala code:
 
-```
+```scala
 val sourceDataPath = new java.io.File("./src/test/resources/scala_projects.mustache").getCanonicalPath
 val engine = new TemplateEngine
 val someAttributes = Map(
@@ -107,7 +107,7 @@ Here's a Mustache template that'll add "probably likes functional programming" t
 
 Here's Scala code that uses this template and outputs a string:
 
-```
+```scala
 val sourceDataPath = new java.io.File("./src/test/resources/boolean_example.mustache").getCanonicalPath
 val engine = new TemplateEngine
 val someAttributes = Map(
@@ -140,7 +140,7 @@ from
 
 Here's the Scala code that executes the function (it assumes the column names are passed in as a pipe delimited string).
 
-```
+```scala
 val sourceDataPath = new java.io.File("./src/test/resources/function_example.mustache").getCanonicalPath
 val engine = new TemplateEngine
 val someAttributes = Map(
@@ -172,7 +172,7 @@ SSP does not follow the "logic-less templates" philosophy used by Mustache. You 
 
 Let's define an object that we'll access in our SSP template:
 
-```
+```scala
 object FunStuff {
   val dinnertime = "eating stuff!"
 }
@@ -192,7 +192,7 @@ Notice that the template needs to import the `FunStuff` object.
 
 Let's write some Scala code that'll use the template to generate a string.
 
-```
+```scala
 val sourceDataPath = new java.io.File("./src/test/resources/simple_example.ssp").getCanonicalPath
 val engine = new TemplateEngine
 println(engine.layout(sourceDataPath))

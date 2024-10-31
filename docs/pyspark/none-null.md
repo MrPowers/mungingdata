@@ -17,7 +17,7 @@ Following the tactics outlined in this post will save you from a lot of pain and
 
 Let's start by creating a DataFrame with `null` values:
 
-```
+```python
 df = spark.createDataFrame([(1, None), (2, "li")], ["num", "name"])
 df.show()
 ```
@@ -35,7 +35,7 @@ You use `None` to create DataFrames with `null` values.
 
 `null` is not a value in Python, so this code will not work:
 
-```
+```python
 df = spark.createDataFrame([(1, null), (2, "li")], ["num", "name"])
 ```
 
@@ -58,7 +58,7 @@ bill,
 
 Read this file into a DataFrame and then show the contents to demonstrate which values are read into the DataFrame as `null`.
 
-```
+```python
 path = "/Users/powers/data/some_people.csv"
 df = spark.read.option("header", True).csv(path)
 df.show()
@@ -80,7 +80,7 @@ The empty string in row 2 and the missing value in row 3 are both read into the 
 
 Create a DataFrame with `num1` and `num2` columns.
 
-```
+```python
 df = spark.createDataFrame([(1, None), (2, 2), (None, None)], ["num1", "num2"])
 df.show()
 ```
@@ -97,7 +97,7 @@ df.show()
 
 Append an `is_num2_null` column to the DataFrame:
 
-```
+```python
 df.withColumn("is_num2_null", df.num2.isNull()).show()
 ```
 
@@ -140,7 +140,7 @@ Lots of times, you'll want this equality behavior:
 
 Here's one way to perform a null safe equality comparison:
 
-```
+```python
 df.withColumn(
   "num1_eq_num2",
   when(df.num1.isNull() & df.num2.isNull(), True)
@@ -187,7 +187,7 @@ This section shows a UDF that works on DataFrames without `null` values and fail
 
 Start by creating a DataFrame that does not contain `null` values.
 
-```
+```python
 countries1 = spark.createDataFrame([("Brasil", 1), ("Mexico", 2)], ["country", "id"])
 countries1.show()
 ```
@@ -203,7 +203,7 @@ countries1.show()
 
 Create a UDF that appends the string "is fun!".
 
-```
+```python
 from pyspark.sql.types import StringType
 
 @udf(returnType=StringType())
@@ -213,7 +213,7 @@ def bad_funify(s):
 
 Run the UDF and observe that is works for DataFrames that don't contain any `null` values.
 
-```
+```python
 countries1.withColumn("fun_country", bad_funify("country")).show()
 ```
 
@@ -228,7 +228,7 @@ countries1.withColumn("fun_country", bad_funify("country")).show()
 
 Let's create another DataFrame and run the `bad_funify` function again.
 
-```
+```python
 countries2 = spark.createDataFrame([("Thailand", 3), (None, 4)], ["country", "id"])
 countries2.withColumn("fun_country", bad_funify("country")).show()
 ```
@@ -366,7 +366,7 @@ TypeError: unsupported operand type(s) for +: 'NoneType' and 'str'
 
 Let's write a `good_funify` function that won't error out.
 
-```
+```python
 @udf(returnType=StringType())
 def good_funify(s):
      return None if s == None else s + " is fun!"
@@ -391,7 +391,7 @@ All of the built-in PySpark functions gracefully handle the `null` input case by
 
 Let's write a `best_funify` function that uses the built-in PySpark functions, so we don't need to explicitly handle the `null` case ourselves.
 
-```
+```python
 def best_funify(col):
      return concat(col, lit(" is fun!"))
 
@@ -419,7 +419,7 @@ If `nullable` is set to `False` then the column cannot contain `null` values.
 
 Here's how to create a DataFrame with one column that's nullable and another column that is not.
 
-```
+```python
 from pyspark.sql import Row
 from pyspark.sql.types import *
 
@@ -449,9 +449,11 @@ df.show()
 
 Use the `printSchema` function to check the `nullable` flag:
 
-```
+```python
 df.printSchema()
+```
 
+```
 root
  |-- name: string (nullable = true)
  |-- age: integer (nullable = false)
@@ -467,14 +469,14 @@ You should always make sure your code works properly with null input in the test
 
 Let's look at a helper function from the [quinn](https://github.com/MrPowers/quinn/) library that converts all the whitespace in a string to single spaces.
 
-```
+```python
 def single_space(col):
     return F.trim(F.regexp_replace(col, " +", " "))
 ```
 
 Let's look at the test for this function.
 
-```
+```python
 def test_single_space(spark):
     df = spark.create_df(
         [
