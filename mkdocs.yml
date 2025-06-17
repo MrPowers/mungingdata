@@ -18,6 +18,9 @@ markdown_extensions:
 
 nav:
   - Home: index.md
+  - Spatial:
+      - Functions:
+        - ST_Touches: spatial/functions/st-touches-sedona-duckdb-postgis.md
   - PySpark:
       - Working with array columns: pyspark/array-arraytype-list.md
       - Avoid periods in column names: pyspark/avoid-dots-periods-column-names.md
